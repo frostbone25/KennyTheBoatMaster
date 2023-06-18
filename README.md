@@ -13,6 +13,8 @@ Kenny is out relaxing and fishing on his boat in the open water, before he is th
 
 This project is fully custom and built entirely using Lua scripts which is the native Telltale gameplay programming language used in their games *(games released before The Expanse: A Telltale Series)*. It features custom UI, cutscenes, gameplay controls and input, procedural generation, collision detection, file saving, and improved lighting. All of the code is well documented and explained.
 
+**NOTE:** This project requires that the user owns a copy of The Walking Dead: Telltale Definitive Series on PC, as it's an add-on, not a standalone game.
+
 # Tools Used
 
 ### [Telltale Script Editor 2.2.2](https://github.com/Telltale-Modding-Group/Telltale-Script-Editor)
