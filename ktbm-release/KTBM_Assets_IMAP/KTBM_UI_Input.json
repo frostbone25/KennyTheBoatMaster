@@ -1,0 +1,40 @@
+[
+  {
+    "mMetaStreamVersion": "6VSM",
+    "mDefaultSectionChunkSize": 1410,
+    "mDebugSectionChunkSize": 0,
+    "mAsyncSectionChunkSize": 0,
+    "mClassNamesLength": 2,
+    "mClassNames": [
+      {
+        "mTypeNameCRC": {
+          "mCrc64": 16494572205536610790
+        },
+        "mVersionCRC": 2938478536
+      },
+      {
+        "mTypeNameCRC": {
+          "mCrc64": 18168016941510070708
+        },
+        "mVersionCRC": 1107160761
+      }
+    ]
+  },
+  {
+    "mName": "KTBM_UI_Input.imap",
+    "mMappedEvents": [
+      {
+        "mInputCode": 1,
+        "mEvent": 0,
+        "mScriptFunction": "KTBM_UI_Input_IMAP_Click_Begin",
+        "mControllerIndexOverride": -1
+      },
+      {
+        "mInputCode": 1,
+        "mEvent": 1,
+        "mScriptFunction": "KTBM_UI_Input_IMAP_Click_End",
+        "mControllerIndexOverride": -1
+      }
+    ]
+  }
+]

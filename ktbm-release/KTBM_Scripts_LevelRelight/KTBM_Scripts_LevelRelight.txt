@@ -1,0 +1,5 @@
+This is a .lua (Lua) archive for the "Kenny The Boat Master" (KTBM) project.
+
+- (.lua) a pre-compiled script that is used by the game to run gameplay logic.
+
+This specific archive stores the "LevelRelight" scripts that are used in the project. These are supplementary to the main level scripts, and are used after the LevelCleanup scripts to both relight and build the scene as necessary for the given level.

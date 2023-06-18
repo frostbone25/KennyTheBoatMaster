@@ -1,0 +1,6 @@
+This is a .lua (Lua) archive for the "Kenny The Boat Master" (KTBM) project.
+
+- (.lua) a pre-compiled script that is used by the game to run gameplay logic.
+
+This specific archive stores the "cutscene" scripts that are used in the project. It contains scripts that are used to help with playing animated sequences in the game, along with the actual scripted sequences themselves.
+

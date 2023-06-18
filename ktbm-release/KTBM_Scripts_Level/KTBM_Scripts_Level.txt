@@ -1,0 +1,5 @@
+This is a .lua (Lua) archive for the "Kenny The Boat Master" (KTBM) project.
+
+- (.lua) a pre-compiled script that is used by the game to run gameplay logic.
+
+This specific archive stores the "level" scripts that are used in the project. These level scripts are basically the starting point for all of the logic used for the entire game. They are executed, and load up all of the KTBM gameplay logic within an existing telltale level (which are purged and rebuilt). There is a script for each level or event in the game and depending on the flow of gameplay they will transition into eachother.

@@ -1,0 +1,5 @@
+This is a .wav (Wavefront) archive for the "Kenny The Boat Master" (KTBM) project.
+
+- (.wav) is a regular audio file that can be used and played in the game.
+
+This specific archive just stores any modified voice lines that get used in the game. Nothing special here, fortunately the telltale tool has functionality for playing normal .wav files that can be used in game.
