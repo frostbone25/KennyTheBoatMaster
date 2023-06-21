@@ -144,3 +144,13 @@ KTBM_ChorePlayOnAgent = function(chore, agentName, priority, bWait)
         return ChorePlay(chore, priority, "default", agentName);
     end
 end
+
+KTBM_SetExtents = function(agent, extentsMin, extentsMax)
+    KTBM_PropertySet(agent, "Extents Min", extentsMin);
+    KTBM_PropertySet(agent, "Extents Max", extentsMax);
+end
+
+KTBM_SetAgentExtents = function(agentName, extentsMin, extentsMax, kScene)
+    KTBM_AgentSetProperty(agentName, "Extents Min", extentsMin, kScene);
+    KTBM_AgentSetProperty(agentName, "Extents Max", extentsMax, kScene);
+end

@@ -40,7 +40,74 @@ end
 KTBM_TextUI_IsCursorOverTextAgent = function(textAgent)
     local vector_cursorPos = CursorGetPos();
     return KTBM_TextUI_TextAgentContains(textAgent, vector_cursorPos);
+end
 
-    --return AgentIsUnderCursor(textAgent); --NOTE: Kept in here for archival purposes, this doesnt not work
-    --return AgentContainingPos(textAgent, vector_cursorPos); --NOTE: Kept in here for archival purposes, this doesnt not work
+KTBM_TextUI_IsCursorOverTextAgentFix = function(textAgent)
+    --NOTE: Bounds Fix
+    --TextGetWorldExtents do not properly factor in rotations well, despite the fact that visually text objects are always oriented towards the screen.
+    --Their actual agent rotations are not, so the bounds will appear out of whack.
+    --To fix this, we just simply match the agent rotations of the text to the camera.
+    local camera_sceneCamera = AgentGetCamera(textAgent);
+    local vector_sceneCameraRotation = AgentGetWorldRot(camera_sceneCamera);
+    AgentSetWorldRot(textAgent, vector_sceneCameraRotation);
+
+    local vector_cursorPos = CursorGetPos();
+    return KTBM_TextUI_TextAgentContains(textAgent, vector_cursorPos);
+
+    --NOTE: Kept in here for archival purposes, these don't not work
+    --|||||||||||||||||||||||||||||||||||| AGENT CURSOR CHECKING ATTEMPT 1 ||||||||||||||||||||||||||||||||||||
+    --return AgentIsUnderCursor(textAgent);
+
+    --|||||||||||||||||||||||||||||||||||| AGENT CURSOR CHECKING ATTEMPT 2 ||||||||||||||||||||||||||||||||||||
+    --return AgentContainingPos(textAgent, vector_cursorPos);
+
+    --|||||||||||||||||||||||||||||||||||| AGENT CURSOR CHECKING ATTEMPT 3 ||||||||||||||||||||||||||||||||||||
+    --local string_textAgentName = AgentGetName(textAgent);
+    --local agent_agentAtScreenPos = AgentAtScreenPos(vector_cursorPos);
+
+    --if(agent_agentAtScreenPos == nil) then 
+        --return false;
+    --end
+
+    --local string_agentNameAtScreenPos = AgentGetName(agent_agentAtScreenPos);
+
+    --if(string.match(string_textAgentName, string_agentNameAtScreenPos) == true) then
+        --return true;
+    --else
+        --return false;
+    --end
+
+    --|||||||||||||||||||||||||||||||||||| AGENT CURSOR CHECKING ATTEMPT 4 ||||||||||||||||||||||||||||||||||||
+    --local string_textAgentName = AgentGetName(textAgent);
+    --local agent_agentsAtScreenPos = AgentAtCursorPos();
+
+    --if(agent_agentsAtScreenPos == nil) then 
+        --return false;
+    --end
+
+    --for index, agent_item in ipairs(agent_agentsAtScreenPos) do
+        --local string_agentNameItem = AgentGetName(agent_item);
+
+        --if(string.match(string_textAgentName, string_agentNameItem) == true) then
+            --return true;
+        --end
+    --end
+
+    --return false;
+
+    --|||||||||||||||||||||||||||||||||||| AGENT CURSOR CHECKING ATTEMPT 5 ||||||||||||||||||||||||||||||||||||
+    --local string_textAgentName = AgentGetName(textAgent);
+    --local agent_agentAtScreenPos = AgentAtLogicalScreenPos(vector_cursorPos);
+
+    --if(agent_agentAtScreenPos == nil) then 
+        --return false;
+    --end
+
+    --local string_agentNameAtScreenPos = AgentGetName(agent_agentAtScreenPos);
+
+    --if(string.match(string_textAgentName, string_agentNameAtScreenPos) == true) then
+        --return true;
+    --else
+        --return false;
+    --end
 end

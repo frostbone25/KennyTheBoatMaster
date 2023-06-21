@@ -34,6 +34,17 @@ KTBM_Development_SceneObjectAgentName = kSceneAgentName;
 KTBM_Development_UseSeasonOneAPI = false;
 KTBM_Development_FreecamUseFOVScale = false;
 
+KTBM_Development_BoundsDebug_ExtentsDebugging = false;
+KTBM_Development_BoundsDebug_Agents = {
+    "Page0_Play",
+    "Page0_Costumes",
+    "Page0_Options",
+    "Page0_Help",
+    "Page0_Credits",
+    "Page0_ReturnToDE",
+    "Page0_Quit"
+};
+
 --relighting dof autofocus variables
 KTBM_DOF_AUTOFOCUS_SceneObject = kScene;
 KTBM_DOF_AUTOFOCUS_SceneObjectAgentName = kScene .. ".scene";
@@ -117,6 +128,11 @@ KTBM_Level_Menu = function()
 
     KTBM_DepthOfFieldAutofocus_SetupDOF();
     Callback_OnPostUpdate:Add(KTBM_DepthOfFieldAutofocus_PerformAutofocus);
+
+    if (KTBM_Core_Project_DebugAllowBoundsDebug) then
+        KTBM_Development_BoundsDebug_Initalize();
+        Callback_OnPostUpdate:Add(KTBM_Development_BoundsDebug_Update);
+    end
 
     if (KTBM_Core_Project_DebugPeformanceMetrics) then
         KTBM_Development_PerformanceMetrics_Initalize();

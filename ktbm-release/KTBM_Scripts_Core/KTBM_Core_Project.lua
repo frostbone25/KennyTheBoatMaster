@@ -3,6 +3,7 @@ KTBM_Core_Project_Version = "1.0.0";
 KTBM_Core_Project_DebugPrinting = true;
 KTBM_Core_Project_DebugFreecamMode = false;
 KTBM_Core_Project_DebugPeformanceMetrics = false;
+KTBM_Core_Project_DebugAllowBoundsDebug = true;
 KTBM_Core_Project_DebugRockCollisionsUI = false;
 KTBM_Core_Project_DebugDisableRocks = false;
 KTBM_Core_Project_DebugDisableRockCollisions = false;

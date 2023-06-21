@@ -399,6 +399,7 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_page0_returnToDE, pressedColor);
             
                 dofile("Menu_KTBM_QuitToDE.lua");
+                
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_returnToDE, rolloverColor);

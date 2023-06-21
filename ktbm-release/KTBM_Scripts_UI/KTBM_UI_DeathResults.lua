@@ -13,10 +13,10 @@ KTBM_UI_PrepareDeathResultsUI = function()
     --create our main menu text
     agent_deathTextTitle = KTBM_TextUI_CreateTextAgent("agent_deathTextTitle", "You Died!", Vector(0, 0, 0), 0, 0);
     agent_deathTextScoreboard = KTBM_TextUI_CreateTextAgent("agent_deathTextScoreboard", "Scoreboard", Vector(0, 0, 0), 0, 0);
-    agent_retryText = KTBM_TextUI_CreateTextAgent("agent_retryText", "Retry", Vector(0, 0, 0), 1, 0);
-    agent_returnToMenuText = KTBM_TextUI_CreateTextAgent("agent_returnToMenuText", "Return To Menu", Vector(0, 0, 0), 1, 0);
-    agent_returnToDefinitiveMenuText = KTBM_TextUI_CreateTextAgent("agent_returnToDefinitiveMenuText", "Return To Definitive Menu", Vector(0, 0, 0), 1, 0);
-    agent_quitToDesktopText = KTBM_TextUI_CreateTextAgent("agent_quitToDesktopText", "Quit To Desktop", Vector(0, 0, 0), 1, 0);
+    agent_retryText = KTBM_TextUI_CreateTextAgent("agent_retryText", "Retry", Vector(0, 0, 0), 0, 0);
+    agent_returnToMenuText = KTBM_TextUI_CreateTextAgent("agent_returnToMenuText", "Return To Menu", Vector(0, 0, 0), 0, 0);
+    agent_returnToDefinitiveMenuText = KTBM_TextUI_CreateTextAgent("agent_returnToDefinitiveMenuText", "Return To Definitive Menu", Vector(0, 0, 0), 0, 0);
+    agent_quitToDesktopText = KTBM_TextUI_CreateTextAgent("agent_quitToDesktopText", "Quit To Desktop", Vector(0, 0, 0), 0, 0);
 
     --scale note
     --1.0 = default
@@ -42,6 +42,8 @@ KTBM_UI_PrepareDeathResultsUI = function()
 end
 
 KTBM_UI_UpdateDeathResultsUI = function()  
+    KTBM_UI_Input_IMAP_Update();
+
     local string_scoreboardText = "";
 
     string_scoreboardText = "[Game Results]";
@@ -70,58 +72,76 @@ KTBM_UI_UpdateDeathResultsUI = function()
     KTBM_PropertySet(agent_returnToDefinitiveMenuText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
     KTBM_PropertySet(agent_quitToDesktopText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
 
+    KTBM_SetExtents(agent_retryText, Vector(0, 0, 0), Vector(0, 0, 0));
+    KTBM_SetExtents(agent_returnToMenuText, Vector(0, 0, 0), Vector(0, 0, 0));
+    KTBM_SetExtents(agent_returnToDefinitiveMenuText, Vector(0, 0, 0), Vector(0, 0, 0));
+    KTBM_SetExtents(agent_quitToDesktopText, Vector(0, 0, 0), Vector(0, 0, 0));
+
     local defaultColor = Color(1.0, 1.0, 1.0, 1.0);
     local rolloverColor = Color(0.25, 0.25, 0.25, 1.0);
     local pressedColor = Color(0.1, 0.0, 0.0, 1.0);
 
     --option 1 (retry)
-    if (KTBM_TextUI_IsCursorOverTextAgent(agent_retryText)) then
-        --if (KTBM_UI_Input_Clicked == true) then
-            --TextSetColor(agent_retryText, pressedColor);
+    if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_retryText)) then
+        if (KTBM_UI_Input_Clicked == true) then
+            TextSetColor(agent_retryText, pressedColor);
 
-            --KTBM_UI_Input_Clicked = false;
-        --else
+            --OverlayShow("ui_loadingScreen.overlay", true);
+            --dofile("KTBM_Level_Game.lua");
+            SubProject_Switch("Menu", "KTBM_Level_Game.lua");
+
+            KTBM_UI_Input_Clicked = false;
+        else
             TextSetColor(agent_retryText, rolloverColor);
-        --end
+        end
     else
         TextSetColor(agent_retryText, defaultColor);
     end
 
     --option 2 (return to menu)
-    if (KTBM_TextUI_IsCursorOverTextAgent(agent_returnToMenuText)) then
-        --if (KTBM_UI_Input_Clicked == true) then
-            --TextSetColor(agent_returnToMenuText, pressedColor);
+    if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_returnToMenuText)) then
+        if (KTBM_UI_Input_Clicked == true) then
+            TextSetColor(agent_returnToMenuText, pressedColor);
 
-            --KTBM_UI_Input_Clicked = false;
-        --else
+            --OverlayShow("ui_loadingScreen.overlay", true);
+            --dofile("KTBM_Level_Menu.lua");
+            SubProject_Switch("Menu", "KTBM_Level_Menu.lua");
+
+            KTBM_UI_Input_Clicked = false;
+        else
             TextSetColor(agent_returnToMenuText, rolloverColor);
-        --end
+        end
     else
         TextSetColor(agent_returnToMenuText, defaultColor);
     end
 
     --option 3 (return to definitive menu)
-    if (KTBM_TextUI_IsCursorOverTextAgent(agent_returnToDefinitiveMenuText)) then
-        --if (KTBM_UI_Input_Clicked == true) then
-            --TextSetColor(agent_returnToDefinitiveMenuText, pressedColor);
+    if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_returnToDefinitiveMenuText)) then
+        if (KTBM_UI_Input_Clicked == true) then
+            TextSetColor(agent_returnToDefinitiveMenuText, pressedColor);
 
-            --KTBM_UI_Input_Clicked = false;
-        --else
+            RenderDelay(1);
+            dofile("Menu_KTBM_QuitToDE.lua");
+
+            KTBM_UI_Input_Clicked = false;
+        else
             TextSetColor(agent_returnToDefinitiveMenuText, rolloverColor);
-        --end
+        end
     else
         TextSetColor(agent_returnToDefinitiveMenuText, defaultColor);
     end
 
     --option 4 (quit to desktop)
-    if (KTBM_TextUI_IsCursorOverTextAgent(agent_quitToDesktopText)) then
-        --if (KTBM_UI_Input_Clicked == true) then
-            --TextSetColor(agent_quitToDesktopText, pressedColor);
+    if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_quitToDesktopText)) then
+        if (KTBM_UI_Input_Clicked == true) then
+            TextSetColor(agent_quitToDesktopText, pressedColor);
 
-            --KTBM_UI_Input_Clicked = false;
-        --else
+            EngineQuit();
+
+            KTBM_UI_Input_Clicked = false;
+        else
             TextSetColor(agent_quitToDesktopText, rolloverColor);
-        --end
+        end
     else
         TextSetColor(agent_quitToDesktopText, defaultColor);
     end
@@ -130,7 +150,6 @@ KTBM_UI_UpdateDeathResultsUI = function()
     --0.0 0.0 0.0 = top left
     --0.5 0.5 0.0 = center
     --0.0 1.0 0.0 = bottom left
-    --AgentSetWorldPosFromLogicalScreenPos(agent_deathTextTitle, Vector(0.36, 0.2, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_deathTextTitle, Vector(0.05, 0.1, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_deathTextScoreboard, Vector(0.05, 0.2, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_retryText, Vector(0.05, 0.75, 0.0));

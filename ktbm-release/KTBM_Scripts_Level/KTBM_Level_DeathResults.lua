@@ -26,6 +26,14 @@ KTBM_Development_SceneObjectAgentName = kSceneAgentName;
 KTBM_Development_UseSeasonOneAPI = false;
 KTBM_Development_FreecamUseFOVScale = false;
 
+KTBM_Development_BoundsDebug_ExtentsDebugging = false;
+KTBM_Development_BoundsDebug_Agents = {
+    "agent_retryText",
+    "agent_returnToMenuText",
+    "agent_returnToDefinitiveMenuText",
+    "agent_quitToDesktopText"
+};
+
 KTBM_Cutscene_DeathResults_ShowUI = false;
 KTBM_Cutscene_DeathResults_CanSkipToMenu = false;
 
@@ -61,6 +69,11 @@ KTBM_Level_DeathResults = function()
 
     KTBM_UI_PrepareDeathResultsUI();
     Callback_OnPostUpdate:Add(KTBM_UI_UpdateDeathResultsUI);
+
+    if (KTBM_Core_Project_DebugAllowBoundsDebug) then
+        KTBM_Development_BoundsDebug_Initalize();
+        Callback_OnPostUpdate:Add(KTBM_Development_BoundsDebug_Update);
+    end
 
     if (KTBM_Core_Project_DebugPeformanceMetrics) then
         KTBM_Development_PerformanceMetrics_Initalize();
