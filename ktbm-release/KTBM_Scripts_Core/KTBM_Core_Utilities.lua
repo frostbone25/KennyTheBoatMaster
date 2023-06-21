@@ -26,3 +26,23 @@ KTBM_GetTableType = function(tableValue)
     
     return stringType;
 end
+
+KTBM_GetTableSize = function(table)
+    local number_size = 1;
+
+    for index, item in ipairs(table) do
+        number_size = number_size + 1;
+    end
+
+    return number_size;
+end
+
+KTBM_GetTableItemByIndex = function(table, desiredIndex)
+    for index, item in ipairs(table) do
+        if(desiredIndex == index) then
+            return item;
+        end
+    end
+
+    return nil;
+end

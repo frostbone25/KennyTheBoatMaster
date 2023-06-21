@@ -10,6 +10,7 @@ local agent_menuTitle1 = nil;
 local agent_menuTitle2 = nil;
 local agent_page0_play = nil;
 local agent_page0_costumes = nil;
+local agent_page0_scoreboard = nil;
 local agent_page0_options = nil;
 local agent_page0_help = nil;
 local agent_page0_credits = nil;
@@ -28,6 +29,18 @@ local agent_pageHelp_help = nil;
 
 local agent_pageCredits_goBack = nil;
 local agent_pageCredits_credits = nil;
+
+local agent_pageScoreboard_goBack = nil;
+local agent_pageScoreboard_main = nil;
+local agent_pageScoreboard_leftArrow = nil;
+local agent_pageScoreboard_pageNumber = nil;
+local agent_pageScoreboard_rightArrow = nil;
+
+local number_gameResultsDataArraySize = 0;
+local number_gameResultsIndex = 1;
+local gameResultsDataArray = nil;
+local gameResultsObject_mostDistance = nil;
+local gameResultsObject_mostKills = nil;
 
 local SetMenuTitleProperties = function(agentName)
     KTBM_AgentSetProperty(agentName, "Text Extrude X", 5, kScene);
@@ -66,8 +79,6 @@ local GetCreditsText = function()
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "Violet";
     string_credits = string_credits .. "\n"; --new line
-    string_credits = string_credits .. "nanOO";
-    string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "Telltale Games & Skybound";
     string_credits = string_credits .. "\n"; --new line
 
@@ -102,9 +113,15 @@ KTBM_UI_MainMenu_Start = function()
     KTBM_UI_PrepareCostumeMenuText();
     KTBM_UI_PrepareHelpMenuText();
     KTBM_UI_PrepareCreditsMenuText();
+    KTBM_UI_PrepareScoreboardMenuText();
 
     CursorHide(false);
     CursorEnable(true);
+
+    gameResultsDataArray = KTBM_Data_GetAllGameResults();
+    number_gameResultsDataArraySize = KTBM_GetTableSize(gameResultsDataArray);
+    gameResultsObject_mostDistance = KTBM_Data_GetBestGameResultByStatistic("DistanceTraveled");
+    gameResultsObject_mostKills = KTBM_Data_GetBestGameResultByStatistic("ZombiesKilled");
 
     --InputMapperActivate(KTBM_UI_IMAP_File);
 end
@@ -115,6 +132,7 @@ KTBM_UI_PrepareMainMenuText = function()
     agent_menuTitle2 = KTBM_TextUI_CreateTextAgent("MenuTitle2", "THE BOATMASTER", Vector(0, 0, 0), 0, 0);
     agent_page0_play = KTBM_TextUI_CreateTextAgent("Page0_Play", "Play", Vector(0, 0, 0), 0, 0);
     agent_page0_costumes = KTBM_TextUI_CreateTextAgent("Page0_Costumes", "Costumes", Vector(0, 0, 0), 0, 0);
+    agent_page0_scoreboard = KTBM_TextUI_CreateTextAgent("Page0_Scoreboard", "Scoreboard", Vector(0, 0, 0), 0, 0);
     agent_page0_options = KTBM_TextUI_CreateTextAgent("Page0_Options", "Options", Vector(0, 0, 0), 0, 0);
     agent_page0_help = KTBM_TextUI_CreateTextAgent("Page0_Help", "Help", Vector(0, 0, 0), 0, 0);
     agent_page0_credits = KTBM_TextUI_CreateTextAgent("Page0_Credits", "Credits", Vector(0, 0, 0), 0, 0);
@@ -129,6 +147,7 @@ KTBM_UI_PrepareMainMenuText = function()
     TextSetScale(agent_menuTitle2, 1.5);
     TextSetScale(agent_page0_play, 1.0);
     TextSetScale(agent_page0_costumes, 1.0);
+    TextSetScale(agent_page0_scoreboard, 1.0);
     TextSetScale(agent_page0_options, 1.0);
     TextSetScale(agent_page0_help, 1.0);
     TextSetScale(agent_page0_credits, 1.0);
@@ -141,6 +160,7 @@ KTBM_UI_PrepareMainMenuText = function()
     TextSetColor(agent_menuTitle2, Color(1.0, 0.0, 0.0, 1.0));
     TextSetColor(agent_page0_play, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_page0_costumes, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_page0_scoreboard, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_page0_options, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_page0_help, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_page0_credits, Color(1.0, 1.0, 1.0, 1.0));
@@ -152,6 +172,7 @@ KTBM_UI_PrepareMainMenuText = function()
     SetMenuTitleProperties("MenuTitle2");
     SetMenuOptionProperties("Page0_Play");
     SetMenuOptionProperties("Page0_Costumes");
+    SetMenuOptionProperties("Page0_Scoreboard");
     SetMenuOptionProperties("Page0_Options");
     SetMenuOptionProperties("Page0_Help");
     SetMenuOptionProperties("Page0_Credits");
@@ -168,11 +189,12 @@ KTBM_UI_PrepareMainMenuText = function()
     AgentSetWorldPosFromLogicalScreenPos(agent_menuTitle2, Vector(0.105 + menuOffsetX, 0.2 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_play, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_costumes, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_page0_options, Vector(0.105 + menuOffsetX, 0.4 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_page0_help, Vector(0.105 + menuOffsetX, 0.45 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_page0_credits, Vector(0.105 + menuOffsetX, 0.5 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_page0_returnToDE, Vector(0.105 + menuOffsetX, 0.55 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_page0_quit, Vector(0.105 + menuOffsetX, 0.6 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_page0_scoreboard, Vector(0.105 + menuOffsetX, 0.4 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_page0_options, Vector(0.105 + menuOffsetX, 0.45 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_page0_help, Vector(0.105 + menuOffsetX, 0.5 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_page0_credits, Vector(0.105 + menuOffsetX, 0.55 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_page0_returnToDE, Vector(0.105 + menuOffsetX, 0.6 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_page0_quit, Vector(0.105 + menuOffsetX, 0.65 + menuOffsetY, 0.0));
 end
 
 KTBM_UI_PrepareCostumeMenuText = function()
@@ -236,7 +258,7 @@ KTBM_UI_PrepareCreditsMenuText = function()
     --0.5 = half
     --2.0 = double
     TextSetScale(agent_pageCredits_goBack, 1.0);
-    TextSetScale(agent_pageCredits_credits, 1.0);
+    TextSetScale(agent_pageCredits_credits, 0.75);
 
     --color note
     --text colors are additive on the scene
@@ -267,7 +289,7 @@ KTBM_UI_PrepareHelpMenuText = function()
     --0.5 = half
     --2.0 = double
     TextSetScale(agent_pageHelp_goBack, 1.0);
-    TextSetScale(agent_pageHelp_help, 1.0);
+    TextSetScale(agent_pageHelp_help, 0.75);
 
     --color note
     --text colors are additive on the scene
@@ -288,6 +310,52 @@ KTBM_UI_PrepareHelpMenuText = function()
     AgentSetWorldPosFromLogicalScreenPos(agent_pageHelp_help, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
 end
 
+KTBM_UI_PrepareScoreboardMenuText = function()
+    --costumes options
+    agent_pageScoreboard_goBack = KTBM_TextUI_CreateTextAgent("PageScoreboard_GoBack", "Go Back", Vector(0, 0, 0), 0, 0);
+    agent_pageScoreboard_main = KTBM_TextUI_CreateTextAgent("PageScoreboard_Main", "Scoreboard Main", Vector(0, 0, 0), 0, 0);
+    agent_pageScoreboard_leftArrow = KTBM_TextUI_CreateTextAgent("PageScoreboard_LeftArrow", "Previous", Vector(0, 0, 0), 1, 0); --this '<' character does not work for whatever reason
+    agent_pageScoreboard_pageNumber = KTBM_TextUI_CreateTextAgent("PageScoreboard_PageNumber", "0/0", Vector(0, 0, 0), 2, 0);
+    agent_pageScoreboard_rightArrow = KTBM_TextUI_CreateTextAgent("PageScoreboard_RightArrow", "Next", Vector(0, 0, 0), 3, 0);
+
+    --scale note
+    --1.0 = default
+    --0.5 = half
+    --2.0 = double
+    TextSetScale(agent_pageScoreboard_goBack, 1.0);
+    TextSetScale(agent_pageScoreboard_main, 0.75);
+    TextSetScale(agent_pageScoreboard_leftArrow, 1.0);
+    TextSetScale(agent_pageScoreboard_pageNumber, 1.0);
+    TextSetScale(agent_pageScoreboard_rightArrow, 1.0);
+
+    --color note
+    --text colors are additive on the scene
+    TextSetColor(agent_pageScoreboard_goBack, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageScoreboard_main, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageScoreboard_leftArrow, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageScoreboard_pageNumber, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageScoreboard_rightArrow, Color(1.0, 1.0, 1.0, 1.0));
+    
+    --set properties on menu texts
+    SetMenuOptionProperties("PageScoreboard_GoBack");
+    SetMenuOptionProperties("PageScoreboard_Main");
+    SetMenuOptionProperties("PageScoreboard_LeftArrow");
+    SetMenuOptionProperties("PageScoreboard_PageNumber");
+    SetMenuOptionProperties("PageScoreboard_RightArrow");
+
+    --screen pos notes
+    --0.0 0.0 0.0 = top left
+    --0.5 0.5 0.0 = center
+    --0.0 1.0 0.0 = bottom left
+    local menuOffsetX = 0.0;
+    local menuOffsetY = 0.1;
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_goBack, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_main, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_leftArrow, Vector(0.105 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_pageNumber, Vector(0.25 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_rightArrow, Vector(0.35 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
+end
+
 KTBM_UI_Update = function()  
     KTBM_UI_Input_IMAP_Update();
 
@@ -295,32 +363,49 @@ KTBM_UI_Update = function()
     local rolloverColor = Color(0.25, 0.25, 0.25, 1.0);
     local pressedColor = Color(0.1, 0.0, 0.0, 1.0);
     
+    --||||||||||||||||||||||||||||| BUTTON VISIBILITY |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| BUTTON VISIBILITY |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| BUTTON VISIBILITY |||||||||||||||||||||||||||||
+
+    local bool_onMainMenuPage = string_currentPage == "main";
+    local bool_onCostumePage = string_currentPage == "costumes";
+    local bool_onHelpPage = string_currentPage == "help";
+    local bool_onCreditsPage = string_currentPage == "credits";
+    local bool_onScoreboardPage = string_currentPage == "scoreboard";
+
+    KTBM_PropertySet(agent_page0_play, "Runtime: Visible", bool_onMainMenuPage);
+    KTBM_PropertySet(agent_page0_costumes, "Runtime: Visible", bool_onMainMenuPage);
+    KTBM_PropertySet(agent_page0_scoreboard, "Runtime: Visible", bool_onMainMenuPage);
+    KTBM_PropertySet(agent_page0_options, "Runtime: Visible", bool_onMainMenuPage);
+    KTBM_PropertySet(agent_page0_help, "Runtime: Visible", bool_onMainMenuPage);
+    KTBM_PropertySet(agent_page0_credits, "Runtime: Visible", bool_onMainMenuPage);
+    KTBM_PropertySet(agent_page0_returnToDE, "Runtime: Visible", bool_onMainMenuPage);
+    KTBM_PropertySet(agent_page0_quit, "Runtime: Visible", bool_onMainMenuPage);
+
+    KTBM_PropertySet(agent_pageCostumes_goBack, "Runtime: Visible", bool_onCostumePage);
+    KTBM_PropertySet(agent_pageCostumes_kenny101, "Runtime: Visible", bool_onCostumePage);
+    KTBM_PropertySet(agent_pageCostumes_kenny102, "Runtime: Visible", bool_onCostumePage);
+    KTBM_PropertySet(agent_pageCostumes_kenny103, "Runtime: Visible", bool_onCostumePage);
+    KTBM_PropertySet(agent_pageCostumes_kenny103Backpack, "Runtime: Visible", bool_onCostumePage);
+    KTBM_PropertySet(agent_pageCostumes_kenny202, "Runtime: Visible", bool_onCostumePage);
+
+    KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", bool_onHelpPage);
+    KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", bool_onHelpPage);
+
+    KTBM_PropertySet(agent_pageCredits_goBack, "Runtime: Visible", bool_onCreditsPage);
+    KTBM_PropertySet(agent_pageCredits_credits, "Runtime: Visible", bool_onCreditsPage);
+
+    KTBM_PropertySet(agent_pageScoreboard_goBack, "Runtime: Visible", bool_onScoreboardPage);
+    KTBM_PropertySet(agent_pageScoreboard_main, "Runtime: Visible", bool_onScoreboardPage);
+    KTBM_PropertySet(agent_pageScoreboard_leftArrow, "Runtime: Visible", bool_onScoreboardPage);
+    KTBM_PropertySet(agent_pageScoreboard_pageNumber, "Runtime: Visible", bool_onScoreboardPage);
+    KTBM_PropertySet(agent_pageScoreboard_rightArrow, "Runtime: Visible", bool_onScoreboardPage);
+
     --||||||||||||||||||||||||||||| MAIN MENU |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| MAIN MENU |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| MAIN MENU |||||||||||||||||||||||||||||
 
-    if(string.match(string_currentPage, "main")) then
-
-        KTBM_PropertySet(agent_page0_play, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_page0_costumes, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_page0_options, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_page0_help, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_page0_credits, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_page0_returnToDE, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_page0_quit, "Runtime: Visible", true);
-
-        KTBM_PropertySet(agent_pageCostumes_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny101, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny102, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny103, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny103Backpack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny202, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageCredits_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCredits_credits, "Runtime: Visible", false);
+    if(bool_onMainMenuPage) then
 
         --option 1 (play)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_play)) then
@@ -345,6 +430,7 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_page0_costumes, pressedColor);
 
                 string_currentPage = "costumes";
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_costumes, rolloverColor);
@@ -353,7 +439,22 @@ KTBM_UI_Update = function()
             TextSetColor(agent_page0_costumes, defaultColor);
         end
 
-        --option 3 (options)
+        --option 3 (scoreboard)
+        if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_scoreboard)) then
+            if (KTBM_UI_Input_Clicked == true) then
+                TextSetColor(agent_page0_scoreboard, pressedColor);
+
+                string_currentPage = "scoreboard";
+
+                KTBM_UI_Input_Clicked = false;
+            else
+                TextSetColor(agent_page0_scoreboard, rolloverColor);
+            end
+        else
+            TextSetColor(agent_page0_scoreboard, defaultColor);
+        end
+
+        --option 4 (options)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_options)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_options, pressedColor);
@@ -365,12 +466,13 @@ KTBM_UI_Update = function()
             TextSetColor(agent_page0_options, defaultColor);
         end
 
-        --option 3 (help)
+        --option 5 (help)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_help)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_help, pressedColor);
 
                 string_currentPage = "help";
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_help, rolloverColor);
@@ -379,12 +481,13 @@ KTBM_UI_Update = function()
             TextSetColor(agent_page0_help, defaultColor);
         end
 
-        --option 3 (credits)
+        --option 6 (credits)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_credits)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_credits, pressedColor);
 
                 string_currentPage = "credits";
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_credits, rolloverColor);
@@ -393,7 +496,7 @@ KTBM_UI_Update = function()
             TextSetColor(agent_page0_credits, defaultColor);
         end
 
-        --option 3 (return to definitive menu)
+        --option 7 (return to definitive menu)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_returnToDE)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_returnToDE, pressedColor);
@@ -408,7 +511,7 @@ KTBM_UI_Update = function()
             TextSetColor(agent_page0_returnToDE, defaultColor);
         end
     
-        --option 4 (quit to desktop)
+        --option 8 (quit to desktop)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_quit)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_quit, pressedColor);
@@ -427,28 +530,7 @@ KTBM_UI_Update = function()
     --||||||||||||||||||||||||||||| COSTUMES MENU |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| COSTUMES MENU |||||||||||||||||||||||||||||
 
-    if(string.match(string_currentPage, "costumes")) then
-
-        KTBM_PropertySet(agent_page0_play, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_costumes, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_options, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_help, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_credits, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_returnToDE, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_quit, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageCostumes_goBack, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_pageCostumes_kenny101, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_pageCostumes_kenny102, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_pageCostumes_kenny103, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_pageCostumes_kenny103Backpack, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_pageCostumes_kenny202, "Runtime: Visible", true);
-
-        KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageCredits_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCredits_credits, "Runtime: Visible", false);
+    if(bool_onCostumePage) then
 
         --option 1 (go back)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumes_goBack)) then
@@ -456,6 +538,7 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_pageCostumes_goBack, pressedColor);
             
                 string_currentPage = "main";
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCostumes_goBack, rolloverColor);
@@ -540,28 +623,7 @@ KTBM_UI_Update = function()
     --||||||||||||||||||||||||||||| HELP MENU |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| HELP MENU |||||||||||||||||||||||||||||
 
-    if(string.match(string_currentPage, "help")) then
-
-        KTBM_PropertySet(agent_page0_play, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_costumes, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_options, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_help, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_credits, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_returnToDE, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_quit, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageCostumes_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny101, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny102, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny103, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny103Backpack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny202, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", true);
-
-        KTBM_PropertySet(agent_pageCredits_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCredits_credits, "Runtime: Visible", false);
+    if(bool_onHelpPage) then
 
         --option 1 (go back)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageHelp_goBack)) then
@@ -569,6 +631,7 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_pageHelp_goBack, pressedColor);
             
                 string_currentPage = "main";
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageHelp_goBack, rolloverColor);
@@ -583,28 +646,7 @@ KTBM_UI_Update = function()
     --||||||||||||||||||||||||||||| CREDITS MENU |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| CREDITS MENU |||||||||||||||||||||||||||||
 
-    if(string.match(string_currentPage, "credits")) then
-
-        KTBM_PropertySet(agent_page0_play, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_costumes, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_options, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_help, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_credits, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_returnToDE, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_page0_quit, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageCostumes_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny101, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny102, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny103, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny103Backpack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageCostumes_kenny202, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", false);
-        KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", false);
-
-        KTBM_PropertySet(agent_pageCredits_goBack, "Runtime: Visible", true);
-        KTBM_PropertySet(agent_pageCredits_credits, "Runtime: Visible", true);
+    if(bool_onCreditsPage) then
 
         --option 1 (go back)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCredits_goBack)) then
@@ -612,12 +654,90 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_pageCredits_goBack, pressedColor);
             
                 string_currentPage = "main";
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCredits_goBack, rolloverColor);
             end
         else
             TextSetColor(agent_pageCredits_goBack, defaultColor);
+        end
+
+    end
+
+    --||||||||||||||||||||||||||||| SCOREBOARD MENU |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| SCOREBOARD MENU |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| SCOREBOARD MENU |||||||||||||||||||||||||||||
+
+    if(bool_onScoreboardPage) then
+
+        number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, number_gameResultsDataArraySize - 1);
+        
+        local string_pageNumberText = "(" .. tostring(number_gameResultsIndex) .. "/" .. tostring(number_gameResultsDataArraySize - 1) .. ")";
+
+        local gameResultsObject_selectedObject = gameResultsDataArray[number_gameResultsIndex];
+
+        local string_scoreboardMainText = "";
+
+        string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject);
+        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+
+        string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST DISTANCE]-------";
+        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+        string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostDistance);
+        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+
+        string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST ZOMBIES KILLED]-------";
+        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+        string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostKills);
+        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+
+        TextSet(agent_pageScoreboard_pageNumber, string_pageNumberText);
+        TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
+
+        --option 1 (go back)
+        if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageScoreboard_goBack)) then
+            if (KTBM_UI_Input_Clicked == true) then
+                TextSetColor(agent_pageScoreboard_goBack, pressedColor);
+            
+                string_currentPage = "main";
+
+                KTBM_UI_Input_Clicked = false;
+            else
+                TextSetColor(agent_pageScoreboard_goBack, rolloverColor);
+            end
+        else
+            TextSetColor(agent_pageScoreboard_goBack, defaultColor);
+        end
+
+        --(previous)
+        if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageScoreboard_leftArrow)) then
+            if (KTBM_UI_Input_Clicked == true) then
+                TextSetColor(agent_pageScoreboard_leftArrow, pressedColor);
+
+                number_gameResultsIndex = number_gameResultsIndex - 1;
+
+                KTBM_UI_Input_Clicked = false;
+            else
+                TextSetColor(agent_pageScoreboard_leftArrow, rolloverColor);
+            end
+        else
+            TextSetColor(agent_pageScoreboard_leftArrow, defaultColor);
+        end
+
+        --(next)
+        if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageScoreboard_rightArrow)) then
+            if (KTBM_UI_Input_Clicked == true) then
+                TextSetColor(agent_pageScoreboard_rightArrow, pressedColor);
+
+                number_gameResultsIndex = number_gameResultsIndex + 1;
+
+                KTBM_UI_Input_Clicked = false;
+            else
+                TextSetColor(agent_pageScoreboard_rightArrow, rolloverColor);
+            end
+        else
+            TextSetColor(agent_pageScoreboard_rightArrow, defaultColor);
         end
 
     end

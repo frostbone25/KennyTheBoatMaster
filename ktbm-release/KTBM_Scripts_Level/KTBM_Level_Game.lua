@@ -3,6 +3,9 @@
 KTBM_Scene_Game
 
 This script deals with the main gameplay of the mini game.
+
+NOTE: When first loading into this scene for the first time, there is some hitching that occurs when some rocks/zombies are first spawned.
+We should look into preloading the assets for the rocks/zombies and anything else that we spawn and see if that solves it.
 -----------------------------------------------------------------------------------------
 ]]--
 

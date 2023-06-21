@@ -7,12 +7,50 @@ KTBM_Data_CurrentGameResults = nil;
 
 KTBM_Data_BuildGameResultsObject = function(number_distanceTraveled, number_zombiesKilled, number_totalTime)
     local gameResults_object = {
+        FileName = "",
         DistanceTraveled = number_distanceTraveled,
         ZombiesKilled = number_zombiesKilled,
         TotalTime = number_totalTime
     };
 
     return gameResults_object;
+end
+
+KTBM_Data_GameResultsObjectToString = function(gameResults_object)
+    local string_fileName = tostring(gameResults_object["FileName"]);
+    local string_distanceTraveled = tostring(gameResults_object["DistanceTraveled"]);
+    local string_zombiesKilled = tostring(gameResults_object["ZombiesKilled"]);
+    local string_totalTime = tostring(gameResults_object["TotalTime"]);
+
+    local string_final = "";
+
+    string_final = string_final .. string_fileName;
+    string_final = string_final .. "\n"; --new line
+    string_final = string_final .. "Distance Traveled: " .. string_distanceTraveled;
+    string_final = string_final .. "\n"; --new line
+    string_final = string_final .. "Zombies Killed: " .. string_zombiesKilled;
+    string_final = string_final .. "\n"; --new line
+    string_final = string_final .. "Total Time: " .. string_totalTime;
+    string_final = string_final .. "\n"; --new line
+
+    return string_final;
+end
+
+KTBM_Data_GameResultsObjectDataToString = function(gameResults_object)
+    local string_distanceTraveled = tostring(gameResults_object["DistanceTraveled"]);
+    local string_zombiesKilled = tostring(gameResults_object["ZombiesKilled"]);
+    local string_totalTime = tostring(gameResults_object["TotalTime"]);
+
+    local string_final = "";
+
+    string_final = string_final .. "Distance Traveled: " .. string_distanceTraveled;
+    string_final = string_final .. "\n"; --new line
+    string_final = string_final .. "Zombies Killed: " .. string_zombiesKilled;
+    string_final = string_final .. "\n"; --new line
+    string_final = string_final .. "Total Time: " .. string_totalTime;
+    string_final = string_final .. "\n"; --new line
+
+    return string_final;
 end
 
 --|||||||||||||||||||||||||||||||||||||||||||| SERIALIZATION - TEXT ||||||||||||||||||||||||||||||||||||||||||||
@@ -46,7 +84,10 @@ end
 KTBM_Data_DeserializeGameResultsObject_Text = function(string_resultsFilePath)
     local file = io.open(string_resultsFilePath, 'r');
 
+    local string_extractedFileName = string_resultsFilePath:sub(#string_mainDirectoryName + 1);
+
     local gameResults_parsedObject = {
+        FileName = string_extractedFileName,
         DistanceTraveled = 0,
         ZombiesKilled = 0,
         TotalTime = 0
@@ -105,7 +146,10 @@ KTBM_Data_DeserializeGameResultsObject_Binary = function(string_resultsFilePath)
     local string_binaryData = file:read("*a");
     file:close();
 
+    local string_extractedFileName = string_resultsFilePath:sub(#string_mainDirectoryName + 1);
+
     local gameResults_parsedObject = {
+        FileName = string_extractedFileName,
         DistanceTraveled = 0,
         ZombiesKilled = 0,
         TotalTime = 0
@@ -181,12 +225,15 @@ KTBM_Data_GetPreviousGameResults = function()
     print(" ");
     print("---GETTING MOST RECENT GAME RESULTS---");
 
-    local mostRecentFilePath = nil
-    local fileExtension = ".txt";
+    local string_mostRecentFilePath = nil
+    local string_fileExtension = ".txt";
 
     if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
-        fileExtension = ".bin";
+        string_fileExtension = ".bin";
     end
+
+    ---------------------------------------------------
+    --Get the most recently created file in the directory.
 
     --local handle = io.popen('dir "'.. string_mainDirectoryName ..'" /b /a-d');
     local handle = io.popen('dir "'.. string_mainDirectoryName .. '" /b /a-d /o:d'); --sorts files by creation date
@@ -196,27 +243,137 @@ KTBM_Data_GetPreviousGameResults = function()
     for file in output:gmatch("[^\r\n]+") do
         local filePath = string_mainDirectoryName .. '\\' ..file;
 
-        if(string.match(filePath, fileExtension)) then
-            mostRecentFilePath = filePath;
+        if(string.match(filePath, string_fileExtension)) then
+            string_mostRecentFilePath = filePath;
         end
     end
+
+    ---------------------------------------------------
+    --After getting the most recent file, get the data from it.
 
     local gameResults_parsedObject = {};
 
     if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
         print("Getting most recent 'Game Results' in binary from the following file path...");
-        print(mostRecentFilePath);
+        print(string_mostRecentFilePath);
 
-        gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(mostRecentFilePath);
+        gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(string_mostRecentFilePath);
     else
         print("Getting most recent 'Game Results' in text from the following file path...");
-        print(mostRecentFilePath);
+        print(string_mostRecentFilePath);
 
-        gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Text(mostRecentFilePath);
+        gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Text(string_mostRecentFilePath);
     end
 
     print("---FINISHED GETTING MOST RECENT GAME RESULTS---");
     print(" ");
 
     return gameResults_parsedObject;
+end
+
+KTBM_Data_GetAllGameResults = function()
+    print(" ");
+    print("---GETTING ALL GAME RESULTS---");
+
+    local strings_gameResultFilePaths = {};
+    local string_fileExtension = ".txt";
+
+    if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+        string_fileExtension = ".bin";
+    end
+
+    ---------------------------------------------------
+    --Get all files in the directory sorted by creation date
+
+    local handle = io.popen('dir "'.. string_mainDirectoryName .. '" /b /a-d /o:d'); --sorts files by creation date
+    local output = handle:read("*a");
+    handle:close();
+
+    for file in output:gmatch("[^\r\n]+") do
+        local string_filePath = string_mainDirectoryName .. '\\' ..file;
+
+        if(string.match(string_filePath, string_fileExtension)) then
+            table.insert(strings_gameResultFilePaths, string_filePath);
+        end
+    end
+
+    ---------------------------------------------------
+    --Create a table to store all of the parsed files in the directory
+
+    local gameResults_array = {};
+
+    for index, string_filePath in ipairs(strings_gameResultFilePaths) do
+        local gameResults_parsedObject = {};
+
+        if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+            gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(string_filePath);
+        else
+            gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Text(string_filePath);
+        end
+
+        table.insert(gameResults_array, gameResults_parsedObject);
+    end
+
+    print("---FINISHED GETTING ALL GAME RESULTS---");
+    print(" ");
+
+    return gameResults_array;
+end
+
+KTBM_Data_GetBestGameResultByStatistic = function(string_variableName)
+    print(" ");
+    print("---GETTING BEST GAME RESULT---");
+
+    local strings_gameResultFilePaths = {};
+    local string_fileExtension = ".txt";
+
+    if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+        string_fileExtension = ".bin";
+    end
+
+    ---------------------------------------------------
+    --Get all files in the directory sorted by creation date
+
+    local handle = io.popen('dir "'.. string_mainDirectoryName .. '" /b /a-d /o:d'); --sorts files by creation date
+    local output = handle:read("*a");
+    handle:close();
+
+    for file in output:gmatch("[^\r\n]+") do
+        local string_filePath = string_mainDirectoryName .. '\\' ..file;
+
+        if(string.match(string_filePath, string_fileExtension)) then
+            table.insert(strings_gameResultFilePaths, string_filePath);
+        end
+    end
+
+    ---------------------------------------------------
+    --Create a table to store all of the parsed files in the directory
+
+    local gameResultsObject_bestResults = nil;
+
+    for index, string_filePath in ipairs(strings_gameResultFilePaths) do
+        local gameResults_parsedObject = {};
+
+        if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+            gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(string_filePath);
+        else
+            gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Text(string_filePath);
+        end
+
+        if(gameResultsObject_bestResults == nil) then
+            gameResultsObject_bestResults = gameResults_parsedObject;
+        else
+            local number_variableValue = gameResults_parsedObject[string_variableName];
+            local number_currentBestVariableValue = gameResultsObject_bestResults[string_variableName];
+
+            if(number_variableValue > number_currentBestVariableValue) then
+                gameResultsObject_bestResults = gameResults_parsedObject;
+            end
+        end
+    end
+
+    print("---FINISHED GETTING BEST GAME RESULT---");
+    print(" ");
+
+    return gameResultsObject_bestResults;
 end

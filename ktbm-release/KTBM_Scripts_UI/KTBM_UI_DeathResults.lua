@@ -8,6 +8,8 @@ local agent_returnToDefinitiveMenuText = nil;
 local agent_quitToDesktopText = nil;
 
 local gameResults_object = nil;
+local gameResultsObject_mostDistance = nil;
+local gameResultsObject_mostKills = nil;
 
 KTBM_UI_PrepareDeathResultsUI = function()
     --create our main menu text
@@ -39,6 +41,8 @@ KTBM_UI_PrepareDeathResultsUI = function()
     TextSetColor(agent_quitToDesktopText, Color(1.0, 1.0, 1.0, 1.0));
 
     gameResults_object = KTBM_Data_GetPreviousGameResults();
+    gameResultsObject_mostDistance = KTBM_Data_GetBestGameResultByStatistic("DistanceTraveled");
+    gameResultsObject_mostKills = KTBM_Data_GetBestGameResultByStatistic("ZombiesKilled");
 end
 
 KTBM_UI_UpdateDeathResultsUI = function()  
@@ -50,18 +54,19 @@ KTBM_UI_UpdateDeathResultsUI = function()
     string_scoreboardText = string_scoreboardText .. "\n"; --new line
 
     if(gameResults_object ~= nil) then
-        local string_distanceTraveled = tostring(KTBM_NumberRound(gameResults_object["DistanceTraveled"]));
-        string_scoreboardText = string_scoreboardText .. "Distance: " .. string_distanceTraveled .. " units";
-        string_scoreboardText = string_scoreboardText .. "\n"; --new line
-
-        local string_zombiesKilled = tostring(gameResults_object["ZombiesKilled"]);
-        string_scoreboardText = string_scoreboardText .. "Zombies Killed: " .. string_zombiesKilled;
-        string_scoreboardText = string_scoreboardText .. "\n"; --new line
-
-        local string_totalTime = KTBM_TimeSecondsFormatted(gameResults_object["TotalTime"]);
-        string_scoreboardText = string_scoreboardText .. "Time: " .. string_totalTime;
+        string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResults_object);
         string_scoreboardText = string_scoreboardText .. "\n"; --new line
     end
+
+    string_scoreboardText = string_scoreboardText .. "-------[BEST DISTANCE]-------";
+    string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResultsObject_mostDistance);
+    string_scoreboardText = string_scoreboardText .. "\n"; --new line
+
+    string_scoreboardText = string_scoreboardText .. "-------[BEST ZOMBIES KILLED]-------";
+    string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResultsObject_mostKills);
+    string_scoreboardText = string_scoreboardText .. "\n"; --new line
 
     TextSet(agent_deathTextScoreboard, string_scoreboardText);
 
