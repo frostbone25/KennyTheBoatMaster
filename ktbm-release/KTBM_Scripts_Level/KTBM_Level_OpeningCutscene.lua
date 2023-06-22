@@ -80,7 +80,7 @@ KTBM_Level_OpeningCutscene = function()
 
     KTBM_Costumes_Kenny_ApplySelectedOutfit(kScene);
 
-    --if (KTBM_Core_Project_DebugFreecamMode) then
+    if (KTBM_Core_Project_DebugFreecamMode) then
         --development helpers
         --KTBM_PrintSceneListToTXT(kScene, "sceneobject_ktbm-menu1.txt")
         --KTBM_LuaHelper_WriteSceneCleanupScript(kScene, "KTBM_LevelCleanup", "KTBM_Level.lua");
@@ -96,12 +96,12 @@ KTBM_Level_OpeningCutscene = function()
         Callback_OnPostUpdate:Add(KTBM_Development_UpdateFreeCamera);
         Callback_OnPostUpdate:Add(KTBM_Development_UpdateRelightTools_Input);
         Callback_OnPostUpdate:Add(KTBM_Development_UpdateRelightTools_Main);
-    --else
+    else
+        KTBM_Cutscene_OpeningCutscene_PrepareCamera();
+    end
 
-    --end
-
-    --LensFlareEffect_Initalize();
-    --Callback_OnPostUpdate:Add(LensFlareEffect_Update);
+    KTBM_Cutscene_OpeningCutscene_Start();
+    Callback_OnPostUpdate:Add(KTBM_Cutscene_OpeningCutscene_Update);
 
     KTBM_DepthOfFieldAutofocus_SetupDOF();
     Callback_OnPostUpdate:Add(KTBM_DepthOfFieldAutofocus_PerformAutofocus);

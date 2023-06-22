@@ -47,6 +47,10 @@ KTBM_Gameplay_Input_IMAP_Right_End = function()
     KTBM_Gameplay_Input_MovementAxis.x = 0;
 end
 
+KTBM_Gameplay_Input_IMAP_Pause_Begin = function()
+    KTBM_Gameplay_State_Paused = not KTBM_Gameplay_State_Paused;
+end
+
 KTBM_Gameplay_PlayerInputUpdate = function()
     --get the frame time
     --when we do any operations we want to multiply them by the frame time so that they are consistent across machines.
@@ -60,12 +64,20 @@ KTBM_Gameplay_PlayerInputUpdate = function()
         return;
     end
 
+    --|||||||||||||||||||||||||||| IMAP INPUT ||||||||||||||||||||||||||||
+    --|||||||||||||||||||||||||||| IMAP INPUT ||||||||||||||||||||||||||||
+    --|||||||||||||||||||||||||||| IMAP INPUT ||||||||||||||||||||||||||||
+    --The current implementation, which uses Telltale's native Input Mapping (IMAP) system to handle input.
+
     KTBM_Gameplay_Input_CurrentHorizontalPositionValue = KTBM_Gameplay_Input_MovementAxis.x * KTBM_Gameplay_BoatMovementSpeed * number_deltaTime;
     KTBM_Gameplay_Input_CurrentHorizontalRotationValue = KTBM_Gameplay_Input_MovementAxis.x * KTBM_Gameplay_BoatMaxRotationAngle;
 
+    --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
+    --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
+    --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
     --This is an older input implementation and is purely hardcoded.
     --This doesn't utilize the native input system within the telltale tool (.imaps)
-    --But I kept it here (but commented) so one can see how you can do input if you prefer not to use imaps.
+    --But I kept it here (but commented out) so one can see how you can do input if you prefer not to use imaps.
 
     --local bool_moveLeft = Input_IsVKeyPressed(KTBM_Core_Keycodes_A) or Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftArrow);
     --local bool_moveRight = Input_IsVKeyPressed(KTBM_Core_Keycodes_D) or Input_IsVKeyPressed(KTBM_Core_Keycodes_RightArrow);
@@ -98,7 +110,7 @@ KTBM_Gameplay_Player_CreateGameCamera = function(kScene)
 end
 
 KTBM_Gameplay_PlayerUpdate = function()
-    if(KTBM_Gameplay_State_HasCrashed == true) then
+    if(KTBM_Gameplay_State_HasCrashed == true) or (KTBM_Gameplay_State_Paused == true) then
         return;
     end
 

@@ -18,7 +18,14 @@ local GenerateNewINI_PlayerSettings = function()
         },
         Gameplay = 
         {
-            KennyOutfitProfile = "202"
+            KennyOutfitProfile = "202",
+            ForceSkipCutscenes = false
+        },
+        Video = 
+        {
+            RenderScale = 1.0,
+            DisableDOF = false,
+            DisableBloom = false
         }
     };
         

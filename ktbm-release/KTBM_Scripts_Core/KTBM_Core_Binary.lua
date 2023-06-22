@@ -1,12 +1,17 @@
 --[[
     Since the Telltale Tool uses only Lua 5.2, we unfortunately don't have access to the handy
     String.Pack or String.Unpack functions supported in 5.3 which make binary formatting incredibly easy.
-    So we have to implement these binary formatting functions ourselves.
+    But... we are on an older version so we have to implement these binary formatting functions ourselves.
 ]]
 
---|||||||||||||||||||||||||||||||||||||||||||| INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
---|||||||||||||||||||||||||||||||||||||||||||| INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
---|||||||||||||||||||||||||||||||||||||||||||| INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| SIGNED INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| SIGNED INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| SIGNED INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--This is a signed 32-bit integer, which means you can store negative numbers.
+--This packs a number value into 4 bytes.
+--This will only work properly for whole numbers (numbers without decimals, for numbers with decimals use floats).
+--Max Value: 2147483647 (inclusive)
+--Min Value: -2147483648 (inclusive)
 
 KTBM_Binary_PackInt32 = function(number_value)
     -- Extracting individual bytes of the number
@@ -27,12 +32,126 @@ KTBM_Binary_UnpackInt32 = function(encodedString)
     local number_byte4 = encodedString:byte(4);
 
     -- Calculating the integer value by combining the bytes
+    local number_result = number_byte1 + number_byte2 * 256 + number_byte3 * 65536 + number_byte4 * 16777216;
+
+    -- Check if the most significant bit is set (sign bit)
+    if number_result >= 2147483648 then
+        number_result = number_result - 4294967296; -- Convert to signed value
+    end
+
+    return number_result;
+end
+
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--This is an unsigned 32-bit integer, which means you can't store negative values (but you can store really high positive values)
+--This packs a number value into 4 bytes.
+--This will only work properly for whole numbers (numbers without decimals, for numbers with decimals use floats).
+--Max Value: 4294967295 (inclusive)
+--Min Value: 0 (inclusive)
+
+KTBM_Binary_PackUInt32 = function(number_value)
+    -- Ensure the number is within the range of 0 to 4294967295 (2^32 - 1)
+    number_value = number_value % 4294967296;
+
+    -- Extracting individual bytes of the number
+    local number_byte1 = number_value % 256;
+    local number_byte2 = math.floor(number_value / 256) % 256;
+    local number_byte3 = math.floor(number_value / 65536) % 256;
+    local number_byte4 = math.floor(number_value / 16777216) % 256;
+
+    -- Constructing the binary string using the individual bytes
+    return string.char(number_byte1, number_byte2, number_byte3, number_byte4);
+end
+
+KTBM_Binary_UnpackUInt32 = function(encodedString)
+    -- Extracting individual bytes from the encoded string
+    local number_byte1 = encodedString:byte(1);
+    local number_byte2 = encodedString:byte(2);
+    local number_byte3 = encodedString:byte(3);
+    local number_byte4 = encodedString:byte(4);
+
+    -- Calculating the integer value by combining the bytes
     return number_byte1 + number_byte2 * 256 + number_byte3 * 65536 + number_byte4 * 16777216;
+end
+
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 24-BIT (3 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 24-BIT (3 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 24-BIT (3 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--This is an unsigned 24-bit integer, which means you can't store negative values (but you can store really high positive values)
+--This packs a number value into 3 bytes.
+--This will only work properly for whole numbers (numbers without decimals, for numbers with decimals use floats).
+--Max Value: 16777215 (inclusive)
+--Min Value: 0 (inclusive)
+
+KTBM_Binary_PackUInt24 = function(number_value)
+    -- Ensure the number is within the range of 0 to 16777215 (2^24 - 1)
+    number_value = number_value % 16777216;
+
+    -- Extracting individual bytes of the number
+    local number_byte1 = number_value % 256;
+    local number_byte2 = math.floor(number_value / 256) % 256;
+    local number_byte3 = math.floor(number_value / 65536) % 256;
+
+    -- Constructing the binary string using the individual bytes
+    return string.char(number_byte1, number_byte2, number_byte3);
+end
+
+KTBM_Binary_UnpackUInt24 = function(encodedString)
+    -- Extracting individual bytes from the encoded string
+    local number_byte1 = encodedString:byte(1);
+    local number_byte2 = encodedString:byte(2);
+    local number_byte3 = encodedString:byte(3);
+
+    -- Calculating the integer value by combining the bytes
+    local result = number_byte1 + number_byte2 * 256 + number_byte3 * 65536;
+
+    return result;
+end
+
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 16-BIT (2 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 16-BIT (2 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 16-BIT (2 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--This is an unsigned 24-bit integer, which means you can't store negative values (but you can store really high positive values)
+--This packs a number value into 2 bytes.
+--This will only work properly for whole numbers (numbers without decimals, for numbers with decimals use floats).
+--Max Value: 65536 (inclusive)
+--Min Value: 0 (inclusive)
+
+KTBM_Binary_PackUInt16 = function(number_value)
+    -- Ensure the number is within the range of 0 to 65535 (2^16 - 1)
+    number_value = number_value % 65536;
+
+    -- Extracting individual bytes of the number
+    local number_byte1 = number_value % 256;
+    local number_byte2 = math.floor(number_value / 256) % 256;
+
+    -- Constructing the binary string using the individual bytes
+    return string.char(number_byte1, number_byte2);
+end
+
+KTBM_Binary_UnpackUInt16 = function(encodedString)
+    -- Extracting individual bytes from the encoded string
+    local number_byte1 = encodedString:byte(1);
+    local number_byte2 = encodedString:byte(2);
+
+    -- Calculating the integer value by combining the bytes
+    local result = number_byte1 + number_byte2 * 256;
+
+    return result;
 end
 
 --|||||||||||||||||||||||||||||||||||||||||||| FLOAT 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| FLOAT 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| FLOAT 32-BIT (4 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
+--This is a 32-bit float, which means you can store decimal values (up to a point)
+--This packs a decimal number value into 4 bytes.
+--Max Value: 3.402823466E+38 (with 7 significant digits of precision)
+--Min Value: 1.175494351E-38 (with 7 significant digits of precision)
+--  NOTE: For these min/max values, in actuality their max values are roughly in line with a 32 bit integer and not way over it...
+--  These large values really are to represent the combination of values that you can represent with decimals.
+--  It's a different way to think about it, but to minimize confusion, the number "cap" is close to a 32 bit signed integer.
 
 KTBM_Binary_PackFloat = function(number_value)
     -- Bitmask used for handling infinity and NaN values

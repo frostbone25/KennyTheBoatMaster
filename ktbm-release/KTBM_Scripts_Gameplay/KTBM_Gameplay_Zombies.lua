@@ -10,7 +10,7 @@ KTBM_Gameplay_Zombies_PropArray = {
 };
 
 KTBM_Gameplay_ZombiesUpdate = function()
-    if(KTBM_Gameplay_State_HasCrashed == true) or (KTBM_Core_Project_DebugDisableZombies == true) then
+    if(KTBM_Gameplay_State_HasCrashed == true) or (KTBM_Core_Project_DebugDisableZombies == true) or (KTBM_Gameplay_State_Paused == true) then
         return;
     end
 

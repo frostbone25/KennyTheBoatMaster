@@ -20,7 +20,7 @@ KTBM_Data_GameResultsObjectToString = function(gameResults_object)
     local string_fileName = tostring(gameResults_object["FileName"]);
     local string_distanceTraveled = tostring(gameResults_object["DistanceTraveled"]);
     local string_zombiesKilled = tostring(gameResults_object["ZombiesKilled"]);
-    local string_totalTime = tostring(gameResults_object["TotalTime"]);
+    local string_totalTime = KTBM_TimeSecondsFormatted(gameResults_object["TotalTime"]);
 
     local string_final = "";
 
@@ -39,7 +39,7 @@ end
 KTBM_Data_GameResultsObjectDataToString = function(gameResults_object)
     local string_distanceTraveled = tostring(gameResults_object["DistanceTraveled"]);
     local string_zombiesKilled = tostring(gameResults_object["ZombiesKilled"]);
-    local string_totalTime = tostring(gameResults_object["TotalTime"]);
+    local string_totalTime = KTBM_TimeSecondsFormatted(gameResults_object["TotalTime"]);
 
     local string_final = "";
 
@@ -56,14 +56,18 @@ end
 --|||||||||||||||||||||||||||||||||||||||||||| SERIALIZATION - TEXT ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| SERIALIZATION - TEXT ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| SERIALIZATION - TEXT ||||||||||||||||||||||||||||||||||||||||||||
---This handles both serialization (writing), and deserialization (reading) the 'gameResults_object' to the disk.
---This will handle the data in a human readable text form.
---Advantages with this format are...
---  1. Easy to read and understand.
---  2. Easy to edit with external programs (it's just a text file).
---Disadvantages with this format are...
---  1. It's really easy to modify the data (so in this instance for example if you wanted to 'cheat' you can simply write your own data)
---  2. It's inefficent with how it's stored (37 bytes or more).
+--[[
+    This handles both serialization (writing), and deserialization (reading) the 'gameResults_object' to the disk.
+    This will handle the data in a human readable text form.
+
+    Advantages with this format are...
+        1. Easy to read and understand.
+        2. Easy to edit with external programs (it's just a text file).
+
+    Disadvantages with this format are...
+        1. It's really easy to modify the data. So in this instance for example if users wanted to 'cheat', they can simply write their own data.
+        2. It's inefficent with how it's stored for disk space and memory (37 bytes or more).
+]]
 
 --This writes the 'gameResults_object' into a text file to the disk for saving.
 KTBM_Data_SerializeGameResultsObject_Text = function(gameResults_object, string_resultsFilePath)
@@ -116,25 +120,51 @@ end
 --|||||||||||||||||||||||||||||||||||||||||||| SERIALIZATION - BINARY ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| SERIALIZATION - BINARY ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| SERIALIZATION - BINARY ||||||||||||||||||||||||||||||||||||||||||||
---This handles both serialization (writing), and deserialization (reading) the 'gameResults_object' to the disk.
---This will handle the data in a binary format.
---Advantages with this format are...
---  1. Data is stored efficently (always 12 bytes, 4 for each value that is stored) NOTE: It can be encoded down even smaller.
---  2. Data can't be that easily modified since it is stored in binary form which makes it secure compared to text.
---Disadvantages with this format are...
---  1. Non-human readable. You won't be able to open the file in a text editor and understand it.
---  2. Not as easy to edit, you will need a hex editor to help you edit the data properly.
+--[[
+    This handles both serialization (writing), and deserialization (reading) the 'gameResults_object' to the disk.
+    This will handle the data in a binary format.
+
+    Advantages with this format are...
+        1. Data is stored very efficently (always 12 bytes, 4 for each value that is stored) 
+        2. Data can't be easily modified externally since it is stored in binary form, making it more secure compared to text.
+
+        NOTE: It can even be encoded down smaller if you wanted, but depending on the values you'll need to be
+        aware of precison issues that will come with that, and the maximum number values that you can represent with fewer bits.
+
+    Disadvantages with this format are...
+        1. Non-human readable. You won't be able to open the file in a text editor and understand it.
+        2. Not as easy to edit externally, you will need a hex editor to help you edit the data properly.
+
+    NOTE FOR PEOPLE: I think it's important to mention that if you are deliberatly trying to avoid cheating in your game/mod
+    and not allowing external data modification then your efforts unfortunately will be futile and worthless. 
+
+    This applies to any project outside of game mods, but in this case, Lua Scripts can be 
+    decompiled EASILY, and it'll be easy to modify the files anyway regardless how many roadblocks 
+    you put up along way (i.e. through encrpytion/obfuscation). When there is a will, there is a way... So just let it be.
+
+    While those methods can certainly make it harder for the average user, it's still possible for someone to go through
+    and modify the data especially if they are skilled. The only reason this is done and included in this project is
+    both for educational purposes, but also because binary serialization is very efficent compared to regular text formats.
+]]
 
 --This writes the 'gameResults_object' into a binary file to the disk for saving.
 KTBM_Data_SerializeGameResultsObject_Binary = function(gameResults_object, string_resultsFilePath)
+    --Create a custom local directory for our mod (NOTE: This isn't necessary but is in here for saftey)
     KTBM_DirectoryCreate(string_mainDirectoryName);
 
+    --The variable that will store all of the binary data of the file encoded in a string
     local string_binaryData = "";
 
+    --Pack the Distance Traveled variable into 4 bytes, and as a float format since it's usually a decimal value.
     string_binaryData = string_binaryData .. KTBM_Binary_PackFloat(gameResults_object["DistanceTraveled"]);
+
+    --Pack the Zombies Killed variable into 4 bytes, and as a regular integer since this value is always a whole number.
     string_binaryData = string_binaryData .. KTBM_Binary_PackInt32(gameResults_object["ZombiesKilled"]);
+
+    --Pack the Distance Traveled variable into 4 bytes, and as a float format since it's usually a decimal value.
     string_binaryData = string_binaryData .. KTBM_Binary_PackFloat(gameResults_object["TotalTime"]);
 
+    --create our file and write the binary string data.
     local file = io.open(string_resultsFilePath, "wb");
     file:write(string_binaryData);
     file:close();

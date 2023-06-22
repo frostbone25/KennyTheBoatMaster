@@ -414,7 +414,8 @@ KTBM_UI_Update = function()
             
                 --OverlayShow("ui_loadingScreen.overlay", true);
                 --dofile("KTBM_Level_Game.lua");
-                SubProject_Switch("Menu", "KTBM_Level_Game.lua");
+                --SubProject_Switch("Menu", "KTBM_Level_Game.lua");
+                SubProject_Switch("Menu", "KTBM_Level_OpeningCutscene.lua");
 
                 KTBM_UI_Input_Clicked = false;
             else

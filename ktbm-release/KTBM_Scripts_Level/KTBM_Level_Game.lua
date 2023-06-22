@@ -16,6 +16,7 @@ require("KTBM_Core_Inclusions.lua");
 require("KTBM_Gameplay_Inclusions.lua");
 
 require("KTBM_UI_Game.lua");
+require("KTBM_UI_Pause.lua");
 
 require("KTBM_Costumes_Boat.lua");
 require("KTBM_Costumes_Kenny.lua");
@@ -55,6 +56,7 @@ KTBM_Gameplay_GameLoopStart = function()
     KTBM_Gameplay_Player_CreateGameCamera(kScene);
     KTBM_Cutscene_Game_Start(kScene);
     KTBM_UI_GamePrepare();
+    KTBM_UI_Pause_Start();
 
     KTBM_SetAgentWorldPosition("group_enviorment", Vector(0, KTBM_Gameplay_EnvironmentHeightOffset, 0), kScene);
 
@@ -73,6 +75,16 @@ KTBM_Gameplay_GameLoopUpdate = function()
     KTBM_Gameplay_ZombiesUpdate();
 
     KTBM_UI_GameUpdate();
+    KTBM_UI_Pause_Update();
+
+    if(KTBM_Gameplay_State_Paused == true) then
+        SceneSetTimeScale(KTBM_Gameplay_kScene, 0);
+        KTBM_Gameplay_EnvironmentMovementSpeed = 0;
+        return;
+    else
+        SceneSetTimeScale(KTBM_Gameplay_kScene, 1);
+        KTBM_Gameplay_EnvironmentMovementSpeed = KTBM_Gameplay_DefaultEnvironmentMovementSpeed;
+    end
 
     --this isnt necessary for all of these functions, ideally i'd avoid it.
     --but just for certainty and prevention we will do protected calls of all of these update functions.

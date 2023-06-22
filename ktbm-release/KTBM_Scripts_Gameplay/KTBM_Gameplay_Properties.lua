@@ -34,7 +34,9 @@ KTBM_Gameplay_EnvironmentHeightOffset = 0;
 --The speed at which the world will scroll.
 --This controls the speed for EVERYTHING in the world.
 --(Lower Value = Slower | Higher Value = Faster)
-KTBM_Gameplay_EnvironmentMovementSpeed = 25;
+KTBM_Gameplay_DefaultEnvironmentMovementSpeed = 25;
+
+KTBM_Gameplay_EnvironmentMovementSpeed = KTBM_Gameplay_DefaultEnvironmentMovementSpeed;
 
 --(Lower Value = Closer | Higher Value = Farther)
 KTBM_Gameplay_EnvironmentHorizontalBoundarySize = 275;
@@ -135,6 +137,9 @@ KTBM_Gameplay_ZombiesHeightRiseSpeed = 15;
 
 --Has the player crashed into a rock yet?
 KTBM_Gameplay_State_HasCrashed = false;
+
+--Has the player paused the game?
+KTBM_Gameplay_State_Paused = false;
 
 --||||||||||||||||||||||||||||||| GAMEPLAY STATISTICS TRACKING |||||||||||||||||||||||||||||||
 --||||||||||||||||||||||||||||||| GAMEPLAY STATISTICS TRACKING |||||||||||||||||||||||||||||||

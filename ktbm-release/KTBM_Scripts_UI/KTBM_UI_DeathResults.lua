@@ -25,7 +25,7 @@ KTBM_UI_PrepareDeathResultsUI = function()
     --0.5 = half
     --2.0 = double
     TextSetScale(agent_deathTextTitle, 3.0);
-    TextSetScale(agent_deathTextScoreboard, 1.0);
+    TextSetScale(agent_deathTextScoreboard, 0.75);
     TextSetScale(agent_retryText, 1.0);
     TextSetScale(agent_returnToMenuText, 1.0);
     TextSetScale(agent_returnToDefinitiveMenuText, 1.0);
@@ -63,7 +63,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
     string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResultsObject_mostDistance);
     string_scoreboardText = string_scoreboardText .. "\n"; --new line
 
-    string_scoreboardText = string_scoreboardText .. "-------[BEST ZOMBIES KILLED]-------";
+    string_scoreboardText = string_scoreboardText .. "-------[MOST ZOMBIES KILLED]-------";
     string_scoreboardText = string_scoreboardText .. "\n"; --new line
     string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResultsObject_mostKills);
     string_scoreboardText = string_scoreboardText .. "\n"; --new line
@@ -93,7 +93,8 @@ KTBM_UI_UpdateDeathResultsUI = function()
 
             --OverlayShow("ui_loadingScreen.overlay", true);
             --dofile("KTBM_Level_Game.lua");
-            SubProject_Switch("Menu", "KTBM_Level_Game.lua");
+            --SubProject_Switch("Menu", "KTBM_Level_Game.lua");
+            SubProject_Switch("Menu", "KTBM_Level_OpeningCutscene.lua");
 
             KTBM_UI_Input_Clicked = false;
         else

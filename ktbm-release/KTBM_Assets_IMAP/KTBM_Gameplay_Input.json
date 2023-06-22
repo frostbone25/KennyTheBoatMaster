@@ -70,6 +70,18 @@
         "mEvent": 1,
         "mScriptFunction": "KTBM_Gameplay_Input_IMAP_Right_End",
         "mControllerIndexOverride": -1
+      },
+      {
+        "mInputCode": 32,
+        "mEvent": 0,
+        "mScriptFunction": "KTBM_Gameplay_Input_IMAP_Pause_Begin",
+        "mControllerIndexOverride": -1
+      },
+      {
+        "mInputCode": 27,
+        "mEvent": 0,
+        "mScriptFunction": "KTBM_Gameplay_Input_IMAP_Pause_Begin",
+        "mControllerIndexOverride": -1
       }
     ]
   }

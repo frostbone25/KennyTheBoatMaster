@@ -1,3 +1,5 @@
+require("KTBM_Cutscene_Skip.lua");
+
 local controller_sound_sceneAmbient = nil;
 local controller_sound_sequenceAudio = nil;
 local number_cutsceneStartTime = 0;
@@ -5,6 +7,8 @@ local bool_startSequence = false;
 
 --main function that prepares the level enviorment
 KTBM_Cutscene_GameDeath_Start = function(kScene)
+    KTBM_Cutscene_Skip_Build();
+
     local agent_boatGroupMain = AgentFindInScene("BoatGroup", kScene);
     local agent_boatGroupAnim = AgentFindInScene("BoatAnimGroup", kScene);
     local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", kScene);
@@ -45,9 +49,22 @@ KTBM_Cutscene_GameDeath_Update = function()
         return;
     end
 
+    KTBM_Cutscene_Skip_CanSkip = true;
+    KTBM_Cutscene_Skip_Update();
+
+    if(KTBM_Cutscene_Skip_Skipped == true) then
+        ControllerKill(controller_sound_sceneAmbient);
+        ControllerKill(controller_sound_sequenceAudio);
+
+        SubProject_Switch("Menu", "KTBM_Level_DeathResults.lua");
+
+        return;
+    end
+
     local number_currentGameTime = GetTotalTime();
 
     if(number_currentGameTime > number_cutsceneStartTime + 7.0) then
+        KTBM_Cutscene_Skip_CutsceneFinished = true;
         --OverlayShow("ui_loadingScreen.overlay", true);
         --SceneRemove(KTBM_Gameplay_kScene);
         --dofile("KTBM_Level_DeathResults.lua");

@@ -28,7 +28,7 @@ KTBM_Gameplay_EnvironmentScrolling_Agents = {
 };
 
 KTBM_Gameplay_EnvironmentScrolling = function()
-    if(KTBM_Gameplay_State_HasCrashed == true) then
+    if(KTBM_Gameplay_State_HasCrashed == true) or (KTBM_Gameplay_State_Paused == true) then
         return;
     end
 
