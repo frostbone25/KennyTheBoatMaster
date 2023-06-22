@@ -10,6 +10,7 @@ KTBM_Core_Project_DebugDisableRockCollisions = false;
 KTBM_Core_Project_DebugDisableZombies = false;
 KTBM_Core_Project_DebugDisableZombieCollisions = false;
 KTBM_Core_Project_GameResultsBinaryFormat = true;
+KTBM_Core_Project_ShowDevelopmentText = true;
 
 --sets some project settings when we load into the game
 KTBM_Core_Project_SetProjectSettings = function()

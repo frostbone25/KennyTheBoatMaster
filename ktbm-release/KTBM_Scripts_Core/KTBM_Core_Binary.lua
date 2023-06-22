@@ -1,4 +1,6 @@
 --[[
+    This script contains functions for handling binary operations.
+
     Since the Telltale Tool uses only Lua 5.2, we unfortunately don't have access to the handy
     String.Pack or String.Unpack functions supported in 5.3 which make binary formatting incredibly easy.
     But... we are on an older version so we have to implement these binary formatting functions ourselves.
@@ -13,6 +15,8 @@
 --Max Value: 2147483647 (inclusive)
 --Min Value: -2147483648 (inclusive)
 
+--Packs a lua number value into a 32-bit signed integer string (4 bytes).
+--RETURNS: String
 KTBM_Binary_PackInt32 = function(number_value)
     -- Extracting individual bytes of the number
     local number_byte1 = number_value % 256;
@@ -24,6 +28,8 @@ KTBM_Binary_PackInt32 = function(number_value)
     return string.char(number_byte1, number_byte2, number_byte3, number_byte4);
 end
 
+--Unpacks a (4 byte) 32-bit signed integer string into a number.
+--RETURNS: Number
 KTBM_Binary_UnpackInt32 = function(encodedString)
     -- Extracting individual bytes from the encoded string
     local number_byte1 = encodedString:byte(1);
@@ -51,6 +57,8 @@ end
 --Max Value: 4294967295 (inclusive)
 --Min Value: 0 (inclusive)
 
+--Packs a lua number value into a 32-bit unsigned integer string (4 bytes).
+--RETURNS: String
 KTBM_Binary_PackUInt32 = function(number_value)
     -- Ensure the number is within the range of 0 to 4294967295 (2^32 - 1)
     number_value = number_value % 4294967296;
@@ -65,6 +73,8 @@ KTBM_Binary_PackUInt32 = function(number_value)
     return string.char(number_byte1, number_byte2, number_byte3, number_byte4);
 end
 
+--Unpacks a (4 byte) 32-bit unsigned integer string into a number.
+--RETURNS: Number
 KTBM_Binary_UnpackUInt32 = function(encodedString)
     -- Extracting individual bytes from the encoded string
     local number_byte1 = encodedString:byte(1);
@@ -85,6 +95,8 @@ end
 --Max Value: 16777215 (inclusive)
 --Min Value: 0 (inclusive)
 
+--Packs a lua number value into a 24-bit unsigned integer string (3 bytes).
+--RETURNS: String
 KTBM_Binary_PackUInt24 = function(number_value)
     -- Ensure the number is within the range of 0 to 16777215 (2^24 - 1)
     number_value = number_value % 16777216;
@@ -98,6 +110,8 @@ KTBM_Binary_PackUInt24 = function(number_value)
     return string.char(number_byte1, number_byte2, number_byte3);
 end
 
+--Unpacks a (3 byte) 24-bit unsigned integer string into a number.
+--RETURNS: Number
 KTBM_Binary_UnpackUInt24 = function(encodedString)
     -- Extracting individual bytes from the encoded string
     local number_byte1 = encodedString:byte(1);
@@ -113,12 +127,14 @@ end
 --|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 16-BIT (2 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 16-BIT (2 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||| UNSIGNED INTEGER 16-BIT (2 BYTES) ||||||||||||||||||||||||||||||||||||||||||||
---This is an unsigned 24-bit integer, which means you can't store negative values (but you can store really high positive values)
+--This is an unsigned 16-bit integer, which means you can't store negative values (but you can store really high positive values)
 --This packs a number value into 2 bytes.
 --This will only work properly for whole numbers (numbers without decimals, for numbers with decimals use floats).
 --Max Value: 65536 (inclusive)
 --Min Value: 0 (inclusive)
 
+--Packs a lua number value into a 16-bit unsigned integer string (2 bytes).
+--RETURNS: String
 KTBM_Binary_PackUInt16 = function(number_value)
     -- Ensure the number is within the range of 0 to 65535 (2^16 - 1)
     number_value = number_value % 65536;
@@ -131,6 +147,8 @@ KTBM_Binary_PackUInt16 = function(number_value)
     return string.char(number_byte1, number_byte2);
 end
 
+--Unpacks a (2 byte) 16-bit unsigned integer string into a number.
+--RETURNS: Number
 KTBM_Binary_UnpackUInt16 = function(encodedString)
     -- Extracting individual bytes from the encoded string
     local number_byte1 = encodedString:byte(1);
@@ -153,6 +171,8 @@ end
 --  These large values really are to represent the combination of values that you can represent with decimals.
 --  It's a different way to think about it, but to minimize confusion, the number "cap" is close to a 32 bit signed integer.
 
+--Packs a lua number value into a 32-bit single precision number string (4 bytes).
+--RETURNS: String
 KTBM_Binary_PackFloat = function(number_value)
     -- Bitmask used for handling infinity and NaN values
     local number_infinityBitmask = 2^32 - 2^22
@@ -197,6 +217,8 @@ KTBM_Binary_PackFloat = function(number_value)
     return string_binaryString
 end
 
+--Unpacks a (4 bytes) 32-bit single precision number string into a lua number.
+--RETURNS: Number
 KTBM_Binary_UnpackFloat = function(string_binaryEncodedString)
     -- Extracting the significand bytes and combining them
     local number_significand = (string_binaryEncodedString:byte(3) % 0x80) * 0x10000 + string_binaryEncodedString:byte(2) * 0x100 + string_binaryEncodedString:byte(1);

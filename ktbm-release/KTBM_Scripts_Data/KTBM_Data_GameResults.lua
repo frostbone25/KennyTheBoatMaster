@@ -278,6 +278,10 @@ KTBM_Data_GetPreviousGameResults = function()
         end
     end
 
+    if(string_mostRecentFilePath == nil) then
+        return;
+    end
+
     ---------------------------------------------------
     --After getting the most recent file, get the data from it.
 
@@ -327,6 +331,14 @@ KTBM_Data_GetAllGameResults = function()
         end
     end
 
+    if(strings_gameResultFilePaths == nil) then
+        return;
+    end
+
+    if(#strings_gameResultFilePaths < 1) then
+        return;
+    end
+
     ---------------------------------------------------
     --Create a table to store all of the parsed files in the directory
 
@@ -374,6 +386,14 @@ KTBM_Data_GetBestGameResultByStatistic = function(string_variableName)
         if(string.match(string_filePath, string_fileExtension)) then
             table.insert(strings_gameResultFilePaths, string_filePath);
         end
+    end
+
+    if(strings_gameResultFilePaths == nil) then
+        return;
+    end
+
+    if(#strings_gameResultFilePaths < 1) then
+        return;
     end
 
     ---------------------------------------------------

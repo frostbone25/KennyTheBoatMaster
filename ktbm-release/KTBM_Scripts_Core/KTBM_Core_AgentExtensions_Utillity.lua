@@ -1,130 +1,216 @@
---============ UTILLITY ============
---============ UTILLITY ============
---============ UTILLITY ============
+--[[
+    This script has numerous utility functions to help deal different aspects of agents.
 
---hides an agent by name
-KTBM_HideAgent = function(agentName, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    AgentHide(agent)
+    The names and descriptions should explain what each function is for.
+
+    NOTE: AgentFindInScene calls especially in a large bulk can be expensive.
+]]
+
+--||||||||||||||||||||||||| RENDER VISIBILITY |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER VISIBILITY |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER VISIBILITY |||||||||||||||||||||||||
+
+--Finds an agent in a scene by it's name and hides it.
+--RETURNS: Nothing
+KTBM_HideAgent = function(string_agentName, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    AgentHide(agent_object);
 end
 
---sets an agents visibility by name
-KTBM_SetAgentVisibillity = function(agentName, visibilityValue, kScene)
-    KTBM_AgentSetProperty(agentName, "Runtime: Visible", visibilityValue, kScene)
+--Sets the visibility of a given agent.
+--RETURNS: Nothing
+KTBM_SetVisibillity = function(agent_object, bool_visibility)
+    KTBM_PropertySet(agent_object, "Runtime: Visible", bool_visibility);
 end
 
---sets an agents culling mode
-KTBM_SetAgentCulling = function(agentName, cullValue, kScene)
-    KTBM_AgentSetProperty(agentName, "Render Cull", cullValue, kScene)
+--Finds an agent in a scene by it's name and sets it's visibility.
+--RETURNS: Nothing
+KTBM_SetAgentVisibillity = function(string_agentName, bool_visibility, string_scene)
+    KTBM_AgentSetProperty(string_agentName, "Runtime: Visible", bool_visibility, string_scene);
 end
 
---sets an agent render scale
-KTBM_SetAgentScale = function(agentName, scaleValue, kScene)
-    KTBM_AgentSetProperty(agentName, "Render Global Scale", scaleValue, kScene)
+--||||||||||||||||||||||||| RENDER CULLING |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER CULLING |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER CULLING |||||||||||||||||||||||||
+
+--Sets culling on an agent.
+--RETURNS: Nothing
+KTBM_SetCulling = function(agent_object, bool_cull)
+    KTBM_PropertySet(agent_object, "Render Cull", bool_cull);
 end
 
---sets an agent shadow casting
-KTBM_SetAgentShadowCasting = function(agentName, castsShadows, kScene)
-    KTBM_AgentSetProperty(agentName, "Render EnvLight Shadow Cast Enable", castsShadows, kScene)
-    KTBM_AgentSetProperty(agentName, "Render Shadow Force Visible", castsShadows, kScene)
+--Finds an agent in a scene by it's name and sets it's culling.
+--RETURNS: Nothing
+KTBM_SetAgentCulling = function(string_agentName, bool_cull, string_scene)
+    KTBM_AgentSetProperty(string_agentName, "Render Cull", bool_cull, string_scene);
 end
 
---checks if an agent exists, then removes an agent by name
-KTBM_RemoveAgent = function(agentName, sceneObj)
-   if AgentExists(AgentGetName(agentName)) then
-       local agent = AgentFindInScene(agentName, sceneObj)
-       AgentDestroy(agent)
+--||||||||||||||||||||||||| RENDER SCALE |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER SCALE |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER SCALE |||||||||||||||||||||||||
+
+--Sets the global render scale on an agent.
+--RETURNS: Nothing
+KTBM_SetScale = function(agent_object, number_scale)
+    KTBM_PropertySet(agent_object, "Render Global Scale", number_scale);
+end
+
+--Finds an agent in a scene by it's name and sets it's global render scale.
+--RETURNS: Nothing
+KTBM_SetAgentScale = function(string_agentName, number_scale, string_scene)
+    KTBM_AgentSetProperty(string_agentName, "Render Global Scale", number_scale, string_scene);
+end
+
+--Sets the axis render scale on an agent.
+--RETURNS: Nothing
+KTBM_SetAxisScale = function(agent_object, vector_scale)
+    KTBM_PropertySet(agent_object, "Render Axis Scale", vector_scale);
+end
+
+--Finds an agent in a scene by it's name and sets it's axis render scale.
+--RETURNS: Nothing
+KTBM_SetAgentAxisScale = function(string_agentName, vector_scale, string_scene)
+    KTBM_AgentSetProperty(string_agentName, "Render Axis Scale", vector_scale, string_scene);
+end
+
+--||||||||||||||||||||||||| RENDER SHADOW CASTING |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER SHADOW CASTING |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER SHADOW CASTING |||||||||||||||||||||||||
+
+--Sets shadow casting on an agent.
+--RETURNS: Nothing
+KTBM_SetShadowCasting = function(agent_object, bool_shadowCasting)
+    KTBM_PropertySet(agent_object, "Render EnvLight Shadow Cast Enable", bool_shadowCasting);
+    KTBM_PropertySet(agent_object, "Render Shadow Force Visible", bool_shadowCasting);
+end
+
+--Finds an agent in a scene by it's name and sets it's shadow casting value.
+--RETURNS: Nothing
+KTBM_SetAgentShadowCasting = function(string_agentName, bool_shadowCasting, string_scene)
+    KTBM_AgentSetProperty(string_agentName, "Render EnvLight Shadow Cast Enable", bool_shadowCasting, string_scene);
+    KTBM_AgentSetProperty(string_agentName, "Render Shadow Force Visible", bool_shadowCasting, string_scene);
+end
+
+--||||||||||||||||||||||||| RENDER BOUNDS EXTENTS |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER BOUNDS EXTENTS |||||||||||||||||||||||||
+--||||||||||||||||||||||||| RENDER BOUNDS EXTENTS |||||||||||||||||||||||||
+
+--Sets the bounds on an agent.
+--RETURNS: Nothing
+KTBM_SetExtents = function(agent, vector_extentsMin, vector_extentsMax)
+    KTBM_PropertySet(agent, "Extents Min", vector_extentsMin);
+    KTBM_PropertySet(agent, "Extents Max", vector_extentsMax);
+end
+
+--Finds an agent in a scene by it's name and sets it's bounds.
+--RETURNS: Nothing
+KTBM_SetAgentExtents = function(string_agentName, vector_extentsMin, vector_extentsMax, string_scene)
+    KTBM_AgentSetProperty(string_agentName, "Extents Min", vector_extentsMin, string_scene);
+    KTBM_AgentSetProperty(string_agentName, "Extents Max", vector_extentsMax, string_scene);
+end
+
+--||||||||||||||||||||||||| AGENT REMOVAL |||||||||||||||||||||||||
+--||||||||||||||||||||||||| AGENT REMOVAL |||||||||||||||||||||||||
+--||||||||||||||||||||||||| AGENT REMOVAL |||||||||||||||||||||||||
+
+--Checks if an agent by the given name exists, finds it in the scene and destroys it.
+--RETURNS: Nothing
+KTBM_RemoveAgent = function(string_agentName, string_scene)
+   if(AgentExists(AgentGetName(string_agentName)) == true) then
+       local agent_object = AgentFindInScene(string_agentName, string_scene);
+       AgentDestroy(agent_object);
    end
 end
 
---removes agents in a scene with a prefix
-KTBM_RemovingAgentsWithPrefix = function(kScene, prefixString)
-    --get all agents in the scene
-    local scene_agents = SceneGetAgents(kScene)
+--Finds all scene agents, checks if they match the given prefix and removes them if they exist.
+--RETURNS: Nothing
+KTBM_RemovingAgentsWithPrefix = function(string_scene, string_agentNamePrefix)
+    local agents_sceneAgents = SceneGetAgents(string_scene);
 
-    --fill out rig agents list
-    for i, agent_object in pairs(scene_agents) do
-        --get the agent name
-        local agent_name = tostring(AgentGetName(agent_object))
-        
-        --check if the agent name contains the prefix, if it does then add it to our agent_names table
-        if (string.match)(agent_name, prefixString) then
-            KTBM_RemoveAgent(agent_name, kScene)
+    for index, agent_object in pairs(agents_sceneAgents) do
+        local string_agentName = tostring(AgentGetName(agent_object));
+
+        if (string.match)(string_agentName, string_agentNamePrefix) then
+            KTBM_RemoveAgent(string_agentName, string_scene);
         end
     end
 end
 
---removes agents in a scene with a prefix
-KTBM_ReplaceAgentsWithPrefixWithDummy = function(kScene, prefixString)
-    --get all agents in the scene
-    local scene_agents = SceneGetAgents(kScene)
+--||||||||||||||||||||||||| UTILITY |||||||||||||||||||||||||
+--||||||||||||||||||||||||| UTILITY |||||||||||||||||||||||||
+--||||||||||||||||||||||||| UTILITY |||||||||||||||||||||||||
 
-    --fill out rig agents list
-    for i, agent_object in pairs(scene_agents) do
-        --get the agent name
-        local agent_name = tostring(AgentGetName(agent_object))
+--Finds all scene agents, checks if they match the given prefix and replaces them with a dummy agent.
+--RETURNS: Nothing
+KTBM_ReplaceAgentsWithPrefixWithDummy = function(string_scene, string_agentNamePrefix)
+    local agents_sceneAgents = SceneGetAgents(string_scene);
+
+    for index, agent_object in pairs(agents_sceneAgents) do
+        local string_agentName = tostring(AgentGetName(agent_object));
+
+        if (string.match)(string_agentName, string_agentNamePrefix) then
+            KTBM_RemoveAgent(string_agentName, string_scene);
         
-        --check if the agent name contains the prefix, if it does then add it to our agent_names table
-        if (string.match)(agent_name, prefixString) then
-            KTBM_RemoveAgent(agent_name, kScene)
-        
-            local dummyAgent = AgentCreate(agent_name, "group.prop", Vector(0,0,0), Vector(0,0,0), kScene, false, false)
+            local agent_dummy = AgentCreate(string_agentName, "group.prop", Vector(0,0,0), Vector(0,0,0), string_scene, false, false);
         end
     end
 end
 
---using a comparison agent, returns the nearest agent of the two given
-KTBM_GetNearestAgent = function(comparisonAgent, agentOne, agentTwo)
-    local distance_agentOne = AgentDistanceToAgent(comparisonAgent, agentOne); --number type
-    local distance_agentTwo = AgentDistanceToAgent(comparisonAgent, agentTwo); --number type
+--Given a comparison agent, and two other agents, the agent that is nearest to the comparison agent will be returned.
+--RETURNS: Agent
+KTBM_GetNearestAgent = function(agent_comparison, agent_one, agent_two)
+    local number_distanceToAgentOne = AgentDistanceToAgent(agent_comparison, agent_one); --number type
+    local number_distanceToAgentTwo = AgentDistanceToAgent(agent_comparison, agent_two); --number type
     
-    if (distance_agentOne < distance_agentTwo) then
-        return agentOne;
+    if (number_distanceToAgentOne < number_distanceToAgentTwo) then
+        return agent_one;
     else
-        return agentTwo;
+        return agent_two;
     end
 end
 
---using a comparison agent, returns the farthest agent of the two given
-KTBM_GetFarthestAgent = function(comparisonAgent, agentOne, agentTwo)
-    local distance_agentOne = AgentDistanceToAgent(comparisonAgent, agentOne); --number type
-    local distance_agentTwo = AgentDistanceToAgent(comparisonAgent, agentTwo); --number type
+--Given a comparison agent, and two other agents, the agent that is farthest to the comparison agent will be returned.
+--RETURNS: Agent
+KTBM_GetFarthestAgent = function(agent_comparison, agent_one, agentTwo)
+    local number_distanceToAgentOne = AgentDistanceToAgent(agent_comparison, agent_one); --number type
+    local number_distanceToAgentTwo = AgentDistanceToAgent(agent_comparison, agent_two); --number type
     
-    if (distance_agentOne > distance_agentTwo) then
-        return agentOne;
+    if (number_distanceToAgentOne > number_distanceToAgentTwo) then
+        return agent_one;
     else
-        return agentTwo;
+        return agent_two;
     end
 end
 
 --performs a raycast from a given agent, to another agent
 --returns true when raycast intersects with scene geometry
 --returns false when raycast doesn't intersect with geometry
-KTBM_RaycastFromAgentToAgent = function(fromAgent, toAgent)
+--RETURNS: Boolean (True/False)
+KTBM_RaycastFromAgentToAgent = function(agent_from, agent_to)
 	--calculate ray origin
-	local rayOrigin = AgentGetWorldPos(fromAgent);
+	local vector_rayOrigin = AgentGetWorldPos(agent_from);
 	
-	if AgentHasNode(fromAgent, "eye_L") and AgentHasNode(fromAgent, "eye_R") then
-		rayOrigin = AgentGetWorldPosBetweenNodes(fromAgent, "eye_R", "eye_L");
+	if AgentHasNode(agent_from, "eye_L") and AgentHasNode(agent_from, "eye_R") then
+		vector_rayOrigin = AgentGetWorldPosBetweenNodes(agent_from, "eye_R", "eye_L");
 	else
-		if AgentHasNode(fromAgent, "Head") then
-			rayOrigin = AgentGetWorldPos(fromAgent, "Head");
+		if AgentHasNode(agent_from, "Head") then
+			vector_rayOrigin = AgentGetWorldPos(agent_from, "Head");
 		end
 	end
 	
 	--calculate ray direction
-	local rayDirection = AgentGetWorldPos(toAgent) - rayOrigin;
+	local vector_rayDirection = AgentGetWorldPos(agent_to) - vector_rayOrigin;
 	
-	if AgentHasNode(toAgent, "Root") then
-		rayDirection = AgentGetWorldPos(toAgent, "Root") - rayOrigin;
+	if AgentHasNode(agent_to, "Root") then
+		vector_rayDirection = AgentGetWorldPos(agent_to, "Root") - vector_rayOrigin;
     else
-		if AgentHasNode(toAgent, "Head") then
-			rayDirection = AgentGetWorldPos(toAgent, "Head") - rayOrigin;
+		if AgentHasNode(agent_to, "Head") then
+			vector_rayDirection = AgentGetWorldPos(agent_to, "Head") - vector_rayOrigin;
 		end
     end
 	
 	--perform a raycast
-	if MathRaySceneIntersect(rayOrigin, rayDirection, AgentGetScene(fromAgent)) then
+	if MathRaySceneIntersect(vector_rayOrigin, vector_rayDirection, AgentGetScene(agent_from)) then
 		return true;
     else
 		return false;
@@ -132,25 +218,16 @@ KTBM_RaycastFromAgentToAgent = function(fromAgent, toAgent)
 end
 
 --plays a .chore specifically on an agent
-KTBM_ChorePlayOnAgent = function(chore, agentName, priority, bWait)
+--RETURNS: Nothing
+KTBM_ChorePlayOnAgent = function(chore_object, string_agentName, number_priority, bool_wait)
     --if a priority value is not given (nil)
-    if not priority then
-        priority = 100;
+    if (number_priority ~= nil) then
+        number_priority = 100;
     end
 
-    if bWait then --if bWait value is given
-        ChorePlayAndWait(chore, priority, "default", agentName);
-    else --if there is no bWait value given (nil)
-        return ChorePlay(chore, priority, "default", agentName);
+    if (bool_wait ~= nil) then --if bool_wait value is given
+        ChorePlayAndWait(chore_object, number_priority, "default", string_agentName);
+    else --if there is no bool_wait value given (nil)
+        return ChorePlay(chore_object, number_priority, "default", string_agentName);
     end
-end
-
-KTBM_SetExtents = function(agent, extentsMin, extentsMax)
-    KTBM_PropertySet(agent, "Extents Min", extentsMin);
-    KTBM_PropertySet(agent, "Extents Max", extentsMax);
-end
-
-KTBM_SetAgentExtents = function(agentName, extentsMin, extentsMax, kScene)
-    KTBM_AgentSetProperty(agentName, "Extents Min", extentsMin, kScene);
-    KTBM_AgentSetProperty(agentName, "Extents Max", extentsMax, kScene);
 end

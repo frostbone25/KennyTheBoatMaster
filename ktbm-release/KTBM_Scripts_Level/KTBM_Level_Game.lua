@@ -156,6 +156,11 @@ KTBM_Level_Game = function()
         KTBM_Development_PerformanceMetrics_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_PerformanceMetrics_Update);
     end
+
+    if (KTBM_Core_Project_ShowDevelopmentText) then
+        KTBM_Development_DevelopmentBuildText_Initalize();
+        Callback_OnPostUpdate:Add(KTBM_Development_DevelopmentBuildText_Update);
+    end
 end
 
 SceneOpen(kScene, kScript);

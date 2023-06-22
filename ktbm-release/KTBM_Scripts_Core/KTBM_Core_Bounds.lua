@@ -1,3 +1,33 @@
+--[[
+    This script has functions to help with object bounding boxes.
+
+    What are object bounding boxes? You can think of them as
+    boxes that fully encompass whatever object you are messing with.
+
+    Bounding Boxes are used to do MANY different things.
+        1. Render Culling: 
+            Rather than checking every polygon/vertex of the model,
+            the bounds of the object is used as a simplified representation of the model.
+            The bounds of that object is then checked against the camera frustum.
+            If the bounds of the object is not inside the camera frustum then
+            it is not in view and therefore culled (or hidden).
+        2. Collision Detection: 
+            For physics detection to check if two objects are intersecting eachothers bounds.
+            If they are then that means a collision has occured.
+        3. Trigger Detection:
+            Similar to collision detection (though simpler), we can check if two objects are
+            intersecting eachothers bounds, and from there we can trigger an event.
+        4. Position Detection: 
+            Similar to Trigger/Collision detection except we can check if a single point
+            in space is inside the bounds of an object.
+
+    There are more use cases for bounding boxes than I've listed here but that
+    should give an idea on how useful bounding boxes are in development.
+    They are a simplified representation of the object, which also makes
+    them very fast especially when usually these operations need to be done
+    multiple times over many frames.
+]]
+
 --references
 --Unity3d Bounds C# - https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Geometry/Bounds.cs
 --should note that this isnt a 1:1 implementation of the bounds class from unity, but it is very inspired by it.

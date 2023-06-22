@@ -33,6 +33,7 @@ require("KTBM_Development_AgentBrowser.lua");
 require("KTBM_Development_PerformanceMetrics.lua");
 require("KTBM_Development_LuaHelper.lua");
 require("KTBM_Development_BoundsDebug.lua");
+require("KTBM_Development_DevelopmentBuildText.lua");
 
 ---------------------------------------------
 

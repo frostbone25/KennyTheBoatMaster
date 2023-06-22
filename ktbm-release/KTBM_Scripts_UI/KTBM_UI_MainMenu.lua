@@ -119,9 +119,12 @@ KTBM_UI_MainMenu_Start = function()
     CursorEnable(true);
 
     gameResultsDataArray = KTBM_Data_GetAllGameResults();
-    number_gameResultsDataArraySize = KTBM_GetTableSize(gameResultsDataArray);
-    gameResultsObject_mostDistance = KTBM_Data_GetBestGameResultByStatistic("DistanceTraveled");
-    gameResultsObject_mostKills = KTBM_Data_GetBestGameResultByStatistic("ZombiesKilled");
+
+    if(gameResultsDataArray ~= nil) then
+        number_gameResultsDataArraySize = KTBM_GetTableSize(gameResultsDataArray);
+        gameResultsObject_mostDistance = KTBM_Data_GetBestGameResultByStatistic("DistanceTraveled");
+        gameResultsObject_mostKills = KTBM_Data_GetBestGameResultByStatistic("ZombiesKilled");
+    end
 
     --InputMapperActivate(KTBM_UI_IMAP_File);
 end
@@ -672,29 +675,36 @@ KTBM_UI_Update = function()
 
     if(bool_onScoreboardPage) then
 
-        number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, number_gameResultsDataArraySize - 1);
+        if(gameResultsDataArray == nil) then
+            number_gameResultsIndex = 0;
+
+            TextSet(agent_pageScoreboard_pageNumber, "(0/0)");
+            TextSet(agent_pageScoreboard_main, "");
+        else
+            number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, number_gameResultsDataArraySize - 1);
         
-        local string_pageNumberText = "(" .. tostring(number_gameResultsIndex) .. "/" .. tostring(number_gameResultsDataArraySize - 1) .. ")";
+            local string_pageNumberText = "(" .. tostring(number_gameResultsIndex) .. "/" .. tostring(number_gameResultsDataArraySize - 1) .. ")";
 
-        local gameResultsObject_selectedObject = gameResultsDataArray[number_gameResultsIndex];
+            local gameResultsObject_selectedObject = gameResultsDataArray[number_gameResultsIndex];
 
-        local string_scoreboardMainText = "";
+            local string_scoreboardMainText = "";
 
-        string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject);
-        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject);
+            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
 
-        string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST DISTANCE]-------";
-        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
-        string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostDistance);
-        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST DISTANCE]-------";
+            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostDistance);
+            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
 
-        string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST ZOMBIES KILLED]-------";
-        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
-        string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostKills);
-        string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST ZOMBIES KILLED]-------";
+            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostKills);
+            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
 
-        TextSet(agent_pageScoreboard_pageNumber, string_pageNumberText);
-        TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
+            TextSet(agent_pageScoreboard_pageNumber, string_pageNumberText);
+            TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
+        end
 
         --option 1 (go back)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageScoreboard_goBack)) then

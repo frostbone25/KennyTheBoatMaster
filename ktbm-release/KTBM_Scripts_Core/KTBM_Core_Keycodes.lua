@@ -1,11 +1,11 @@
 --[[
-This is a reference script that basically stores all of the possible virtual key code values so that we can easily find and access them.
+    This is a reference script that basically stores all of the possible virtual key code values so that we can easily find and access them.
 
-Windows Virtual Key Codes
-https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+    Windows Virtual Key Codes
+    https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 
-Hexcode To Decimal
-https://www.rapidtables.com/convert/number/hex-to-decimal.html
+    Hexcode To Decimal
+    https://www.rapidtables.com/convert/number/hex-to-decimal.html
 ]]--
 
 --mouse buttons

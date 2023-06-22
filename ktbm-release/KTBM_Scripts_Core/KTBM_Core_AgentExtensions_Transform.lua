@@ -1,59 +1,85 @@
---NOTE TO SELF: AgentFindInScene calls especially in bulk can be very expensive.
+--[[
+    This script has functions to help deal with transformations on agents.
 
---============ TRANSFORMATION - SET ============
---============ TRANSFORMATION - SET ============
---============ TRANSFORMATION - SET ============
+    Transformations on agents involve simply moving and rotating objects
+    in a scene. It's worth mentioning that there are two kinds of transformations.
+
+    Local - Means it's relative to the objects parent, usually by default
+    objects that are not parented or grouped to another agent, local transformations
+    are basically identical to world transformations. However when an object
+    is parented/grouped to another agent then it's transformations will be
+    relative to the parent.
+
+    World - Means that you are always treating the transformations of the object
+    in world space regardless if it's parented or grouped to another object.
+    Whatever position/rotation you set an agent to will always be that
+    position/rotation.
+
+    NOTE: AgentFindInScene calls especially in a large bulk can be expensive.
+]]
+
+--||||||||||||||||||||||||| TRANSFORMATION - SET |||||||||||||||||||||||||
+--||||||||||||||||||||||||| TRANSFORMATION - SET |||||||||||||||||||||||||
+--||||||||||||||||||||||||| TRANSFORMATION - SET |||||||||||||||||||||||||
 --for moving and rotating agents
 
---rotates an agent by name
-KTBM_SetAgentRotation = function(agentName, rotationValue, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    AgentSetRot(agent, rotationValue)
+--Finds an agent in a scene by it's name and rotates it (locally if it's parented to an object).
+--RETURNS: Nothing
+KTBM_SetAgentRotation = function(string_agentName, vector_rotation, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    AgentSetRot(agent_object, vector_rotation);
 end
 
---positions an agent by name
-KTBM_SetAgentPosition = function(agentName, positionValue, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    AgentSetPos(agent, positionValue)
+--Finds an agent in a scene by it's name and moves it (locally if it's parented to an object).
+--RETURNS: Nothing
+KTBM_SetAgentPosition = function(string_agentName, vector_position, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    AgentSetPos(agent_object, vector_position);
 end
 
---rotates an agent in world space by name
-KTBM_SetAgentWorldRotation = function(agentName, rotationValue, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    AgentSetWorldRot(agent, rotationValue)
+--Finds an agent in a scene by it's name and rotates it in world space.
+--RETURNS: Nothing
+KTBM_SetAgentWorldRotation = function(string_agentName, vector_rotation, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    AgentSetWorldRot(agent_object, vector_rotation);
 end
 
---positions an agent in world space by name
-KTBM_SetAgentWorldPosition = function(agentName, positionValue, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    AgentSetWorldPos(agent, positionValue)
+--Finds an agent in a scene by it's name and moves it in world space.
+--RETURNS: Nothing
+KTBM_SetAgentWorldPosition = function(string_agentName, vector_position, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    AgentSetWorldPos(agent_object, vector_position);
 end
 
---============ TRANSFORMATION - GET ============
---============ TRANSFORMATION - GET ============
---============ TRANSFORMATION - GET ============
+--||||||||||||||||||||||||| TRANSFORMATION - GET |||||||||||||||||||||||||
+--||||||||||||||||||||||||| TRANSFORMATION - GET |||||||||||||||||||||||||
+--||||||||||||||||||||||||| TRANSFORMATION - GET |||||||||||||||||||||||||
 --for getting rotation/position of agents
 
---gets an agents rotation by name
-KTBM_GetAgentRotation = function(agentName, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    return AgentGetRot(agent)
+--Finds an agent in a scene by it's name and gets it's rotation (locally if it's parented to an object).
+--RETURNS: Vector
+KTBM_GetAgentRotation = function(string_agentName, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    return AgentGetRot(agent_object);
 end
 
---gets an agents position by name
-KTBM_GetAgentPosition = function(agentName, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    return AgentGetPos(agent)
+--Finds an agent in a scene by it's name and gets it's position (locally if it's parented to an object).
+--RETURNS: Vector
+KTBM_GetAgentPosition = function(string_agentName, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    return AgentGetPos(agent_object);
 end
 
---gets an agents world rotation by name
-KTBM_GetAgentWorldRotation = function(agentName, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    return AgentGetWorldRot(agent)
+--Finds an agent in a scene by it's name and gets its rotation in world space.
+--RETURNS: Vector
+KTBM_GetAgentWorldRotation = function(string_agentName, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    return AgentGetWorldRot(agent_object);
 end
 
---gets an agents world position by name
-KTBM_GetAgentWorldPosition = function(agentName, kScene)
-    local agent = AgentFindInScene(agentName, kScene)
-    return AgentGetWorldPos(agent)
+--Finds an agent in a scene by it's name and gets its position in world space.
+--RETURNS: Vector
+KTBM_GetAgentWorldPosition = function(string_agentName, string_scene)
+    local agent_object = AgentFindInScene(string_agentName, string_scene);
+    return AgentGetWorldPos(agent_object);
 end
