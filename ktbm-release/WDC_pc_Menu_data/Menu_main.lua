@@ -1,4 +1,4 @@
-﻿-- Decompiled using luadec 2.2 rev:  for Lua 5.2 from https://github.com/viruscamp/luadec
+-- Decompiled using luadec 2.2 rev:  for Lua 5.2 from https://github.com/viruscamp/luadec
 -- Command line: E:\Work\MODDING\Github\TTDS-FirstCutscene\first-cutscene-release\WDC_pc_Menu_data\Menu_main_temp.lua 
 
 -- params : ...
@@ -20,11 +20,12 @@ require("UI_Legend.lua")
 require("UI_Popup.lua")
 
 --droyti LAL support
-require("Menu_LoadAnyLevel.lua")
-local loadAnyLevelStatus, droytiLal = pcall(require, "Menu_loadAnyLevel.lua")
+--require("Menu_loadAnyLevel.lua")
+local loadAnyLevelStatus, droytiLal = pcall(require, "Menu_loadAnyLevel.lua");
 
 --ktbm load game
-require("Menu_KTBM_LoadMyMenu.lua")
+--require("Menu_KTBM_LoadMyMenu.lua")
+local ktbmMenuStatus, ktbmMenu = pcall(require, "Menu_KTBM_LoadMyMenu.lua");
 
 if ResourceExists("DebugLoader.lua") then
   require("DebugLoader.lua")
@@ -125,8 +126,10 @@ Menu_Main = function()
     end
   
     --ktbm mod button
-    Menu_Add(ListButtonLite, "kennytheboatmaster", "Play Kenny The Boat Master", "PlayKBTM_Game()")
-  
+    if(ktbmMenuStatus) then
+      Menu_Add(ListButtonLite, "kennytheboatmaster", "Play Kenny The Boat Master", "PlayKBTM_Game()")
+    end
+
     Menu_Add(ListButtonLite, "characters", "label_characters", "Menu_Characters()")
     Menu_Add(ListButtonLite, "art", "label_art", "Menu_ConceptGallery()")
     Menu_Add(ListButtonLite, "music", "label_music", "Menu_Music()")
@@ -221,4 +224,3 @@ if ResourceExists("DebugLoader.lua") then
   Callback_OnLoadDebugMenu:Add(OpenDebugMenu)
 end
 SceneOpen(kScene, "Menu_Main_Start")
-

@@ -15,11 +15,5 @@ PlayKBTM_Game = function()
 
     --note to self: we need to do a scene fade both when opening the scene and exiting the scene.
 
-    OverlayShow("ui_loadingScreen.overlay", true);
-
-    --execute the cutscene level script
-    dofile("KTBM_Level_Menu.lua");
-    
-    SceneRemove("ui_menuMain");
-    SceneRemove("adv_clementineHouse400");
+    SubProject_Switch("Menu", "KTBM_Level_Menu.lua");
 end

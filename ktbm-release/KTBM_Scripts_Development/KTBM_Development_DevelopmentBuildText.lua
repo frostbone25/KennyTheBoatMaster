@@ -4,7 +4,7 @@
 
 --(public) relight dev variables (public because these values need to be persistent)
 KTBM_Development_DevelopmentBuildText_Text = nil;
-KTBM_Development_DevelopmentBuildText_TextTitle = "Kenny The Boat Master (DEVELOPMENT BUILD V0.9.0)";
+KTBM_Development_DevelopmentBuildText_TextTitle = "Kenny The Boat Master (DEVELOPMENT BUILD V0.9.1)";
 KTBM_Development_DevelopmentBuildText_ShowText = true;
 
 KTBM_Development_DevelopmentBuildText_Initalize = function()

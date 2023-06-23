@@ -88,6 +88,7 @@ KTBM_Core_Project_EnableGameArchives = function()
 
     --require("ProjectSettingsManager.lua");
     --ProjectSettingsManager_Apply("Season2");
+
 end
 
 KTBM_Core_Project_DisableGameArchives = function()
