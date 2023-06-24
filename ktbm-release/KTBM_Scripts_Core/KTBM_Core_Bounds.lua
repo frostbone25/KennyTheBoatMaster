@@ -59,7 +59,7 @@
 --v7 = v4->mBoundingBox.mMax.z;
 
 --Corrects the bounding box on an agent to factor in the objects scale.
-KTBM_Bounds_AgentSetCorrectBounds = function(agent_object)
+KTBM_Bounds_AgentSetCorrectBounds = function(agent_object, number_scaleFactor)
     --we need to access the agent properties to get what we need
     local props_agentProperties = AgentGetRuntimeProperties(agent_object);
 
@@ -75,8 +75,12 @@ KTBM_Bounds_AgentSetCorrectBounds = function(agent_object)
     local vector_adjustedExtentsMax = vector_extentsMax;
 
     ---------------------------------------------------------
-    --first step is to apply the object scaling, which is thankfully very simple to do
+    --all that needs to be done is apply object scaling.
     
+    --apply a user adjustale scale factor
+    vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_scaleFactor);
+    vector_adjustedExtentsMax = VectorScale(vector_adjustedExtentsMax, number_scaleFactor);
+
     --get the render scaling values
     local number_renderGlobalScale = PropertyGet(props_agentProperties, "Render Global Scale"); --single scalar value
     local vector_renderAxisScale = PropertyGet(props_agentProperties, "Render Axis Scale"); --vector scale value

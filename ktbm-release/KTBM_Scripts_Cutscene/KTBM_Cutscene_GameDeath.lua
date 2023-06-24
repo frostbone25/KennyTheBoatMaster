@@ -56,6 +56,7 @@ KTBM_Cutscene_GameDeath_Update = function()
         ControllerKill(controller_sound_sceneAmbient);
         ControllerKill(controller_sound_sequenceAudio);
 
+        OverlayShow("ui_loadingScreen.overlay", true);
         SubProject_Switch("Menu", "KTBM_Level_DeathResults.lua");
 
         return;
@@ -65,10 +66,8 @@ KTBM_Cutscene_GameDeath_Update = function()
 
     if(number_currentGameTime > number_cutsceneStartTime + 7.0) then
         KTBM_Cutscene_Skip_CutsceneFinished = true;
-        --OverlayShow("ui_loadingScreen.overlay", true);
-        --SceneRemove(KTBM_Gameplay_kScene);
-        --dofile("KTBM_Level_DeathResults.lua");
         
+        OverlayShow("ui_loadingScreen.overlay", true);
         SubProject_Switch("Menu", "KTBM_Level_DeathResults.lua");
     end
 end

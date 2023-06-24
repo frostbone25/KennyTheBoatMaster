@@ -32,6 +32,8 @@ local controller_kenny_running = nil;
 local controller_kenny_punch = nil;
 
 local controller_cutsceneAudio = nil;
+local controller_fireAmbience = nil;
+--local controller_
 
 --main function that prepares the level enviorment
 KTBM_Cutscene_DeathResults_Build = function()
@@ -224,37 +226,45 @@ KTBM_Cutscene_DeathResults_Update = function()
 
     ----------------------------------------------------------
     if(KTBM_Cutscene_Skip_Skipped == true) then
-        ControllerKill(controller_cutsceneAudio);
+        if(bool_marker_showStagedScene == false) then
+            ControllerKill(controller_cutsceneAudio);
 
-        local controllersTable_character = AgentGetControllers(agent_kenny);
+            local controllersTable_character = AgentGetControllers(agent_kenny);
     
-        for i, cnt in ipairs(controllersTable_character) do
-            ControllerKill(cnt);
+            for i, cnt in ipairs(controllersTable_character) do
+                ControllerKill(cnt);
+            end
+
+            KTBM_SetAgentWorldPosition("myMenuCamera", Vector(7.327, 1.125, 0.511), KTBM_Cutscene_DeathResults_kScene);
+            KTBM_SetAgentWorldRotation("myMenuCamera", Vector(4.333, -83.156, 0.0), KTBM_Cutscene_DeathResults_kScene);
+            KTBM_AgentSetProperty("myMenuCamera", "Field of View", 71, KTBM_Cutscene_DeathResults_kScene);
+
+            KTBM_SetAgentWorldPosition("agent_endScreenGroup", Vector(0, 0, 0), KTBM_Cutscene_DeathResults_kScene);
+
+            KTBM_AgentSetProperty("light_camera", "EnvLight - Intensity", 0, KTBM_Cutscene_DeathResults_kScene)
+            KTBM_AgentSetProperty("light_D", "EnvLight - Intensity", 0, KTBM_Cutscene_DeathResults_kScene)
+
+            KTBM_SetAgentRotation("Kenny", Vector(0, 90, 0), KTBM_Cutscene_DeathResults_kScene);
+            KTBM_SetAgentWorldPosition("agent_kennyParent", Vector(4.12, 0, 0.62), KTBM_Cutscene_DeathResults_kScene);
+            KTBM_SetAgentWorldRotation("agent_kennyParent", Vector(0, 0, 0), KTBM_Cutscene_DeathResults_kScene);
+
+            local cnt_idleAnimation = PlayAnimation(agent_kenny, "sk54_idle_kennyArmsX.anm");
+            ControllerSetLooping(cnt_idleAnimation, true);
+
+            controller_fireAmbience = SoundPlay("fireplace_lp.wav");
+            ControllerSetLooping(controller_fireAmbience, true);
+            ControllerSetSoundVolume(controller_fireAmbience, 1);
+
+            KTBM_Cutscene_DeathResults_ShowUI = true;
+            KTBM_Cutscene_Skip_CutsceneFinished = true;
+
+            CursorHide(false);
+            CursorEnable(true);
+
+            bool_marker_showStagedScene = true;
+
+            return;
         end
-
-        KTBM_SetAgentWorldPosition("myMenuCamera", Vector(7.327, 1.125, 0.511), KTBM_Cutscene_DeathResults_kScene);
-        KTBM_SetAgentWorldRotation("myMenuCamera", Vector(4.333, -83.156, 0.0), KTBM_Cutscene_DeathResults_kScene);
-        KTBM_AgentSetProperty("myMenuCamera", "Field of View", 71, KTBM_Cutscene_DeathResults_kScene);
-
-        KTBM_SetAgentWorldPosition("agent_endScreenGroup", Vector(0, 0, 0), KTBM_Cutscene_DeathResults_kScene);
-
-        KTBM_AgentSetProperty("light_camera", "EnvLight - Intensity", 0, KTBM_Cutscene_DeathResults_kScene)
-        KTBM_AgentSetProperty("light_D", "EnvLight - Intensity", 0, KTBM_Cutscene_DeathResults_kScene)
-
-        KTBM_SetAgentRotation("Kenny", Vector(0, 90, 0), KTBM_Cutscene_DeathResults_kScene);
-        KTBM_SetAgentWorldPosition("agent_kennyParent", Vector(4.12, 0, 0.62), KTBM_Cutscene_DeathResults_kScene);
-        KTBM_SetAgentWorldRotation("agent_kennyParent", Vector(0, 0, 0), KTBM_Cutscene_DeathResults_kScene);
-
-        local cnt_idleAnimation = PlayAnimation(agent_kenny, "sk54_idle_kennyArmsX.anm");
-        ControllerSetLooping(cnt_idleAnimation, true);
-
-        KTBM_Cutscene_DeathResults_ShowUI = true;
-        KTBM_Cutscene_Skip_CutsceneFinished = true;
-
-        CursorHide(false);
-        CursorEnable(true);
-
-        return;
     end
 
     ----------------------------------------------------------
@@ -317,6 +327,10 @@ KTBM_Cutscene_DeathResults_Update = function()
 
             local cnt_idleAnimation = PlayAnimation(agent_kenny, "sk54_idle_kennyArmsX.anm");
             ControllerSetLooping(cnt_idleAnimation, true);
+
+            controller_fireAmbience = SoundPlay("fireplace_lp.wav");
+            ControllerSetLooping(controller_fireAmbience, true);
+            ControllerSetSoundVolume(controller_fireAmbience, 1);
 
             RenderDelay(1);
 

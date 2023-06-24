@@ -64,8 +64,7 @@ KTBM_Cutscene_Game_Start = function(kScene)
     --set our soundtrack
     controller_music = SoundPlay("mus_loop_action_11.wav");
     ControllerSetLooping(controller_music, true);
-    --ControllerSetSoundVolume(controller_music, 0.5);
-    ControllerSetSoundVolume(controller_music, 7.0);
+    ControllerSetSoundVolume(controller_music, 1.0);
     
     --do scene ambient sound
     controller_sound_sceneAmbient = SoundPlay("amb_river_shore_calm_water.wav");

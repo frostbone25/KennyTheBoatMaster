@@ -1,4 +1,12 @@
-[Pp]lanning/
-ktbm-release/Builds
+#some pre-production stuff and other stuff that isn't needed
+planning/
+documents/
+
+#some art stuff that I would like to include but takes up too much space
+art/
+
+#make sure we don't accidentally include builds in the project
+#builds will be offically put out in the releases page
+ktbm-release/[Bb]uilds
 [Bb]uild/
 [Bb]uilds/

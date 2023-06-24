@@ -1,6 +1,7 @@
 --disk path
 local string_mainDirectoryName = "KennyTheBoatMaster";
 local string_baseFilePath = string_mainDirectoryName .. "/GameResults";
+local strings_gameResultFilePaths = {};
 
 --config file data
 KTBM_Data_CurrentGameResults = nil;
@@ -8,7 +9,7 @@ KTBM_Data_CurrentGameResults = nil;
 KTBM_Data_BuildGameResultsObject = function(number_distanceTraveled, number_zombiesKilled, number_totalTime)
     local gameResults_object = {
         FileName = "",
-        DistanceTraveled = number_distanceTraveled,
+        DistanceTraveled = KTBM_NumberRound(number_distanceTraveled, 0),
         ZombiesKilled = number_zombiesKilled,
         TotalTime = number_totalTime
     };
@@ -26,7 +27,7 @@ KTBM_Data_GameResultsObjectToString = function(gameResults_object)
 
     string_final = string_final .. string_fileName;
     string_final = string_final .. "\n"; --new line
-    string_final = string_final .. "Distance Traveled: " .. string_distanceTraveled;
+    string_final = string_final .. "Distance Traveled: " .. string_distanceTraveled .. " meters";
     string_final = string_final .. "\n"; --new line
     string_final = string_final .. "Zombies Killed: " .. string_zombiesKilled;
     string_final = string_final .. "\n"; --new line
@@ -43,7 +44,7 @@ KTBM_Data_GameResultsObjectDataToString = function(gameResults_object)
 
     local string_final = "";
 
-    string_final = string_final .. "Distance Traveled: " .. string_distanceTraveled;
+    string_final = string_final .. "Distance Traveled: " .. string_distanceTraveled .. " meters";
     string_final = string_final .. "\n"; --new line
     string_final = string_final .. "Zombies Killed: " .. string_zombiesKilled;
     string_final = string_final .. "\n"; --new line
@@ -77,7 +78,8 @@ KTBM_Data_SerializeGameResultsObject_Text = function(gameResults_object, string_
     local string_zombiesKilled = tostring(gameResults_object["ZombiesKilled"]);
     local string_totalTime = tostring(gameResults_object["TotalTime"]);
 
-    local file = io.open(string_resultsFilePath, "a");
+    --local file = io.open(string_resultsFilePath, "a");
+    local file = io.open(string_resultsFilePath, "w");
     file:write(string_distanceTraveled, "\n");
     file:write(string_zombiesKilled, "\n");
     file:write(string_totalTime, "\n");
@@ -156,7 +158,7 @@ KTBM_Data_SerializeGameResultsObject_Binary = function(gameResults_object, strin
     local string_binaryData = "";
 
     --Pack the Distance Traveled variable into 4 bytes, and as a float format since it's usually a decimal value.
-    string_binaryData = string_binaryData .. KTBM_Binary_PackFloat(gameResults_object["DistanceTraveled"]);
+    string_binaryData = string_binaryData .. KTBM_Binary_PackInt32(gameResults_object["DistanceTraveled"]);
 
     --Pack the Zombies Killed variable into 4 bytes, and as a regular integer since this value is always a whole number.
     string_binaryData = string_binaryData .. KTBM_Binary_PackInt32(gameResults_object["ZombiesKilled"]);
@@ -165,14 +167,14 @@ KTBM_Data_SerializeGameResultsObject_Binary = function(gameResults_object, strin
     string_binaryData = string_binaryData .. KTBM_Binary_PackFloat(gameResults_object["TotalTime"]);
 
     --create our file and write the binary string data.
-    local file = io.open(string_resultsFilePath, "wb");
+    local file = io.open(string_resultsFilePath, "w");
     file:write(string_binaryData);
     file:close();
 end
 
 --This reads in a binary file from the disk and returns a 'gameResults_object'.
 KTBM_Data_DeserializeGameResultsObject_Binary = function(string_resultsFilePath)
-    local file = io.open(string_resultsFilePath, "rb");
+    local file = io.open(string_resultsFilePath, "r");
     local string_binaryData = file:read("*a");
     file:close();
 
@@ -193,7 +195,7 @@ KTBM_Data_DeserializeGameResultsObject_Binary = function(string_resultsFilePath)
             local string_bytes = string_binaryData:sub(number_pointerPosition, number_pointerPosition + 4);
             number_pointerPosition = number_pointerPosition + 4; --4 bytes for a 32-bit float
 
-            local number_parsedValue = KTBM_Binary_UnpackFloat(string_bytes);
+            local number_parsedValue = KTBM_Binary_UnpackInt32(string_bytes);
 
             gameResults_parsedObject["DistanceTraveled"] = number_parsedValue;
         elseif(number_index == 1) then
@@ -251,11 +253,9 @@ KTBM_Data_SaveGameResults = function(gameResults_object)
     print(" ");
 end
 
-KTBM_Data_GetPreviousGameResults = function()
-    print(" ");
-    print("---GETTING MOST RECENT GAME RESULTS---");
+KTBM_Data_GetAllGameResultFilePaths = function()
+    strings_gameResultFilePaths = {};
 
-    local string_mostRecentFilePath = nil
     local string_fileExtension = ".txt";
 
     if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
@@ -263,24 +263,35 @@ KTBM_Data_GetPreviousGameResults = function()
     end
 
     ---------------------------------------------------
-    --Get the most recently created file in the directory.
+    --Get all files in the directory sorted by creation date
 
-    --local handle = io.popen('dir "'.. string_mainDirectoryName ..'" /b /a-d');
+    --NOTE: This does briefly tab out and back to the game unfortunately.
     local handle = io.popen('dir "'.. string_mainDirectoryName .. '" /b /a-d /o:d'); --sorts files by creation date
     local output = handle:read("*a");
     handle:close();
 
     for file in output:gmatch("[^\r\n]+") do
-        local filePath = string_mainDirectoryName .. '\\' ..file;
+        local string_filePath = string_mainDirectoryName .. '\\' ..file;
 
-        if(string.match(filePath, string_fileExtension)) then
-            string_mostRecentFilePath = filePath;
+        if(string.match(string_filePath, string_fileExtension)) then
+            table.insert(strings_gameResultFilePaths, string_filePath);
         end
     end
+end
 
-    if(string_mostRecentFilePath == nil) then
+KTBM_Data_GetPreviousGameResults = function()
+    print(" ");
+    print("---GETTING MOST RECENT GAME RESULTS---");
+
+    if(strings_gameResultFilePaths == nil) then
         return;
     end
+
+    if(#strings_gameResultFilePaths < 1) then
+        return;
+    end
+    
+    local string_mostRecentFilePath = strings_gameResultFilePaths[1];
 
     ---------------------------------------------------
     --After getting the most recent file, get the data from it.
@@ -308,28 +319,6 @@ end
 KTBM_Data_GetAllGameResults = function()
     print(" ");
     print("---GETTING ALL GAME RESULTS---");
-
-    local strings_gameResultFilePaths = {};
-    local string_fileExtension = ".txt";
-
-    if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
-        string_fileExtension = ".bin";
-    end
-
-    ---------------------------------------------------
-    --Get all files in the directory sorted by creation date
-
-    local handle = io.popen('dir "'.. string_mainDirectoryName .. '" /b /a-d /o:d'); --sorts files by creation date
-    local output = handle:read("*a");
-    handle:close();
-
-    for file in output:gmatch("[^\r\n]+") do
-        local string_filePath = string_mainDirectoryName .. '\\' ..file;
-
-        if(string.match(string_filePath, string_fileExtension)) then
-            table.insert(strings_gameResultFilePaths, string_filePath);
-        end
-    end
 
     if(strings_gameResultFilePaths == nil) then
         return;
@@ -366,27 +355,8 @@ KTBM_Data_GetBestGameResultByStatistic = function(string_variableName)
     print(" ");
     print("---GETTING BEST GAME RESULT---");
 
-    local strings_gameResultFilePaths = {};
-    local string_fileExtension = ".txt";
-
-    if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
-        string_fileExtension = ".bin";
-    end
-
     ---------------------------------------------------
     --Get all files in the directory sorted by creation date
-
-    local handle = io.popen('dir "'.. string_mainDirectoryName .. '" /b /a-d /o:d'); --sorts files by creation date
-    local output = handle:read("*a");
-    handle:close();
-
-    for file in output:gmatch("[^\r\n]+") do
-        local string_filePath = string_mainDirectoryName .. '\\' ..file;
-
-        if(string.match(string_filePath, string_fileExtension)) then
-            table.insert(strings_gameResultFilePaths, string_filePath);
-        end
-    end
 
     if(strings_gameResultFilePaths == nil) then
         return;

@@ -107,6 +107,11 @@ KTBM_Gameplay_Player_CreateGameCamera = function(kScene)
 
     --activate the imap file for the game input
     InputMapperActivate(KTBM_Gameplay_Input_IMAP_File);
+
+    local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", kScene);
+
+    --NOTE: IMPORTANT! Corrects the existing bounds on the object to factor in the scaling operations we are doing
+    KTBM_Bounds_AgentSetCorrectBounds(agent_boat, KTBM_Gameplay_BoatCollisionScaleFactor);
 end
 
 KTBM_Gameplay_PlayerUpdate = function()

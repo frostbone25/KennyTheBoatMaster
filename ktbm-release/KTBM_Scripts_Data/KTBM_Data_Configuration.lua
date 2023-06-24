@@ -26,6 +26,12 @@ local GenerateNewINI_PlayerSettings = function()
             RenderScale = 1.0,
             DisableDOF = false,
             DisableBloom = false
+        },
+        Audio = 
+        {
+            MusicVolume = 1.0,
+            VoiceVolume = 1.0,
+            SoundVolume = 1.0
         }
     };
         

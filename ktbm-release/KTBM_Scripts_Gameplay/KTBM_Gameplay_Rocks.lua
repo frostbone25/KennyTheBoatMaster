@@ -43,7 +43,7 @@ KTBM_Gameplay_RocksUpdate = function()
         KTBM_AgentSetProperty(string_newRockName, "Render Static", false, KTBM_Gameplay_kScene);
 
         --NOTE: IMPORTANT! Corrects the existing bounds on the object to factor in the scaling operations we are doing
-        KTBM_Bounds_AgentSetCorrectBounds(agent_newRock);
+        KTBM_Bounds_AgentSetCorrectBounds(agent_newRock, KTBM_Gameplay_RocksCollisionScaleFactor);
 
         table.insert(KTBM_Gameplay_Rocks_AgentArray, agent_newRock);
 
@@ -68,7 +68,7 @@ KTBM_Gameplay_RocksUpdate = function()
 
         number_newPosition_z = number_newPosition_z - (KTBM_Gameplay_EnvironmentMovementSpeed * number_deltaTime);
 
-        if(number_newPosition_y < 0 + KTBM_Gameplay_EnvironmentHeightOffset) then
+        if(number_newPosition_y < KTBM_Gameplay_RocksEndingHeight + KTBM_Gameplay_EnvironmentHeightOffset) then
             number_newPosition_y = number_newPosition_y + (KTBM_Gameplay_RocksHeightRiseSpeed * number_deltaTime);
         end
 

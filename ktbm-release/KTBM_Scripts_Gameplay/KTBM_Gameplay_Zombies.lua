@@ -79,7 +79,7 @@ KTBM_Gameplay_ZombiesUpdate = function()
 
         number_newPosition_z = number_newPosition_z - (KTBM_Gameplay_EnvironmentMovementSpeed * number_deltaTime);
 
-        if(number_newPosition_y < 0 + KTBM_Gameplay_EnvironmentHeightOffset) then
+        if(number_newPosition_y < KTBM_Gameplay_ZombiesEndingHeight + KTBM_Gameplay_EnvironmentHeightOffset) then
             number_newPosition_y = number_newPosition_y + (KTBM_Gameplay_ZombiesHeightRiseSpeed * number_deltaTime);
         end
 

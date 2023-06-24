@@ -31,20 +31,29 @@ KTBM_Gameplay_EnvironmentHeightOffset = 0;
 --||||||||||||||||||||||||||||||| ENVIORMENT SCROLLING PROPERTIES |||||||||||||||||||||||||||||||
 --These properties are responsible for handling the enviorment scrolling
 
---The speed at which the world will scroll.
+--The default speed at which the world will scroll.
 --This controls the speed for EVERYTHING in the world.
 --(Lower Value = Slower | Higher Value = Faster)
 KTBM_Gameplay_DefaultEnvironmentMovementSpeed = 25;
 
+--The current speed at which the world will scroll.
+--This will change during gameplay, so don't change this value.
 KTBM_Gameplay_EnvironmentMovementSpeed = KTBM_Gameplay_DefaultEnvironmentMovementSpeed;
 
+--How far out left/right the enviorment will be from the player.
 --(Lower Value = Closer | Higher Value = Farther)
 KTBM_Gameplay_EnvironmentHorizontalBoundarySize = 275;
 
+--How far in the distance the enviorment will start at from the player.
+--(Lower Value = Closer | Higher Value = Farther)
 KTBM_Gameplay_EnvironmentDistanceSpawn = 850;
 
+--How close the enviorment will be before the distance is reset from the player.
+--(Lower Value = Closer | Higher Value = Farther)
 KTBM_Gameplay_EnvironmentMinimumDistance = -450;
 
+--The height at which the enviorment spawns in.
+--(Lower Value = More Down | Higher Value = More Up)
 KTBM_Gameplay_EnvironmentSpawnHeight = -2.5;
 
 --||||||||||||||||||||||||||||||| PLAYER BOAT PROPERTIES |||||||||||||||||||||||||||||||
@@ -63,6 +72,14 @@ KTBM_Gameplay_BoatMovementSpeed = 20;
 --Controls the angle at which the boat will take when moving from side to side
 --(Less than 0 = Max Angle In Opposite Direction | 0 = Straight | More than 0 = Max Angle)
 KTBM_Gameplay_BoatMaxRotationAngle = 25;
+
+--NOTE: 13.4112 meters per second (30 miles per hour)
+--NOTE: 22.352 meters per second (50 miles per hour)
+KTBM_Gameplay_DistanceTraveledRate = 13.4112;
+
+--Controls the global scale of the boat collision box
+--(Lower Value = Smaller Collision Box | Higher Value = Larger Collision Box)
+KTBM_Gameplay_BoatCollisionScaleFactor = 0.75;
 
 --||||||||||||||||||||||||||||||| ROCK SPAWNING PROPERTIES |||||||||||||||||||||||||||||||
 --||||||||||||||||||||||||||||||| ROCK SPAWNING PROPERTIES |||||||||||||||||||||||||||||||
@@ -93,9 +110,16 @@ KTBM_Gameplay_RocksMinimumDistance = -20;
 --(Lower Value = Closer To Camera | Higher Value = Farther From Camera)
 KTBM_Gameplay_RocksStartingHeight = -10;
 
+--Controls the height at which the rocks will rest at
+KTBM_Gameplay_RocksEndingHeight = 0.5;
+
 --Controls the speed at which the rocks will rise to
 --(Lower Value = Slower | Higher Value = Faster)
 KTBM_Gameplay_RocksHeightRiseSpeed = 15;
+
+--Controls the global scale of some of the collision boxes
+--(Lower Value = Smaller Collision Boxes | Higher Value = Larger Collision Boxes)
+KTBM_Gameplay_RocksCollisionScaleFactor = 0.5;
 
 --||||||||||||||||||||||||||||||| ZOMBIE SPAWNING PROPERTIES |||||||||||||||||||||||||||||||
 --||||||||||||||||||||||||||||||| ZOMBIE SPAWNING PROPERTIES |||||||||||||||||||||||||||||||
@@ -104,7 +128,7 @@ KTBM_Gameplay_RocksHeightRiseSpeed = 15;
 
 --Controls how far out from side to side can we spawn the zombies
 --(Lower Value = Smaller | Higher Value = Bigger)
-KTBM_Gameplay_ZombiesHorizontalBoundarySize = 25;
+KTBM_Gameplay_ZombiesHorizontalBoundarySize = 22;
 
 --Controls the interval rate of when zombies are spawned
 --(Lower Value = Faster | Higher Value = Slower)
@@ -123,8 +147,10 @@ KTBM_Gameplay_ZombiesMinimumDistance = -20;
 --(As opposed to just popping them magically in the distance)
 
 --Controls the height at which the zombies spawn at.
---(Lower Value = Closer To Camera | Higher Value = Farther From Camera)
 KTBM_Gameplay_ZombiesStartingHeight = -10;
+
+--Controls the height at which the zombies will rest at
+KTBM_Gameplay_ZombiesEndingHeight = -0.75;
 
 --Controls the speed at which the zombies will rise to
 --(Lower Value = Slower | Higher Value = Faster)

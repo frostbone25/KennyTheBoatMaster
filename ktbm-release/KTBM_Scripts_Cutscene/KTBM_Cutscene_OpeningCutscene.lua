@@ -75,8 +75,7 @@ KTBM_Cutscene_OpeningCutscene_Update = function()
     KTBM_Cutscene_Skip_Update();
 
     if(KTBM_Cutscene_Skip_Skipped == true) then
-        --OverlayShow("ui_loadingScreen.overlay", true);
-        --dofile("KTBM_Level_Game.lua");
+        OverlayShow("ui_loadingScreen.overlay", true);
         SubProject_Switch("Menu", "KTBM_Level_Game.lua");
 
         return;
@@ -94,8 +93,7 @@ KTBM_Cutscene_OpeningCutscene_Update = function()
 
     if(number_currentGameTime > number_sceneStartTime + 6.0) then
         if(bool_trigger_loadGame == false) then
-            --OverlayShow("ui_loadingScreen.overlay", true);
-            --dofile("KTBM_Level_Game.lua");
+            OverlayShow("ui_loadingScreen.overlay", true);
             SubProject_Switch("Menu", "KTBM_Level_Game.lua");
 
             bool_trigger_loadGame = true;

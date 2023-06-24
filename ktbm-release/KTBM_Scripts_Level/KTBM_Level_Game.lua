@@ -63,7 +63,8 @@ KTBM_Gameplay_GameLoopStart = function()
     KTBM_Gameplay_Stats_StartTime = GetTotalTime();
 end
 
-local bool_triggerOnce = false;
+local bool_triggerOnce_ingameDeath = false;
+local bool_triggerOnce_gameDataSave = false;
 
 KTBM_Gameplay_GameLoopUpdate = function()
     KTBM_Gameplay_PlayerInputUpdate();
@@ -104,20 +105,30 @@ KTBM_Gameplay_GameLoopUpdate = function()
 
     --keep tracking these stats until we crash
     if(KTBM_Gameplay_State_HasCrashed == false) then
-        KTBM_Gameplay_Stats_DistanceTraveled = KTBM_Gameplay_Stats_DistanceTraveled + (KTBM_Gameplay_EnvironmentMovementSpeed * GetFrameTime());
+        KTBM_Gameplay_Stats_DistanceTraveled = KTBM_Gameplay_Stats_DistanceTraveled + (KTBM_Gameplay_DistanceTraveledRate * GetFrameTime());
 
         KTBM_Gameplay_Stats_EndTime = GetTotalTime();
         KTBM_Gameplay_Stats_TotalTime = KTBM_Gameplay_Stats_EndTime - KTBM_Gameplay_Stats_StartTime;
     else
-        if(bool_triggerOnce == false) then
+        --WE CRASHED! Play the ingame death sequence.
+        if(bool_triggerOnce_ingameDeath == false) then
             KTBM_Cutscene_Game_End(kScene);
             KTBM_Cutscene_GameDeath_Start(kScene);
             KTBM_LevelRelight_M101_FlagshipExteriorDeck_MakeGameWaterStatic(kScene);
 
+            bool_triggerOnce_ingameDeath = true;
+        end
+
+        --When the cutscene is skipped (or it finishes) save the game before we load into the next level.
+        if(KTBM_Cutscene_Skip_CutsceneFinished == true) and (bool_triggerOnce_gameDataSave == false) then
+            OverlayShow("ui_loadingScreen.overlay", true);
+
             local gameResults_object = KTBM_Data_BuildGameResultsObject(KTBM_Gameplay_Stats_DistanceTraveled, KTBM_Gameplay_Stats_ZombiesKilled, KTBM_Gameplay_Stats_TotalTime);
             KTBM_Data_SaveGameResults(gameResults_object);
 
-            bool_triggerOnce = true;
+            SubProject_Switch("Menu", "KTBM_Level_DeathResults.lua");
+
+            bool_triggerOnce_gameDataSave = true;
         end
     end
 end

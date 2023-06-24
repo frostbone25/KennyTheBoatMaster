@@ -11,6 +11,45 @@ local gameResults_object = nil;
 local gameResultsObject_mostDistance = nil;
 local gameResultsObject_mostKills = nil;
 
+local controller_sound_uiClick = nil;
+local controller_sound_uiRollover = nil;
+local string_previousRolloverItem = "";
+local string_currentRolloverItem = "";
+local bool_cancelRolloverSound = false;
+
+local PlayClickSound = function()
+    if(controller_sound_uiClick ~= nil) then
+        ControllerKill(controller_sound_uiClick);
+    end
+
+    controller_sound_uiClick = SoundPlay("ui_misc_items_6.wav");
+    --controller_sound_uiClick = SoundPlay("ui_click_4.wav");
+
+    ControllerSetSoundVolume(controller_sound_uiClick, 1);
+end
+
+local PlayRolloverSound = function()
+    if not (string_previousRolloverItem == string_currentRolloverItem) then
+        string_previousRolloverItem = string_currentRolloverItem;
+        bool_cancelRolloverSound = false;
+    end
+
+    if(bool_cancelRolloverSound == false) then
+        if(controller_sound_uiRollover ~= nil) then
+            ControllerKill(controller_sound_uiRollover);
+        end
+
+        controller_sound_uiRollover = SoundPlay("ui_magnets_6.wav");
+        --controller_sound_uiRollover = SoundPlay("ui_magnets_5.wav");
+        --controller_sound_uiRollover = SoundPlay("ui_magnets_4.wav");
+        --controller_sound_uiRollover = SoundPlay("ui_click_1.wav");
+
+        ControllerSetSoundVolume(controller_sound_uiRollover, 1);
+
+        bool_cancelRolloverSound = true;
+    end
+end
+
 KTBM_UI_PrepareDeathResultsUI = function()
     --create our main menu text
     agent_deathTextTitle = KTBM_TextUI_CreateTextAgent("agent_deathTextTitle", "You Died!", Vector(0, 0, 0), 0, 0);
@@ -40,6 +79,7 @@ KTBM_UI_PrepareDeathResultsUI = function()
     TextSetColor(agent_returnToDefinitiveMenuText, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_quitToDesktopText, Color(1.0, 1.0, 1.0, 1.0));
 
+    KTBM_Data_GetAllGameResultFilePaths();
     gameResults_object = KTBM_Data_GetPreviousGameResults();
     gameResultsObject_mostDistance = KTBM_Data_GetBestGameResultByStatistic("DistanceTraveled");
     gameResultsObject_mostKills = KTBM_Data_GetBestGameResultByStatistic("ZombiesKilled");
@@ -47,6 +87,7 @@ end
 
 KTBM_UI_UpdateDeathResultsUI = function()  
     KTBM_UI_Input_IMAP_Update();
+    PlayRolloverSound();
 
     local string_scoreboardText = "";
 
@@ -90,6 +131,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
     if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_retryText)) then
         if (KTBM_UI_Input_Clicked == true) then
             TextSetColor(agent_retryText, pressedColor);
+            PlayClickSound();
 
             --OverlayShow("ui_loadingScreen.overlay", true);
             --dofile("KTBM_Level_Game.lua");
@@ -99,6 +141,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
             KTBM_UI_Input_Clicked = false;
         else
             TextSetColor(agent_retryText, rolloverColor);
+            string_currentRolloverItem = "page0_retry";
         end
     else
         TextSetColor(agent_retryText, defaultColor);
@@ -108,6 +151,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
     if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_returnToMenuText)) then
         if (KTBM_UI_Input_Clicked == true) then
             TextSetColor(agent_returnToMenuText, pressedColor);
+            PlayClickSound();
 
             --OverlayShow("ui_loadingScreen.overlay", true);
             --dofile("KTBM_Level_Menu.lua");
@@ -116,6 +160,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
             KTBM_UI_Input_Clicked = false;
         else
             TextSetColor(agent_returnToMenuText, rolloverColor);
+            string_currentRolloverItem = "page0_returnToMenu";
         end
     else
         TextSetColor(agent_returnToMenuText, defaultColor);
@@ -125,6 +170,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
     if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_returnToDefinitiveMenuText)) then
         if (KTBM_UI_Input_Clicked == true) then
             TextSetColor(agent_returnToDefinitiveMenuText, pressedColor);
+            PlayClickSound();
 
             RenderDelay(1);
             dofile("Menu_KTBM_QuitToDE.lua");
@@ -132,6 +178,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
             KTBM_UI_Input_Clicked = false;
         else
             TextSetColor(agent_returnToDefinitiveMenuText, rolloverColor);
+            string_currentRolloverItem = "page0_returnToDE";
         end
     else
         TextSetColor(agent_returnToDefinitiveMenuText, defaultColor);
@@ -141,12 +188,14 @@ KTBM_UI_UpdateDeathResultsUI = function()
     if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_quitToDesktopText)) then
         if (KTBM_UI_Input_Clicked == true) then
             TextSetColor(agent_quitToDesktopText, pressedColor);
+            PlayClickSound();
 
             EngineQuit();
 
             KTBM_UI_Input_Clicked = false;
         else
             TextSetColor(agent_quitToDesktopText, rolloverColor);
+            string_currentRolloverItem = "page0_quit";
         end
     else
         TextSetColor(agent_quitToDesktopText, defaultColor);

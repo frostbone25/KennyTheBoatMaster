@@ -6,8 +6,7 @@ require("KTBM_UI_Input.lua");
 
 local string_currentPage = "main";
 
-local agent_menuTitle1 = nil;
-local agent_menuTitle2 = nil;
+local agent_mainTitleGraphic = nil;
 local agent_page0_play = nil;
 local agent_page0_costumes = nil;
 local agent_page0_scoreboard = nil;
@@ -21,7 +20,6 @@ local agent_pageCostumes_goBack = nil;
 local agent_pageCostumes_kenny101 = nil;
 local agent_pageCostumes_kenny102 = nil;
 local agent_pageCostumes_kenny103 = nil;
-local agent_pageCostumes_kenny103Backpack = nil;
 local agent_pageCostumes_kenny202 = nil;
 
 local agent_pageHelp_goBack = nil;
@@ -42,6 +40,45 @@ local gameResultsDataArray = nil;
 local gameResultsObject_mostDistance = nil;
 local gameResultsObject_mostKills = nil;
 
+local controller_sound_uiClick = nil;
+local controller_sound_uiRollover = nil;
+local string_previousRolloverItem = "";
+local string_currentRolloverItem = "";
+local bool_cancelRolloverSound = false;
+
+local PlayClickSound = function()
+    if(controller_sound_uiClick ~= nil) then
+        ControllerKill(controller_sound_uiClick);
+    end
+
+    controller_sound_uiClick = SoundPlay("ui_misc_items_6.wav");
+    --controller_sound_uiClick = SoundPlay("ui_click_4.wav");
+
+    ControllerSetSoundVolume(controller_sound_uiClick, 1);
+end
+
+local PlayRolloverSound = function()
+    if not (string_previousRolloverItem == string_currentRolloverItem) then
+        string_previousRolloverItem = string_currentRolloverItem;
+        bool_cancelRolloverSound = false;
+    end
+
+    if(bool_cancelRolloverSound == false) then
+        if(controller_sound_uiRollover ~= nil) then
+            ControllerKill(controller_sound_uiRollover);
+        end
+
+        controller_sound_uiRollover = SoundPlay("ui_magnets_6.wav");
+        --controller_sound_uiRollover = SoundPlay("ui_magnets_5.wav");
+        --controller_sound_uiRollover = SoundPlay("ui_magnets_4.wav");
+        --controller_sound_uiRollover = SoundPlay("ui_click_1.wav");
+
+        ControllerSetSoundVolume(controller_sound_uiRollover, 1);
+
+        bool_cancelRolloverSound = true;
+    end
+end
+
 local SetMenuTitleProperties = function(agentName)
     KTBM_AgentSetProperty(agentName, "Text Extrude X", 5, kScene);
     KTBM_AgentSetProperty(agentName, "Text Extrude Y", 5, kScene);
@@ -59,27 +96,40 @@ local GetCreditsText = function()
 
     string_credits = string_credits .. "\n"; --new line
 
+    --Crediting myself... because I'm me.
     string_credits = string_credits .. "[Creator]";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "David Matos";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "\n"; --new line
 
+    --Thanks frank for the graphics!
     string_credits = string_credits .. "[Graphic Artists]";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "FrankDP1";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "\n"; --new line
 
+    --Special thanks to many of these peeps!
+    --Most of which who have assisted through playtesting/suggestions/problem solving.
+    --And others have been absolutely instrumental in the development of the project ( and modding in general, you know who you are :P ).
     string_credits = string_credits .. "[Special Thanks]";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "Mawrak";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "Denymeister";
     string_credits = string_credits .. "\n"; --new line
-    string_credits = string_credits .. "Violet";
+    string_credits = string_credits .. "Aizzble";
     string_credits = string_credits .. "\n"; --new line
-    string_credits = string_credits .. "Telltale Games & Skybound";
+    string_credits = string_credits .. "Klauner";
+    string_credits = string_credits .. "\n"; --new line
+    string_credits = string_credits .. "Kasumiruuu";
+    string_credits = string_credits .. "\n"; --new line
+    string_credits = string_credits .. "Pi";
+    string_credits = string_credits .. "\n"; --new line
+    string_credits = string_credits .. "StevieRival";
+    string_credits = string_credits .. "\n"; --new line
+    string_credits = string_credits .. "Violet (droyti)";
     string_credits = string_credits .. "\n"; --new line
 
     return string_credits;
@@ -118,6 +168,7 @@ KTBM_UI_MainMenu_Start = function()
     CursorHide(false);
     CursorEnable(true);
 
+    KTBM_Data_GetAllGameResultFilePaths();
     gameResultsDataArray = KTBM_Data_GetAllGameResults();
 
     if(gameResultsDataArray ~= nil) then
@@ -130,9 +181,21 @@ KTBM_UI_MainMenu_Start = function()
 end
 
 KTBM_UI_PrepareMainMenuText = function()
+    --ui_boot_logoTTG.prop
+    --ui_boot_title.prop
+    --ui_boot_titleBackground.prop
+    --AgentSetWorldPosFromLogicalScreenPos(agent_pageHelp_goBack, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
+    ResourceSetEnable("Boot");
+    agent_mainTitleGraphic = AgentCreate("testing1", "ui_boot_title.prop", Vector(0, 1, 0), Vector(0, 0, 0), KTBM_Gameplay_kScene, false, false);
+    KTBM_PropertySet(agent_mainTitleGraphic, "Render Axis Scale", Vector(1.7777777778, 1.0, 1.0));
+    KTBM_PropertySet(agent_mainTitleGraphic, "Render Global Scale", 0.0375);
+    KTBM_PropertySet(agent_mainTitleGraphic, "Render After Anti-Aliasing", true);
+    KTBM_PropertySet(agent_mainTitleGraphic, "Render Depth Test", false);
+    KTBM_PropertySet(agent_mainTitleGraphic, "Render Depth Write", false);
+    KTBM_PropertySet(agent_mainTitleGraphic, "Render Depth Write Alpha", false);
+    ShaderSwapTexture(agent_mainTitleGraphic, "ui_boot_title.d3dtx", "KTBM_Texture_TitleGraphic.d3dtx");
+
     --create our main menu text
-    agent_menuTitle1 = KTBM_TextUI_CreateTextAgent("MenuTitle1", "KENNY", Vector(0, 0, 0), 0, 0);
-    agent_menuTitle2 = KTBM_TextUI_CreateTextAgent("MenuTitle2", "THE BOATMASTER", Vector(0, 0, 0), 0, 0);
     agent_page0_play = KTBM_TextUI_CreateTextAgent("Page0_Play", "Play", Vector(0, 0, 0), 0, 0);
     agent_page0_costumes = KTBM_TextUI_CreateTextAgent("Page0_Costumes", "Costumes", Vector(0, 0, 0), 0, 0);
     agent_page0_scoreboard = KTBM_TextUI_CreateTextAgent("Page0_Scoreboard", "Scoreboard", Vector(0, 0, 0), 0, 0);
@@ -146,8 +209,6 @@ KTBM_UI_PrepareMainMenuText = function()
     --1.0 = default
     --0.5 = half
     --2.0 = double
-    TextSetScale(agent_menuTitle1, 4.25);
-    TextSetScale(agent_menuTitle2, 1.5);
     TextSetScale(agent_page0_play, 1.0);
     TextSetScale(agent_page0_costumes, 1.0);
     TextSetScale(agent_page0_scoreboard, 1.0);
@@ -159,8 +220,7 @@ KTBM_UI_PrepareMainMenuText = function()
 
     --color note
     --text colors are additive on the scene
-    TextSetColor(agent_menuTitle1, Color(1.0, 1.0, 1.0, 1.0));
-    TextSetColor(agent_menuTitle2, Color(1.0, 0.0, 0.0, 1.0));
+
     TextSetColor(agent_page0_play, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_page0_costumes, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_page0_scoreboard, Color(1.0, 1.0, 1.0, 1.0));
@@ -171,8 +231,7 @@ KTBM_UI_PrepareMainMenuText = function()
     TextSetColor(agent_page0_quit, Color(1.0, 1.0, 1.0, 1.0));
 
     --set properties on menu texts
-    SetMenuTitleProperties("MenuTitle1");
-    SetMenuTitleProperties("MenuTitle2");
+
     SetMenuOptionProperties("Page0_Play");
     SetMenuOptionProperties("Page0_Costumes");
     SetMenuOptionProperties("Page0_Scoreboard");
@@ -188,8 +247,7 @@ KTBM_UI_PrepareMainMenuText = function()
     --0.0 1.0 0.0 = bottom left
     local menuOffsetX = 0.0;
     local menuOffsetY = 0.1;
-    AgentSetWorldPosFromLogicalScreenPos(agent_menuTitle1, Vector(0.1 + menuOffsetX, 0.1 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_menuTitle2, Vector(0.105 + menuOffsetX, 0.2 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_mainTitleGraphic, Vector(0.28, 0.265, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_play, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_costumes, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_scoreboard, Vector(0.105 + menuOffsetX, 0.4 + menuOffsetY, 0.0));
@@ -206,7 +264,6 @@ KTBM_UI_PrepareCostumeMenuText = function()
     agent_pageCostumes_kenny101 = KTBM_TextUI_CreateTextAgent("PageCostumes_101", "101 Outfit", Vector(0, 0, 0), 0, 0);
     agent_pageCostumes_kenny102 = KTBM_TextUI_CreateTextAgent("PageCostumes_102", "102 Outfit", Vector(0, 0, 0), 0, 0);
     agent_pageCostumes_kenny103 = KTBM_TextUI_CreateTextAgent("PageCostumes_103", "103 Outfit", Vector(0, 0, 0), 0, 0);
-    agent_pageCostumes_kenny103Backpack = KTBM_TextUI_CreateTextAgent("PageCostumes_103Pack", "103 Backpack Outfit", Vector(0, 0, 0), 0, 0);
     agent_pageCostumes_kenny202 = KTBM_TextUI_CreateTextAgent("PageCostumes_202", "202 Outfit", Vector(0, 0, 0), 0, 0);
 
     --scale note
@@ -217,7 +274,6 @@ KTBM_UI_PrepareCostumeMenuText = function()
     TextSetScale(agent_pageCostumes_kenny101, 1.0);
     TextSetScale(agent_pageCostumes_kenny102, 1.0);
     TextSetScale(agent_pageCostumes_kenny103, 1.0);
-    TextSetScale(agent_pageCostumes_kenny103Backpack, 1.0);
     TextSetScale(agent_pageCostumes_kenny202, 1.0);
 
     --color note
@@ -226,7 +282,6 @@ KTBM_UI_PrepareCostumeMenuText = function()
     TextSetColor(agent_pageCostumes_kenny101, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageCostumes_kenny102, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageCostumes_kenny103, Color(1.0, 1.0, 1.0, 1.0));
-    TextSetColor(agent_pageCostumes_kenny103Backpack, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageCostumes_kenny202, Color(1.0, 1.0, 1.0, 1.0));
     
     --set properties on menu texts
@@ -234,7 +289,6 @@ KTBM_UI_PrepareCostumeMenuText = function()
     SetMenuOptionProperties("PageCostumes_101");
     SetMenuOptionProperties("PageCostumes_102");
     SetMenuOptionProperties("PageCostumes_103");
-    SetMenuOptionProperties("PageCostumes_103Pack");
     SetMenuOptionProperties("PageCostumes_202");
     
     --screen pos notes
@@ -247,8 +301,7 @@ KTBM_UI_PrepareCostumeMenuText = function()
     AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumes_kenny101, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumes_kenny102, Vector(0.105 + menuOffsetX, 0.4 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumes_kenny103, Vector(0.105 + menuOffsetX, 0.45 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumes_kenny103Backpack, Vector(0.105 + menuOffsetX, 0.5 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumes_kenny202, Vector(0.105 + menuOffsetX, 0.55 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumes_kenny202, Vector(0.105 + menuOffsetX, 0.5 + menuOffsetY, 0.0));
 end
 
 KTBM_UI_PrepareCreditsMenuText = function()
@@ -354,6 +407,7 @@ KTBM_UI_PrepareScoreboardMenuText = function()
     local menuOffsetY = 0.1;
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_goBack, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_main, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
+
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_leftArrow, Vector(0.105 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_pageNumber, Vector(0.25 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_rightArrow, Vector(0.35 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
@@ -361,6 +415,8 @@ end
 
 KTBM_UI_Update = function()  
     KTBM_UI_Input_IMAP_Update();
+
+    PlayRolloverSound();
 
     local defaultColor = Color(1.0, 1.0, 1.0, 1.0);
     local rolloverColor = Color(0.25, 0.25, 0.25, 1.0);
@@ -389,7 +445,6 @@ KTBM_UI_Update = function()
     KTBM_PropertySet(agent_pageCostumes_kenny101, "Runtime: Visible", bool_onCostumePage);
     KTBM_PropertySet(agent_pageCostumes_kenny102, "Runtime: Visible", bool_onCostumePage);
     KTBM_PropertySet(agent_pageCostumes_kenny103, "Runtime: Visible", bool_onCostumePage);
-    KTBM_PropertySet(agent_pageCostumes_kenny103Backpack, "Runtime: Visible", bool_onCostumePage);
     KTBM_PropertySet(agent_pageCostumes_kenny202, "Runtime: Visible", bool_onCostumePage);
 
     KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", bool_onHelpPage);
@@ -414,15 +469,18 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_play)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_play, pressedColor);
+                PlayClickSound();
             
                 --OverlayShow("ui_loadingScreen.overlay", true);
                 --dofile("KTBM_Level_Game.lua");
                 --SubProject_Switch("Menu", "KTBM_Level_Game.lua");
                 SubProject_Switch("Menu", "KTBM_Level_OpeningCutscene.lua");
 
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_play, rolloverColor);
+                string_currentRolloverItem = "page0_play";
             end
         else
             TextSetColor(agent_page0_play, defaultColor);
@@ -432,12 +490,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_costumes)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_costumes, pressedColor);
+                PlayClickSound();
 
                 string_currentPage = "costumes";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_costumes, rolloverColor);
+                string_currentRolloverItem = "page0_costumes";
             end
         else
             TextSetColor(agent_page0_costumes, defaultColor);
@@ -447,12 +507,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_scoreboard)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_scoreboard, pressedColor);
+                PlayClickSound();
 
                 string_currentPage = "scoreboard";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_scoreboard, rolloverColor);
+                string_currentRolloverItem = "page0_scoreboard";
             end
         else
             TextSetColor(agent_page0_scoreboard, defaultColor);
@@ -462,9 +524,12 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_options)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_options, pressedColor);
+                PlayClickSound();
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_options, rolloverColor);
+                string_currentRolloverItem = "page0_options";
             end
         else
             TextSetColor(agent_page0_options, defaultColor);
@@ -474,12 +539,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_help)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_help, pressedColor);
+                PlayClickSound();
 
                 string_currentPage = "help";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_help, rolloverColor);
+                string_currentRolloverItem = "page0_help";
             end
         else
             TextSetColor(agent_page0_help, defaultColor);
@@ -489,12 +556,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_credits)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_credits, pressedColor);
+                PlayClickSound();
 
                 string_currentPage = "credits";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_credits, rolloverColor);
+                string_currentRolloverItem = "page0_credits";
             end
         else
             TextSetColor(agent_page0_credits, defaultColor);
@@ -504,12 +573,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_returnToDE)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_returnToDE, pressedColor);
+                PlayClickSound();
             
                 dofile("Menu_KTBM_QuitToDE.lua");
                 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_returnToDE, rolloverColor);
+                string_currentRolloverItem = "page0_returnToDE";
             end
         else
             TextSetColor(agent_page0_returnToDE, defaultColor);
@@ -519,11 +590,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_page0_quit)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_quit, pressedColor);
+                PlayClickSound();
 
                 EngineQuit();
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_page0_quit, rolloverColor);
+                string_currentRolloverItem = "page0_quit";
             end
         else
             TextSetColor(agent_page0_quit, defaultColor);
@@ -540,12 +614,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumes_goBack)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageCostumes_goBack, pressedColor);
+                PlayClickSound();
             
                 string_currentPage = "main";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCostumes_goBack, rolloverColor);
+                string_currentRolloverItem = "pageCostume_goBack";
             end
         else
             TextSetColor(agent_pageCostumes_goBack, defaultColor);
@@ -555,11 +631,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumes_kenny101)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageCostumes_kenny101, pressedColor);
+                PlayClickSound();
 
                 KTBM_Costumes_Kenny_SetCostume_To101(KTBM_Cutscene_Menu_kScene);
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCostumes_kenny101, rolloverColor);
+                string_currentRolloverItem = "pageCostume_101";
             end
         else
             TextSetColor(agent_pageCostumes_kenny101, defaultColor);
@@ -569,11 +648,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumes_kenny102)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageCostumes_kenny102, pressedColor);
+                PlayClickSound();
 
                 KTBM_Costumes_Kenny_SetCostume_To102(KTBM_Cutscene_Menu_kScene);
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCostumes_kenny102, rolloverColor);
+                string_currentRolloverItem = "pageCostume_102";
             end
         else
             TextSetColor(agent_pageCostumes_kenny102, defaultColor);
@@ -583,39 +665,31 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumes_kenny103)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageCostumes_kenny103, pressedColor);
+                PlayClickSound();
 
                 KTBM_Costumes_Kenny_SetCostume_To103(KTBM_Cutscene_Menu_kScene);
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCostumes_kenny103, rolloverColor);
+                string_currentRolloverItem = "pageCostume_103";
             end
         else
             TextSetColor(agent_pageCostumes_kenny103, defaultColor);
         end
 
-        --option 5 (103 pack costume)
-        if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumes_kenny103Backpack)) then
-            if (KTBM_UI_Input_Clicked == true) then
-                TextSetColor(agent_pageCostumes_kenny103Backpack, pressedColor);
-
-                KTBM_Costumes_Kenny_SetCostume_To103Pack(KTBM_Cutscene_Menu_kScene);
-                KTBM_UI_Input_Clicked = false;
-            else
-                TextSetColor(agent_pageCostumes_kenny103Backpack, rolloverColor);
-            end
-        else
-            TextSetColor(agent_pageCostumes_kenny103Backpack, defaultColor);
-        end
-
-        --option 6 (202 costume)
+        --option 5 (202 costume)
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumes_kenny202)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageCostumes_kenny202, pressedColor);
+                PlayClickSound();
 
                 KTBM_Costumes_Kenny_SetCostume_To202(KTBM_Cutscene_Menu_kScene);
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCostumes_kenny202, rolloverColor);
+                string_currentRolloverItem = "pageCostume_202";
             end
         else
             TextSetColor(agent_pageCostumes_kenny202, defaultColor);
@@ -633,12 +707,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageHelp_goBack)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageHelp_goBack, pressedColor);
+                PlayClickSound();
             
                 string_currentPage = "main";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageHelp_goBack, rolloverColor);
+                string_currentRolloverItem = "pageHelp_goBack";
             end
         else
             TextSetColor(agent_pageHelp_goBack, defaultColor);
@@ -656,12 +732,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCredits_goBack)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageCredits_goBack, pressedColor);
+                PlayClickSound();
             
                 string_currentPage = "main";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCredits_goBack, rolloverColor);
+                string_currentRolloverItem = "pageCredits_goBack";
             end
         else
             TextSetColor(agent_pageCredits_goBack, defaultColor);
@@ -692,12 +770,12 @@ KTBM_UI_Update = function()
             string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject);
             string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
 
-            string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST DISTANCE]-------";
+            string_scoreboardMainText = string_scoreboardMainText .. "[BEST DISTANCE]";
             string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
             string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostDistance);
             string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
 
-            string_scoreboardMainText = string_scoreboardMainText .. "-------[BEST ZOMBIES KILLED]-------";
+            string_scoreboardMainText = string_scoreboardMainText .. "[BEST ZOMBIES KILLED]";
             string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
             string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostKills);
             string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
@@ -710,12 +788,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageScoreboard_goBack)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageScoreboard_goBack, pressedColor);
+                PlayClickSound();
             
                 string_currentPage = "main";
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageScoreboard_goBack, rolloverColor);
+                string_currentRolloverItem = "pageScoreboard_goBack";
             end
         else
             TextSetColor(agent_pageScoreboard_goBack, defaultColor);
@@ -725,12 +805,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageScoreboard_leftArrow)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageScoreboard_leftArrow, pressedColor);
+                PlayClickSound();
 
                 number_gameResultsIndex = number_gameResultsIndex - 1;
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageScoreboard_leftArrow, rolloverColor);
+                string_currentRolloverItem = "pageScoreboard_previous";
             end
         else
             TextSetColor(agent_pageScoreboard_leftArrow, defaultColor);
@@ -740,12 +822,14 @@ KTBM_UI_Update = function()
         if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageScoreboard_rightArrow)) then
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_pageScoreboard_rightArrow, pressedColor);
+                PlayClickSound();
 
                 number_gameResultsIndex = number_gameResultsIndex + 1;
 
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageScoreboard_rightArrow, rolloverColor);
+                string_currentRolloverItem = "pageScoreboard_next";
             end
         else
             TextSetColor(agent_pageScoreboard_rightArrow, defaultColor);
