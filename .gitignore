@@ -10,3 +10,7 @@ art/
 ktbm-release/[Bb]uilds
 [Bb]uild/
 [Bb]uilds/
+
+#some tests that shouldn't be included
+test/
+tests/
