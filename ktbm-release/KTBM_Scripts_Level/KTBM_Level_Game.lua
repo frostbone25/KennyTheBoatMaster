@@ -78,7 +78,7 @@ KTBM_Gameplay_GameLoopUpdate = function()
     KTBM_UI_GameUpdate();
     KTBM_UI_Pause_Update();
 
-    if(KTBM_Gameplay_State_Paused == true) then
+    if(KTBM_Gameplay_State_Paused == true) and (KTBM_Gameplay_State_HasCrashed == false) then
         SceneSetTimeScale(KTBM_Gameplay_kScene, 0);
         KTBM_Gameplay_EnvironmentMovementSpeed = 0;
         return;

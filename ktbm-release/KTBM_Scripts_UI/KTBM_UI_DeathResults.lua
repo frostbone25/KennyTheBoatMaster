@@ -91,23 +91,33 @@ KTBM_UI_UpdateDeathResultsUI = function()
 
     local string_scoreboardText = "";
 
-    string_scoreboardText = "[Game Results]";
-    string_scoreboardText = string_scoreboardText .. "\n"; --new line
-
     if(gameResults_object ~= nil) then
         string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResults_object);
         string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    else
+        string_scoreboardText = string_scoreboardText .. "ERROR! Most recent game results data was not saved!";
+        string_scoreboardText = string_scoreboardText .. "\n"; --new line
     end
 
-    string_scoreboardText = string_scoreboardText .. "-------[BEST DISTANCE]-------";
     string_scoreboardText = string_scoreboardText .. "\n"; --new line
-    string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResultsObject_mostDistance);
+    string_scoreboardText = string_scoreboardText .. "[Best Statistics]";
     string_scoreboardText = string_scoreboardText .. "\n"; --new line
 
-    string_scoreboardText = string_scoreboardText .. "-------[MOST ZOMBIES KILLED]-------";
-    string_scoreboardText = string_scoreboardText .. "\n"; --new line
-    string_scoreboardText = string_scoreboardText .. KTBM_Data_GameResultsObjectDataToString(gameResultsObject_mostKills);
-    string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    if(gameResultsObject_mostDistance ~= nil) then
+        string_scoreboardText = string_scoreboardText .. "Best Distance: " .. tostring(KTBM_Data_GameResultsObject_GetDistanceTraveled(gameResultsObject_mostDistance));
+        string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    else
+        string_scoreboardText = string_scoreboardText .. "ERROR! Wasn't able to load the run with the best distance.";
+        string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    end
+
+    if(gameResultsObject_mostKills ~= nil) then
+        string_scoreboardText = string_scoreboardText .. "Most Zombies Killed: " .. tostring(KTBM_Data_GameResultsObject_GetZombiesKilled(gameResultsObject_mostDistance));
+        string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    else
+        string_scoreboardText = string_scoreboardText .. "ERROR! Wasn't able to load the run with the best distance.";
+        string_scoreboardText = string_scoreboardText .. "\n"; --new line
+    end
 
     TextSet(agent_deathTextScoreboard, string_scoreboardText);
 

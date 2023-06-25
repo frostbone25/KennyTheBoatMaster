@@ -265,6 +265,8 @@ KTBM_Cutscene_DeathResults_Update = function()
 
             return;
         end
+
+        return;
     end
 
     ----------------------------------------------------------

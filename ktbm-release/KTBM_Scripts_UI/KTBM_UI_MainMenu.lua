@@ -40,6 +40,7 @@ local agent_pageScoreboard_pageNumber = nil;
 local agent_pageScoreboard_rightArrow = nil;
 
 local number_gameResultsDataArraySize = 0;
+local number_gameResultsPages = 0;
 local number_gameResultsIndex = 1;
 local gameResultsDataArray = nil;
 local gameResultsObject_mostDistance = nil;
@@ -191,6 +192,9 @@ KTBM_UI_MainMenu_Start = function()
         number_gameResultsDataArraySize = KTBM_GetTableSize(gameResultsDataArray);
         gameResultsObject_mostDistance = KTBM_Data_GetBestGameResultByStatistic("DistanceTraveled");
         gameResultsObject_mostKills = KTBM_Data_GetBestGameResultByStatistic("ZombiesKilled");
+
+        number_gameResultsPages = number_gameResultsDataArraySize / 3;
+        number_gameResultsPages = KTBM_NumberRound(number_gameResultsPages, 0);
     end
 
     --InputMapperActivate(KTBM_UI_IMAP_File);
@@ -849,31 +853,37 @@ KTBM_UI_Update = function()
             TextSet(agent_pageScoreboard_item2, "");
             TextSet(agent_pageScoreboard_item3, "");
         else
-            number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, number_gameResultsDataArraySize - 1);
-        
-            local string_pageNumberText = "(" .. tostring(number_gameResultsIndex) .. "/" .. tostring(number_gameResultsDataArraySize - 1) .. ")";
+            number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, number_gameResultsPages);
+            
+            local string_pageNumberText = "(" .. tostring(number_gameResultsIndex) .. "/" .. tostring(number_gameResultsPages) .. ")";
 
-            local gameResultsObject_selectedObject = gameResultsDataArray[number_gameResultsIndex];
+            local gameResultsObject_selectedObject1 = gameResultsDataArray[number_gameResultsIndex];
+            local gameResultsObject_selectedObject2 = gameResultsDataArray[number_gameResultsIndex + 1];
+            local gameResultsObject_selectedObject3 = gameResultsDataArray[number_gameResultsIndex + 2];
 
-            local string_scoreboardMainText = "";
+            local string_scoreboardItemText1 = "";
+            local string_scoreboardItemText2 = "";
+            local string_scoreboardItemText3 = "";
 
-            string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject);
-            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            if(gameResultsObject_selectedObject1 ~= nil) then
+                string_scoreboardItemText1 = string_scoreboardItemText1 .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject1);
+                string_scoreboardItemText1 = string_scoreboardItemText1 .. "\n"; --new line
+            end
 
-            string_scoreboardMainText = string_scoreboardMainText .. "[BEST DISTANCE]";
-            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
-            string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostDistance);
-            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            if(gameResultsObject_selectedObject2 ~= nil) then
+                string_scoreboardItemText2 = string_scoreboardItemText2 .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject2);
+                string_scoreboardItemText2 = string_scoreboardItemText2 .. "\n"; --new line
+            end
 
-            string_scoreboardMainText = string_scoreboardMainText .. "[BEST ZOMBIES KILLED]";
-            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
-            string_scoreboardMainText = string_scoreboardMainText .. KTBM_Data_GameResultsObjectToString(gameResultsObject_mostKills);
-            string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
+            if(gameResultsObject_selectedObject3 ~= nil) then
+                string_scoreboardItemText3 = string_scoreboardItemText3 .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject3);
+                string_scoreboardItemText3 = string_scoreboardItemText3 .. "\n"; --new line
+            end
 
             TextSet(agent_pageScoreboard_pageNumber, string_pageNumberText);
-            TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
-            TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
-            TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
+            TextSet(agent_pageScoreboard_item1, string_scoreboardItemText1);
+            TextSet(agent_pageScoreboard_item2, string_scoreboardItemText2);
+            TextSet(agent_pageScoreboard_item3, string_scoreboardItemText3);
         end
 
         --option 1 (go back)

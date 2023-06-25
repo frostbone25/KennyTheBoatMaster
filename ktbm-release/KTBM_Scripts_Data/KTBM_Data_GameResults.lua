@@ -17,15 +17,55 @@ KTBM_Data_BuildGameResultsObject = function(number_distanceTraveled, number_zomb
     return gameResults_object;
 end
 
+KTBM_Data_GameResultsObject_GetFileName = function(gameResults_object)
+    return gameResults_object["FileName"];
+end
+
+KTBM_Data_GameResultsObject_GetDistanceTraveled = function(gameResults_object)
+    return gameResults_object["DistanceTraveled"];
+end
+
+KTBM_Data_GameResultsObject_GetZombiesKilled = function(gameResults_object)
+    return gameResults_object["ZombiesKilled"];
+end
+
+KTBM_Data_GameResultsObject_GetTotalTime = function(gameResults_object)
+    return gameResults_object["TotalTime"];
+end
+
+KTBM_Data_GameResults_GetDateTimeFromFileName = function(string_gameResultFileName)
+    local string_monthNames = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+    local _, _, string_hours, string_minutes, string_seconds, string_month, string_day, string_year = string.find(string_gameResultFileName, "GameResults_(%d+)-(%d+)-(%d+)_(%d+)-(%d+)-(%d+)");
+    local number_month = tonumber(string_month);
+    local number_hours = tonumber(string_hours);
+    local number_formattedHours = number_hours;
+
+    local string_timePeriod = "AM";
+
+    if(number_hours >= 12) then
+        string_timePeriod = "PM";
+        number_formattedHours = number_formattedHours - 12;
+    end
+
+    local string_monthName = string_monthNames[number_month];
+
+    local formattedDate = string_monthName .. " " .. string_day .. ", " .. string_year;
+    local formattedTime = string.format("%02d:%02d:%02d %s", number_formattedHours, string_minutes, string_seconds, string_timePeriod);
+    local string_finalFormattedString = formattedDate .. " at " .. formattedTime;
+
+    return string_finalFormattedString;
+end
+
 KTBM_Data_GameResultsObjectToString = function(gameResults_object)
-    local string_fileName = tostring(gameResults_object["FileName"]);
+    local string_fileName = KTBM_Data_GameResults_GetDateTimeFromFileName(gameResults_object["FileName"]);
     local string_distanceTraveled = tostring(gameResults_object["DistanceTraveled"]);
     local string_zombiesKilled = tostring(gameResults_object["ZombiesKilled"]);
     local string_totalTime = KTBM_TimeSecondsFormatted(gameResults_object["TotalTime"]);
 
     local string_final = "";
 
-    string_final = string_final .. string_fileName;
+    string_final = string_final .. "Date: " .. string_fileName;
     string_final = string_final .. "\n"; --new line
     string_final = string_final .. "Distance Traveled: " .. string_distanceTraveled .. " meters";
     string_final = string_final .. "\n"; --new line
@@ -291,7 +331,11 @@ KTBM_Data_GetPreviousGameResults = function()
         return;
     end
     
-    local string_mostRecentFilePath = strings_gameResultFilePaths[1];
+    local string_mostRecentFilePath = strings_gameResultFilePaths[#strings_gameResultFilePaths];
+
+    if(string_mostRecentFilePath == nil) then
+        return;
+    end
 
     ---------------------------------------------------
     --After getting the most recent file, get the data from it.
