@@ -19,7 +19,7 @@ This project is fully custom and built entirely using Lua scripts which is the n
 
 Listed here are tools that were used to make the project, or were used to help assist in certain parts of it.
 
-### [Telltale Script Editor 3.0.0](https://github.com/Telltale-Modding-Group/Telltale-Script-Editor)
+### [Telltale Script Editor 3.0.0](https://github.com/Telltale-Modding-Group/Telltale-Script-Editor](https://github.com/Mawrak/Telltale-Script-Editor-Tweaks)
 
 This was the primary editor for the project, it's where the main creation, script editing, and building of the project takes place. We make heavy use of the Build and Run feature which deploys the mod to the game and launches it, used in conjunction with the [Load Any Level](https://www.nexusmods.com/thewalkingdeadthetelltaledefinitiveseries/mods/7?tab=description) mod this makes iteration time in development almost instantaneous.
 
