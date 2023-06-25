@@ -6,7 +6,9 @@ require("KTBM_UI_Input.lua");
 
 local string_currentPage = "main";
 
+local agent_mainMenuGroup = nil;
 local agent_mainTitleGraphic = nil;
+local agent_mainTitleOverlayGraphic = nil;
 local agent_page0_play = nil;
 local agent_page0_costumes = nil;
 local agent_page0_scoreboard = nil;
@@ -24,12 +26,15 @@ local agent_pageCostumes_kenny202 = nil;
 
 local agent_pageHelp_goBack = nil;
 local agent_pageHelp_help = nil;
+local agent_pageHelpInputGraphic = nil;
 
 local agent_pageCredits_goBack = nil;
 local agent_pageCredits_credits = nil;
 
 local agent_pageScoreboard_goBack = nil;
-local agent_pageScoreboard_main = nil;
+local agent_pageScoreboard_item1 = nil;
+local agent_pageScoreboard_item2 = nil;
+local agent_pageScoreboard_item3 = nil;
 local agent_pageScoreboard_leftArrow = nil;
 local agent_pageScoreboard_pageNumber = nil;
 local agent_pageScoreboard_rightArrow = nil;
@@ -103,10 +108,12 @@ local GetCreditsText = function()
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "\n"; --new line
 
-    --Thanks frank for the graphics!
+    --Thanks frank and kasumiruuu for the graphics!
     string_credits = string_credits .. "[Graphic Artists]";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "FrankDP1";
+    string_credits = string_credits .. "\n"; --new line
+    string_credits = string_credits .. "Kasumiruuu";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "\n"; --new line
 
@@ -123,8 +130,6 @@ local GetCreditsText = function()
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "Klauner";
     string_credits = string_credits .. "\n"; --new line
-    string_credits = string_credits .. "Kasumiruuu";
-    string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "Pi";
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "StevieRival";
@@ -138,32 +143,43 @@ end
 local GetHelpText = function()
     local string_help = "";
 
-    string_help = string_help .. "\n"; --new line
+    --string_help = string_help .. "\n"; --new line
     
-    string_help = string_help .. "[Keys]";
-    string_help = string_help .. "\n"; --new line
-    string_help = string_help .. "[A] or [Left Arrow] - Steer Left";
-    string_help = string_help .. "\n"; --new line
-    string_help = string_help .. "[D] or [Right Arrow] - Steer Right";
+    --string_help = string_help .. "[What to do]";
+    --string_help = string_help .. "\n"; --new line
+    --string_help = string_help .. "Avoid crashing by steering your boat away";
+    --string_help = string_help .. "\n"; --new line
+    --string_help = string_help .. "from any rocks in the water. Kill as many";
+    --string_help = string_help .. "\n"; --new line
+    --string_help = string_help .. "zombies as you can by running them over";
+    --string_help = string_help .. "\n"; --new line
+    --string_help = string_help .. "with your boat. The longer distance you";
+    --string_help = string_help .. "\n"; --new line
+    --string_help = string_help .. "travel without crashing, the better.";
+    --string_help = string_help .. "\n"; --new line
 
+    string_help = string_help .. "[What to do]";
     string_help = string_help .. "\n"; --new line
+    string_help = string_help .. "Don't crash into rocks on the water.";
     string_help = string_help .. "\n"; --new line
-    string_help = string_help .. "Steer the boat away from any rocks on the water.";
+    string_help = string_help .. "Kill zombies with your boat.";
     string_help = string_help .. "\n"; --new line
-    string_help = string_help .. "Kill as many zombies as you can on the water.";
-    string_help = string_help .. "\n"; --new line
-    string_help = string_help .. "The longer distance you travel, and the more zombies you kill, the better.";
+    string_help = string_help .. "The more the distance/kills the better.";
     string_help = string_help .. "\n"; --new line
 
     return string_help;
 end
 
 KTBM_UI_MainMenu_Start = function()
+    agent_mainMenuGroup = AgentCreate("agent_mainMenuGroup", "group.prop", Vector(0,0,0), Vector(0,0,0), KTBM_Gameplay_kScene, false, false);
+
     KTBM_UI_PrepareMainMenuText();
     KTBM_UI_PrepareCostumeMenuText();
     KTBM_UI_PrepareHelpMenuText();
     KTBM_UI_PrepareCreditsMenuText();
     KTBM_UI_PrepareScoreboardMenuText();
+
+    KTBM_UI_YesNoDialogBox_Start();
 
     CursorHide(false);
     CursorEnable(true);
@@ -181,19 +197,26 @@ KTBM_UI_MainMenu_Start = function()
 end
 
 KTBM_UI_PrepareMainMenuText = function()
-    --ui_boot_logoTTG.prop
     --ui_boot_title.prop
     --ui_boot_titleBackground.prop
-    --AgentSetWorldPosFromLogicalScreenPos(agent_pageHelp_goBack, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
-    ResourceSetEnable("Boot");
-    agent_mainTitleGraphic = AgentCreate("testing1", "ui_boot_title.prop", Vector(0, 1, 0), Vector(0, 0, 0), KTBM_Gameplay_kScene, false, false);
+    agent_mainTitleGraphic = AgentCreate("agent_mainTitleGraphic", "ui_boot_title.prop", Vector(0, 1, 0), Vector(0, 0, 0), KTBM_Gameplay_kScene, false, false);
     KTBM_PropertySet(agent_mainTitleGraphic, "Render Axis Scale", Vector(1.7777777778, 1.0, 1.0));
     KTBM_PropertySet(agent_mainTitleGraphic, "Render Global Scale", 0.0375);
     KTBM_PropertySet(agent_mainTitleGraphic, "Render After Anti-Aliasing", true);
     KTBM_PropertySet(agent_mainTitleGraphic, "Render Depth Test", false);
     KTBM_PropertySet(agent_mainTitleGraphic, "Render Depth Write", false);
     KTBM_PropertySet(agent_mainTitleGraphic, "Render Depth Write Alpha", false);
-    ShaderSwapTexture(agent_mainTitleGraphic, "ui_boot_title.d3dtx", "KTBM_Texture_TitleGraphic.d3dtx");
+    ShaderSwapTexture(agent_mainTitleGraphic, "ui_boot_title.d3dtx", "KTBM_Texture_TitleGraphicV6.d3dtx");
+
+    agent_mainTitleOverlayGraphic = AgentCreate("agent_mainTitleOverlayGraphic", "ui_boot_title.prop", Vector(0, 1, 0), Vector(0, 0, 0), KTBM_Gameplay_kScene, false, false);
+    KTBM_PropertySet(agent_mainTitleOverlayGraphic, "Render Axis Scale", Vector(3, 5.0, 1.0));
+    KTBM_PropertySet(agent_mainTitleOverlayGraphic, "Render Global Scale", 0.0375);
+    KTBM_PropertySet(agent_mainTitleOverlayGraphic, "Render After Anti-Aliasing", true);
+    KTBM_PropertySet(agent_mainTitleOverlayGraphic, "Render Depth Test", false);
+    KTBM_PropertySet(agent_mainTitleOverlayGraphic, "Render Depth Write", false);
+    KTBM_PropertySet(agent_mainTitleOverlayGraphic, "Render Depth Write Alpha", false);
+    KTBM_PropertySet(agent_mainTitleOverlayGraphic, "Render Layer", -5);
+    ShaderSwapTexture(agent_mainTitleOverlayGraphic, "ui_boot_title.d3dtx", "KTBM_Texture_BlackFadedEdges38.d3dtx");
 
     --create our main menu text
     agent_page0_play = KTBM_TextUI_CreateTextAgent("Page0_Play", "Play", Vector(0, 0, 0), 0, 0);
@@ -204,6 +227,18 @@ KTBM_UI_PrepareMainMenuText = function()
     agent_page0_credits = KTBM_TextUI_CreateTextAgent("Page0_Credits", "Credits", Vector(0, 0, 0), 0, 0);
     agent_page0_returnToDE = KTBM_TextUI_CreateTextAgent("Page0_ReturnToDE", "Return To Definitive Menu", Vector(0, 0, 0), 0, 0);
     agent_page0_quit = KTBM_TextUI_CreateTextAgent("Page0_Quit", "Quit To Desktop", Vector(0, 0, 0), 0, 0);
+
+
+    AgentAttach(agent_mainTitleGraphic, agent_mainMenuGroup);
+    AgentAttach(agent_mainTitleOverlayGraphic, agent_mainMenuGroup);
+    AgentAttach(agent_page0_play, agent_mainMenuGroup);
+    AgentAttach(agent_page0_costumes, agent_mainMenuGroup);
+    AgentAttach(agent_page0_scoreboard, agent_mainMenuGroup);
+    AgentAttach(agent_page0_options, agent_mainMenuGroup);
+    AgentAttach(agent_page0_help, agent_mainMenuGroup);
+    AgentAttach(agent_page0_credits, agent_mainMenuGroup);
+    AgentAttach(agent_page0_returnToDE, agent_mainMenuGroup);
+    AgentAttach(agent_page0_quit, agent_mainMenuGroup);
 
     --scale note
     --1.0 = default
@@ -248,6 +283,7 @@ KTBM_UI_PrepareMainMenuText = function()
     local menuOffsetX = 0.0;
     local menuOffsetY = 0.1;
     AgentSetWorldPosFromLogicalScreenPos(agent_mainTitleGraphic, Vector(0.28, 0.265, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_mainTitleOverlayGraphic, Vector(0.175, 0.5, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_play, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_costumes, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_page0_scoreboard, Vector(0.105 + menuOffsetX, 0.4 + menuOffsetY, 0.0));
@@ -265,6 +301,12 @@ KTBM_UI_PrepareCostumeMenuText = function()
     agent_pageCostumes_kenny102 = KTBM_TextUI_CreateTextAgent("PageCostumes_102", "102 Outfit", Vector(0, 0, 0), 0, 0);
     agent_pageCostumes_kenny103 = KTBM_TextUI_CreateTextAgent("PageCostumes_103", "103 Outfit", Vector(0, 0, 0), 0, 0);
     agent_pageCostumes_kenny202 = KTBM_TextUI_CreateTextAgent("PageCostumes_202", "202 Outfit", Vector(0, 0, 0), 0, 0);
+
+    AgentAttach(agent_pageCostumes_goBack, agent_mainMenuGroup);
+    AgentAttach(agent_pageCostumes_kenny101, agent_mainMenuGroup);
+    AgentAttach(agent_pageCostumes_kenny102, agent_mainMenuGroup);
+    AgentAttach(agent_pageCostumes_kenny103, agent_mainMenuGroup);
+    AgentAttach(agent_pageCostumes_kenny202, agent_mainMenuGroup);
 
     --scale note
     --1.0 = default
@@ -309,6 +351,9 @@ KTBM_UI_PrepareCreditsMenuText = function()
     agent_pageCredits_goBack = KTBM_TextUI_CreateTextAgent("PageCredits_GoBack", "Go Back", Vector(0, 0, 0), 0, 0);
     agent_pageCredits_credits = KTBM_TextUI_CreateTextAgent("PageCredits_Credits", GetCreditsText(), Vector(0, 0, 0), 0, 0);
 
+    AgentAttach(agent_pageCredits_goBack, agent_mainMenuGroup);
+    AgentAttach(agent_pageCredits_credits, agent_mainMenuGroup);
+
     --scale note
     --1.0 = default
     --0.5 = half
@@ -340,6 +385,20 @@ KTBM_UI_PrepareHelpMenuText = function()
     agent_pageHelp_goBack = KTBM_TextUI_CreateTextAgent("PageHelp_GoBack", "Go Back", Vector(0, 0, 0), 0, 0);
     agent_pageHelp_help = KTBM_TextUI_CreateTextAgent("PageHelp_Credits", GetHelpText(), Vector(0, 0, 0), 0, 0);
 
+    agent_pageHelpInputGraphic = AgentCreate("agent_pageHelpInputGraphic", "ui_boot_title.prop", Vector(0, 1, 0), Vector(0, 0, 0), KTBM_Gameplay_kScene, false, false);
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Render Axis Scale", Vector(1, 1, 1));
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Render Global Scale", 0.0375);
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Render After Anti-Aliasing", true);
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Render Depth Test", false);
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Render Depth Write", false);
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Render Depth Write Alpha", false);
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Render Layer", 5);
+    ShaderSwapTexture(agent_pageHelpInputGraphic, "ui_boot_title.d3dtx", "KTBM_Texture_HelpInputDiagram.d3dtx");
+
+    AgentAttach(agent_pageHelp_goBack, agent_mainMenuGroup);
+    AgentAttach(agent_pageHelp_help, agent_mainMenuGroup);
+    AgentAttach(agent_pageHelpInputGraphic, agent_mainMenuGroup);
+
     --scale note
     --1.0 = default
     --0.5 = half
@@ -364,22 +423,35 @@ KTBM_UI_PrepareHelpMenuText = function()
     local menuOffsetY = 0.1;
     AgentSetWorldPosFromLogicalScreenPos(agent_pageHelp_goBack, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageHelp_help, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageHelpInputGraphic, Vector(0.235 + menuOffsetX, 0.675 + menuOffsetY, 0.0));
 end
 
 KTBM_UI_PrepareScoreboardMenuText = function()
     --costumes options
     agent_pageScoreboard_goBack = KTBM_TextUI_CreateTextAgent("PageScoreboard_GoBack", "Go Back", Vector(0, 0, 0), 0, 0);
-    agent_pageScoreboard_main = KTBM_TextUI_CreateTextAgent("PageScoreboard_Main", "Scoreboard Main", Vector(0, 0, 0), 0, 0);
+    agent_pageScoreboard_item1 = KTBM_TextUI_CreateTextAgent("agent_pageScoreboard_item1", "Item 1", Vector(0, 0, 0), 0, 0);
+    agent_pageScoreboard_item2 = KTBM_TextUI_CreateTextAgent("agent_pageScoreboard_item2", "Item 2", Vector(0, 0, 0), 0, 0);
+    agent_pageScoreboard_item3 = KTBM_TextUI_CreateTextAgent("agent_pageScoreboard_item3", "Item 3", Vector(0, 0, 0), 0, 0);
     agent_pageScoreboard_leftArrow = KTBM_TextUI_CreateTextAgent("PageScoreboard_LeftArrow", "Previous", Vector(0, 0, 0), 1, 0); --this '<' character does not work for whatever reason
     agent_pageScoreboard_pageNumber = KTBM_TextUI_CreateTextAgent("PageScoreboard_PageNumber", "0/0", Vector(0, 0, 0), 2, 0);
     agent_pageScoreboard_rightArrow = KTBM_TextUI_CreateTextAgent("PageScoreboard_RightArrow", "Next", Vector(0, 0, 0), 3, 0);
+
+    AgentAttach(agent_pageScoreboard_goBack, agent_mainMenuGroup);
+    AgentAttach(agent_pageScoreboard_item1, agent_mainMenuGroup);
+    AgentAttach(agent_pageScoreboard_item2, agent_mainMenuGroup);
+    AgentAttach(agent_pageScoreboard_item3, agent_mainMenuGroup);
+    AgentAttach(agent_pageScoreboard_leftArrow, agent_mainMenuGroup);
+    AgentAttach(agent_pageScoreboard_pageNumber, agent_mainMenuGroup);
+    AgentAttach(agent_pageScoreboard_rightArrow, agent_mainMenuGroup);
 
     --scale note
     --1.0 = default
     --0.5 = half
     --2.0 = double
     TextSetScale(agent_pageScoreboard_goBack, 1.0);
-    TextSetScale(agent_pageScoreboard_main, 0.75);
+    TextSetScale(agent_pageScoreboard_item1, 0.75);
+    TextSetScale(agent_pageScoreboard_item2, 0.75);
+    TextSetScale(agent_pageScoreboard_item3, 0.75);
     TextSetScale(agent_pageScoreboard_leftArrow, 1.0);
     TextSetScale(agent_pageScoreboard_pageNumber, 1.0);
     TextSetScale(agent_pageScoreboard_rightArrow, 1.0);
@@ -387,14 +459,18 @@ KTBM_UI_PrepareScoreboardMenuText = function()
     --color note
     --text colors are additive on the scene
     TextSetColor(agent_pageScoreboard_goBack, Color(1.0, 1.0, 1.0, 1.0));
-    TextSetColor(agent_pageScoreboard_main, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageScoreboard_item1, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageScoreboard_item2, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageScoreboard_item3, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageScoreboard_leftArrow, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageScoreboard_pageNumber, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageScoreboard_rightArrow, Color(1.0, 1.0, 1.0, 1.0));
     
     --set properties on menu texts
     SetMenuOptionProperties("PageScoreboard_GoBack");
-    SetMenuOptionProperties("PageScoreboard_Main");
+    SetMenuOptionProperties("agent_pageScoreboard_item1");
+    SetMenuOptionProperties("agent_pageScoreboard_item2");
+    SetMenuOptionProperties("agent_pageScoreboard_item3");
     SetMenuOptionProperties("PageScoreboard_LeftArrow");
     SetMenuOptionProperties("PageScoreboard_PageNumber");
     SetMenuOptionProperties("PageScoreboard_RightArrow");
@@ -406,7 +482,10 @@ KTBM_UI_PrepareScoreboardMenuText = function()
     local menuOffsetX = 0.0;
     local menuOffsetY = 0.1;
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_goBack, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
-    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_main, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
+
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_item1, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_item2, Vector(0.105 + menuOffsetX, 0.49 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_item3, Vector(0.105 + menuOffsetX, 0.63 + menuOffsetY, 0.0));
 
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_leftArrow, Vector(0.105 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageScoreboard_pageNumber, Vector(0.25 + menuOffsetX, 0.77 + menuOffsetY, 0.0));
@@ -417,6 +496,12 @@ KTBM_UI_Update = function()
     KTBM_UI_Input_IMAP_Update();
 
     PlayRolloverSound();
+
+    KTBM_PropertySet(agent_mainMenuGroup, "Group - Visible", not KTBM_UI_YesNoDialogBox_IsOpen);
+
+    if(KTBM_UI_YesNoDialogBox_IsOpen == true) then
+        return;
+    end
 
     local defaultColor = Color(1.0, 1.0, 1.0, 1.0);
     local rolloverColor = Color(0.25, 0.25, 0.25, 1.0);
@@ -449,12 +534,15 @@ KTBM_UI_Update = function()
 
     KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", bool_onHelpPage);
     KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", bool_onHelpPage);
+    KTBM_PropertySet(agent_pageHelpInputGraphic, "Runtime: Visible", bool_onHelpPage);
 
     KTBM_PropertySet(agent_pageCredits_goBack, "Runtime: Visible", bool_onCreditsPage);
     KTBM_PropertySet(agent_pageCredits_credits, "Runtime: Visible", bool_onCreditsPage);
 
     KTBM_PropertySet(agent_pageScoreboard_goBack, "Runtime: Visible", bool_onScoreboardPage);
-    KTBM_PropertySet(agent_pageScoreboard_main, "Runtime: Visible", bool_onScoreboardPage);
+    KTBM_PropertySet(agent_pageScoreboard_item1, "Runtime: Visible", bool_onScoreboardPage);
+    KTBM_PropertySet(agent_pageScoreboard_item2, "Runtime: Visible", bool_onScoreboardPage);
+    KTBM_PropertySet(agent_pageScoreboard_item3, "Runtime: Visible", bool_onScoreboardPage);
     KTBM_PropertySet(agent_pageScoreboard_leftArrow, "Runtime: Visible", bool_onScoreboardPage);
     KTBM_PropertySet(agent_pageScoreboard_pageNumber, "Runtime: Visible", bool_onScoreboardPage);
     KTBM_PropertySet(agent_pageScoreboard_rightArrow, "Runtime: Visible", bool_onScoreboardPage);
@@ -757,7 +845,9 @@ KTBM_UI_Update = function()
             number_gameResultsIndex = 0;
 
             TextSet(agent_pageScoreboard_pageNumber, "(0/0)");
-            TextSet(agent_pageScoreboard_main, "");
+            TextSet(agent_pageScoreboard_item1, "");
+            TextSet(agent_pageScoreboard_item2, "");
+            TextSet(agent_pageScoreboard_item3, "");
         else
             number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, number_gameResultsDataArraySize - 1);
         
@@ -781,6 +871,8 @@ KTBM_UI_Update = function()
             string_scoreboardMainText = string_scoreboardMainText .. "\n"; --new line
 
             TextSet(agent_pageScoreboard_pageNumber, string_pageNumberText);
+            TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
+            TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
             TextSet(agent_pageScoreboard_main, string_scoreboardMainText);
         end
 

@@ -16,6 +16,7 @@ require("KTBM_Costumes_Boat.lua");
 require("KTBM_Costumes_Kenny.lua");
 require("KTBM_Cutscene_Menu.lua");
 require("KTBM_UI_MainMenu.lua");
+require("KTBM_UI_YesNoDialogBox.lua");
 
 --our main level variables
 local kScript = "KTBM_Level_Menu";
@@ -119,8 +120,10 @@ KTBM_Level_Menu = function()
         Callback_OnPostUpdate:Add(KTBM_Development_UpdateRelightTools_Main);
     else
         KTBM_UI_MainMenu_Start();
+        KTBM_UI_YesNoDialogBox_Start();
 
         Callback_OnPostUpdate:Add(KTBM_UI_Update);
+        Callback_OnPostUpdate:Add(KTBM_UI_YesNoDialogBox_Update);
     end
 
     --LensFlareEffect_Initalize();

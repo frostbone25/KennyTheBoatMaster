@@ -5,30 +5,6 @@ KTBM_Costumes_Boat_Build = function(kScene)
     KTBM_SetAgentWorldPosition("obj_boatMotorChesapeake", Vector(0,0,0), kScene);
     KTBM_SetAgentWorldRotation("obj_boatMotorChesapeake", Vector(0,0,0), kScene);
 
-
-
-
-
-    --ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "color_fFFFFF.d3dtx"); --some papers around the boat
-    --ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "color_fFFFFF.d3dtx"); --beer cans
-    --ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "color_fFFFFF.d3dtx"); --main motor
-    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "color_fFFFFF.d3dtx"); --trim parts of the boat
-    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "color_fFFFFF.d3dtx"); --floor/bottom of boat
-    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "color_fFFFFF.d3dtx"); --side walls of the boat
-    --ShaderOverrideTexture(agent_boat, "obj_stickersBoatChesapeake.d3dtx", "color_fFFFFF.d3dtx"); --stickers on the boat
-
-
-    --ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "KTBM_Texture_Skin1_obj_motorBoatChesapeak.d3dtx"); --main motor
-    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "KTBM_Texture_Skin1_tile_hullMetalBoatChesapeakeA.d3dtx"); --trim parts of the boat
-    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "KTBM_Texture_Skin1_tile_hullMetalBoatChesapeakeC.d3dtx"); --floor/bottom of boat
-    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "KTBM_Texture_Skin1_tile_hullMetalBoatChesapeakeB.d3dtx"); --side walls of the boat
-    --ShaderOverrideTexture(agent_boat, "obj_stickersBoatChesapeake.d3dtx", "KTBM_Texture_Skin1_obj_stickersBoatChesapeake.d3dtx"); --stickers on the boat
-
-
-
-
-
-
     --get the existing bag object in the scene and stick it somewhere in the boat
     local agent_bag = AgentFindInScene("obj_bagDuffelB", kScene);
     KTBM_SetAgentWorldPosition("obj_bagDuffelB", Vector(0.693793, 0.922282, -1.742433), kScene);
@@ -134,4 +110,50 @@ KTBM_Costumes_Boat_Build = function(kScene)
     
     --attach the boat anim group to the main boat group parent for gameplay/cutscene moving
     AgentAttach(agent_boat_group2, agent_boat_group1);
+end
+
+--main function that prepares the level enviorment
+KTBM_Costumes_Boat_RestoreTextures = function(kScene)
+    --get the existing boat object in the scene and reset the position and rotation
+    local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", kScene);
+
+    ShaderRestoreAllTextures(agent_boat);
+    --ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "env_drugstoreOfficeCalendar.d3dtx"); --some papers around the boat
+    --ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "obj_beerCanFlagshipExteriorDeck.d3dtx"); --beer cans
+    --ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "obj_motorBoatChesapeak.d3dtx"); --main motor
+    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "tile_hullMetalBoatChesapeakeA.d3dtx"); --trim parts of the boat
+    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "tile_hullMetalBoatChesapeakeC.d3dtx"); --floor/bottom of boat
+    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "tile_hullMetalBoatChesapeakeB.d3dtx"); --side walls of the boat
+    --ShaderOverrideTexture(agent_boat, "obj_stickersBoatChesapeake.d3dtx", "obj_stickersBoatChesapeake.d3dtx"); --stickers on the boat
+end
+
+--main function that prepares the level enviorment
+KTBM_Costumes_Boat_ApplySkin1 = function(kScene)
+    --get the existing boat object in the scene and reset the position and rotation
+    local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", kScene);
+
+    --this custom skin doesn't mess with these textures, so just apply the default ones.
+    ShaderRestoreAllTextures(agent_boat);
+    --ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "env_drugstoreOfficeCalendar.d3dtx"); --some papers around the boat
+    --ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "obj_beerCanFlagshipExteriorDeck.d3dtx"); --beer cans
+
+    ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "KTBM_Texture_Skin1_obj_motorBoatChesapeak.d3dtx"); --main motor
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "KTBM_Texture_Skin1_tile_hullMetalBoatChesapeakeA.d3dtx"); --trim parts of the boat
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "KTBM_Texture_Skin1_tile_hullMetalBoatChesapeakeC.d3dtx"); --floor/bottom of boat
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "KTBM_Texture_Skin1_tile_hullMetalBoatChesapeakeB.d3dtx"); --side walls of the boat
+    ShaderOverrideTexture(agent_boat, "obj_stickersBoatChesapeake.d3dtx", "KTBM_Texture_Skin1_obj_stickersBoatChesapeake.d3dtx"); --stickers on the boat
+end
+
+--main function that prepares the level enviorment
+KTBM_Costumes_Boat_ApplySkinTest = function(kScene)
+    --get the existing boat object in the scene and reset the position and rotation
+    local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", kScene);
+
+    ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "color_fFFFFF.d3dtx"); --some papers around the boat
+    ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "color_fFFFFF.d3dtx"); --beer cans
+    ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "color_fFFFFF.d3dtx"); --main motor
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "color_fFFFFF.d3dtx"); --trim parts of the boat
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "color_fFFFFF.d3dtx"); --floor/bottom of boat
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "color_fFFFFF.d3dtx"); --side walls of the boat
+    ShaderOverrideTexture(agent_boat, "obj_stickersBoatChesapeake.d3dtx", "color_fFFFFF.d3dtx"); --stickers on the boat
 end

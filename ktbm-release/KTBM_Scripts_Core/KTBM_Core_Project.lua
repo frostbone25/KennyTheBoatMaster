@@ -1,5 +1,6 @@
 KTBM_Core_Project_Version = "1.0.0";
 
+--debugging options
 KTBM_Core_Project_DebugPrinting = false;
 KTBM_Core_Project_DebugFreecamMode = false;
 KTBM_Core_Project_DebugPeformanceMetrics = false;
@@ -9,6 +10,7 @@ KTBM_Core_Project_DebugDisableRocks = false;
 KTBM_Core_Project_DebugDisableRockCollisions = false;
 KTBM_Core_Project_DebugDisableZombies = false;
 KTBM_Core_Project_DebugDisableZombieCollisions = false;
+
 KTBM_Core_Project_GameResultsBinaryFormat = true;
 KTBM_Core_Project_ShowDevelopmentText = true;
 
@@ -67,6 +69,7 @@ KTBM_Core_Project_EnableGameArchives = function()
     ResourceSetEnable("ProjectSeason4");
     ResourceSetEnable("WalkingDead401");
 
+    ResourceSetEnable("Boot");
     ResourceSetEnable("ProjectSeason1");
     ResourceSetEnable("ProjectSeason2");
     --ResourceSetEnable("ProjectSeason3");
@@ -101,6 +104,7 @@ KTBM_Core_Project_DisableGameArchives = function()
     ResourceSetEnable("ProjectSeason4");
     ResourceSetDisable("WalkingDead401");
 
+    ResourceSetDisable("Boot");
     --ResourceSetDisable("ProjectSeason2");
     --ResourceSetDisable("ProjectSeasonM");
     ResourceSetDisable("WalkingDeadM101");
