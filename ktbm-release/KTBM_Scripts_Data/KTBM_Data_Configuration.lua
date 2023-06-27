@@ -19,6 +19,7 @@ local GenerateNewINI_PlayerSettings = function()
         Gameplay = 
         {
             KennyOutfitProfile = "202",
+            BoatOutfitProfile = "Default",
             ForceSkipCutscenes = false
         },
         Video = 

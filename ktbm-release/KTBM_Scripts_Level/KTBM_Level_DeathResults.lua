@@ -6,6 +6,7 @@ require("KTBM_LevelCleanup_M101_FlagshipExteriorDeck.lua");
 require("KTBM_LevelRelight_M101_FlagshipExteriorDeck.lua");
 require("KTBM_Cutscene_DeathResults.lua");
 require("KTBM_Costumes_Kenny.lua");
+require("KTBM_Costumes_Boat.lua");
 
 require("KTBM_UI_DeathResults.lua");
 
@@ -46,6 +47,7 @@ KTBM_Level_DeathResults = function()
     KTBM_Cutscene_DeathResults_Build(kScene);
 
     KTBM_Costumes_Kenny_ApplySelectedOutfit(kScene);
+    KTBM_Costumes_Boat_ApplySelectedOutfit(kScene);
 
     --if (KTBM_Core_Project_DebugFreecamMode) then
         --development helpers

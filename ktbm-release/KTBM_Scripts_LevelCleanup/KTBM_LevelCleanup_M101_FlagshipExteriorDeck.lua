@@ -559,7 +559,7 @@ KTBM_LevelCleanup_M101_FlagshipExteriorDeck_FullPurge = function(kScene)
    KTBM_RemoveAgent("obj_chairPlasticFlagshipExteriorDeckC", kScene);
    KTBM_RemoveAgent("obj_strawFlagshipExteriorDeck", kScene);
    KTBM_RemoveAgent("obj_bagDuffelB", kScene);
-   KTBM_RemoveAgent("obj_boatMotorChesapeake", kScene);
+   --KTBM_RemoveAgent("obj_boatMotorChesapeake", kScene);
    KTBM_RemoveAgent("obj_boatTugNormaFlagshipExteriorDeckD", kScene);
    KTBM_RemoveAgent("obj_chairRigidExteriorDeck", kScene);
    KTBM_RemoveAgent("obj_tiesZipHandsWD", kScene);

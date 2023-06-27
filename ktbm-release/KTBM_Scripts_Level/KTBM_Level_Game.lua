@@ -157,6 +157,7 @@ KTBM_Level_Game = function()
     KTBM_Costumes_Boat_Build(kScene);
     KTBM_Costumes_Kenny_AddToBoat(kScene);
     KTBM_Costumes_Kenny_ApplySelectedOutfit(kScene);
+    KTBM_Costumes_Boat_ApplySelectedOutfit(kScene);
 
     if (KTBM_Core_Project_DebugFreecamMode) then
         KTBM_Development_CreateFreeCamera();

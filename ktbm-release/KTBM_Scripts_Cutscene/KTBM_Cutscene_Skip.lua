@@ -16,7 +16,7 @@ KTBM_Cutscene_Skip_Build = function()
 
     --color note
     --text colors are additive on the scene
-    TextSetColor(KTBM_Cutscene_Skip_TextAgent, Color(0.25, 0.25, 0.25, 1.0));
+    TextSetColor(KTBM_Cutscene_Skip_TextAgent, Color(1.0, 1.0, 1.0, 1.0));
 
     number_skipStartTime = GetTotalTime();
 end

@@ -79,8 +79,12 @@ KTBM_Cutscene_DeathResults_Build = function()
 
     -----------------------------------------------
     local agent_endScreenGroup = AgentCreate("agent_endScreenGroup", "group.prop", Vector(0, 0, 0), Vector(0, 0, 0), KTBM_Cutscene_DeathResults_kScene, false, false);
-    local agent_boat = AgentCreate("agent_boat", "obj_boatMotorChesapeake.prop", Vector(0, 0, 0), Vector(0, 135, 0), KTBM_Cutscene_DeathResults_kScene, false, false);
-    
+
+    --local agent_boat = AgentCreate("obj_boatMotorChesapeake", "obj_boatMotorChesapeake.prop", Vector(0, 0, 0), Vector(0, 135, 0), KTBM_Cutscene_DeathResults_kScene, false, false);
+    local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", KTBM_Cutscene_DeathResults_kScene);
+    AgentSetWorldPos(agent_boat, Vector(0, 0, 0));
+    AgentSetWorldRot(agent_boat, Vector(0, 135, 0));
+
     --fx_fireA_embers
     --fx_fireB_embers
     --fx_fireFireplaceLodge
@@ -223,6 +227,12 @@ KTBM_Cutscene_DeathResults_Update = function()
     AgentSetPos(agent_kenny, lockedPos);
     AgentSetPos(agent_kenny, Vector(0,0,0));
     KTBM_SetAgentPosition("Kenny", lockedPos, KTBM_Cutscene_DeathResults_kScene);
+
+    if(KTBM_Data_PlayerSettings ~= nil) then
+        if(KTBM_Data_PlayerSettings.Gameplay.ForceSkipCutscenes == true) then
+            KTBM_Cutscene_Skip_Skipped = true;
+        end
+    end
 
     ----------------------------------------------------------
     if(KTBM_Cutscene_Skip_Skipped == true) then

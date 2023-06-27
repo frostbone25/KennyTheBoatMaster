@@ -79,6 +79,7 @@ KTBM_Level_OpeningCutscene = function()
     Callback_OnPostUpdate:Add(KTBM_LevelRelight_M101_FlagshipExteriorDeck_UpdateLighting);
 
     KTBM_Costumes_Kenny_ApplySelectedOutfit(kScene);
+    KTBM_Costumes_Boat_ApplySelectedOutfit(kScene);
 
     if (KTBM_Core_Project_DebugFreecamMode) then
         --development helpers

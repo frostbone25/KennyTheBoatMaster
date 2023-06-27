@@ -26,7 +26,7 @@ KTBM_Gameplay_EnvironmentHeightOffset = 0;
     Which if you've already looked through it, that is why you see that appear alot.
 ]]
 
-KTBM_Gameplay_SpeedBoostTransitionLerpFactor = 5;
+KTBM_Gameplay_SpeedBoostTransitionLerpFactor = 2.5;
 
 --||||||||||||||||||||||||||||||| ENVIORMENT SCROLLING PROPERTIES |||||||||||||||||||||||||||||||
 --||||||||||||||||||||||||||||||| ENVIORMENT SCROLLING PROPERTIES |||||||||||||||||||||||||||||||

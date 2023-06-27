@@ -95,6 +95,7 @@ KTBM_Level_Menu = function()
     KTBM_Cutscene_Menu_Build(kScene);
 
     KTBM_Costumes_Kenny_ApplySelectedOutfit(kScene);
+    KTBM_Costumes_Boat_ApplySelectedOutfit(kScene);
 
     Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_Animation_UpdateBoatBuoyancy);
     Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_Animation_UpdateHandheldCamera);
