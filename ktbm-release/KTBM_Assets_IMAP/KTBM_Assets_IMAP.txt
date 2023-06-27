@@ -17,3 +17,9 @@ Link - https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-code
 
 The microsoft documentation only lists the values in hexadecimal, not decimal, so these can be converted to a decimal value using this converter.
 Link - https://www.rapidtables.com/convert/number/hex-to-decimal.html
+
+Additionally also in the project, there is a handy script in the following location... 
+
+- ktbm-release/KTBM_Scripts_Core/KTBM_Core_Keycodes.lua
+
+This script stores all of the keybinds noted in the Microsoft Virtual Key Code docs. These already have the values converted into decimal and are also descriptively named. It might be easier to look into this file if you want to find the keys that you want to use, most of the work has been done for you in there.

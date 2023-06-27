@@ -21,7 +21,9 @@ end
 local controller_music = nil;
 local controller_sound_sceneAmbient = nil;
 local controller_kenny_idle = nil;
-local kenny_agent = nil;
+local agent_kenny = nil;
+
+local number_sceneStartTime = 0;
 
 --main function that prepares the level enviorment
 KTBM_Cutscene_Menu_Build = function()
@@ -35,35 +37,39 @@ KTBM_Cutscene_Menu_Build = function()
     controller_music = SoundPlay("mus_linear_intro_lakeBridgeApproach.wav");
     ControllerSetLooping(controller_music, true);
     ControllerSetSoundVolume(controller_music, 0.5);
+    ControllerFadeIn(controller_music, 2.0);
     
     --do scene ambient sound
-    controller_sound_sceneAmbient = SoundPlay("amb_river_shore_calm_water.wav");
+    controller_sound_sceneAmbient = SoundPlay("KTBM_Sound_MenuAmbience.wav");
     ControllerSetLooping(controller_sound_sceneAmbient, true);
-    ControllerSetSoundVolume(controller_sound_sceneAmbient, 0.25);
+    ControllerSetSoundVolume(controller_sound_sceneAmbient, 1.0);
+    ControllerFadeIn(controller_sound_sceneAmbient, 2.0);
     
     --------------------------------------------------------
     --prepare kennys base idle animations
 
-    kenny_agent = AgentFindInScene("Kenny", KTBM_Cutscene_Menu_kScene);
+    agent_kenny = AgentFindInScene("Kenny", KTBM_Cutscene_Menu_kScene);
 
     --play a sitting animation
-    controller_kenny_idle = PlayAnimation(kenny_agent, "sk54_idle_wD200GMSit.anm");
+    controller_kenny_idle = PlayAnimation(agent_kenny, "sk54_idle_wD200GMSit.anm");
     
     --loop the idle animation
     ControllerSetLooping(controller_kenny_idle, true);
     
     --position him in the boat so hes properly sitting
     KTBM_SetAgentPosition("Kenny", Vector(0, 0.05, -0.8), KTBM_Cutscene_Menu_kScene);
+
+    number_sceneStartTime = GetTotalTime();
 end
 
-local animclips_kenny_eyeDarts = 
+local strings_kennyEyeDartAnimations = 
 {
     "kenny200_face_eyeDartsA_add.anm",
     "kenny200_face_eyeDartsB_add",
     "kenny200_face_eyeDartsC_add"
 };
 
-local animclips_kenny_headGestures = 
+local strings_kennyHeadGesturesAnimations = 
 {
     "wd200GM_headGesture_tiltLeftA_add.anm",
     "wd200GM_headGesture_tiltLeftB_add.anm",
@@ -74,125 +80,137 @@ local animclips_kenny_headGestures =
     "wd200GM_headGesture_lookDown_add.anm"
 };
 
-local animclips_kenny_leans = 
+local strings_kennyLeansAnimations = 
 {
     "sk54_kenny200SitCouch_leanFwd_add.anm",
     "sk54_kenny200SitCouch_leanLeft_add.anm",
     "sk54_kenny200SitCouch_leanRight_add.anm"
 };
 
-local choreclips_kenny_emotions = 
+local strings_kennyEmotionsChoreClips = 
 {
     "sk54_kenny200_toHappyA",
     "sk54_kenny200_toHappyB",
     "sk54_kenny200_toHappyC"
+--    "sk54_kenny200_toNormalA"
+--    "sk54_kenny200_toNormalB"
 };
 
---local choreclips_kenny_emotions = 
---{
---    "sk54_kenny200_toHappyA",
---    "sk54_kenny200_toHappyB",
---    "sk54_kenny200_toHappyC",
---    "sk54_kenny200_toNormalA",
---    "sk54_kenny200_toNormalB"
---};
 
-local tick_kenny_idle_blink = 0;
-local tick_kenny_idle_eyeDart = 0;
-local tick_kenny_idle_headGestures = 0;
-local tick_kenny_idle_leans = 0;
-local tick_kenny_idle_emotion = 0;
+local bool_marker_voiceLine1 = false;
+local bool_marker_voiceLine2 = false;
+local bool_marker_voiceLine3 = false;
 
-local maxTick_kenny_idle_blink = 100;
-local maxTick_kenny_idle_eyeDart = 250;
-local maxTick_kenny_idle_headGestures = 250;
-local maxTick_kenny_idle_leans = 275;
-local maxTick_kenny_idle_emotion = 200;
+local number_blinkTime = 2.5;
+local number_nextBlinkTime = 0;
 
-KTBM_Cutscene_Menu_UpdateKennyIdleAnimation = function()
-    --update our tick rates
-    tick_kenny_idle_blink = tick_kenny_idle_blink + 1;
-    tick_kenny_idle_eyeDart = tick_kenny_idle_eyeDart + 1;
-    tick_kenny_idle_headGestures = tick_kenny_idle_headGestures + 1;
-    tick_kenny_idle_leans = tick_kenny_idle_leans + 1;
-    tick_kenny_idle_emotion = tick_kenny_idle_emotion + 1;
+local number_randomEmotionTime = 5.0;
+local number_randomEmotionNextTime = 0;
 
-    --if the tick rate for blinks is greater than the max, time to play an animation
-    if(tick_kenny_idle_blink > maxTick_kenny_idle_blink) then
-        local blinkController = PlayAnimation(kenny_agent, "kenny_face_blinkNormal_add.anm");
-        ControllerSetLooping(blinkController, false);
-        
-        --reset so this only is played once (until its played again later)
-        tick_kenny_idle_blink = 0;
+local number_randomEyeDartsTime = 6.5;
+local number_randomEyeDartsNextTime = 0;
+
+local number_randomHeadGestureTime = 3.5;
+local number_randomHeadGestureNextTime = 0;
+
+local number_randomLeansTime = 4.5;
+local number_randomLeansNextTime = 0;
+
+--102 - 308617547 - "thats what i'm thinkin"
+--102 - 310411539 - "you found it too eh?"
+--102 - 310416205 - "I could eat a horse"
+--102 - 310419862 - "you got any ideas?"
+--102 - 310480962 - "so, uh... whats up?"
+--102 - 310522918 - "you might earn yourself a place on the rv after all"
+--103 - 312483841 - "looks like this is our lucky day"
+--103 - 312484054 - "you made up your mind yet?"
+--103 - 312504603 - "i apprecaite it though"
+--103 - 312705025 - "next stop, the atlantic"
+--103 - 314609782 - "oh yeah? know alot about boats do ya?"
+--103 - 314720438 - "what about the boat?"
+
+KTBM_Cutscene_Menu_Update = function()
+    local number_currentDeltaTime = GetFrameTime();
+    local number_currentTotalGameTime = GetTotalTime();
+
+    ----------------------------------------------
+    if(number_currentTotalGameTime > number_nextBlinkTime) then
+        local controller_blink = PlayAnimation(agent_kenny, "kenny_face_blinkNormal_add.anm");
+        ControllerSetLooping(controller_blink, false);
+        ControllerSetContribution(controller_blink, 1.0);
+
+        number_nextBlinkTime = number_currentTotalGameTime + number_blinkTime;
     end
-    
-    --if the tick rate for eye darts is greater than the max, time to play an animation
-    if(tick_kenny_idle_eyeDart > maxTick_kenny_idle_eyeDart) then
-        local randomEyeDartClipIndex = math.random(1, #animclips_kenny_eyeDarts);
-        local eyeDartClip = animclips_kenny_eyeDarts[randomEyeDartClipIndex];
-        
-        local eyeDartController = PlayAnimation(kenny_agent, eyeDartClip);
-        ControllerSetLooping(eyeDartController, false);
-        
-        --reset so this only is played once (until its played again later)
-        tick_kenny_idle_eyeDart = 0;
-    end
-    
-    --if the tick rate for eye darts is greater than the max, time to play an animation
-    if(tick_kenny_idle_headGestures > maxTick_kenny_idle_headGestures) then
-        local randomHeadGestureClipIndex = math.random(1, #animclips_kenny_headGestures);
-        local headGestureClip = animclips_kenny_headGestures[randomHeadGestureClipIndex];
-        
-        local headGestureController = PlayAnimation(kenny_agent, headGestureClip);
-        ControllerSetLooping(headGestureController, false);
-        
-        --reset so this only is played once (until its played again later)
-        tick_kenny_idle_headGestures = 0;
-    end
-    
-    --if the tick rate for eye darts is greater than the max, time to play an animation
-    if(tick_kenny_idle_leans > maxTick_kenny_idle_leans) then
-        local randomLeansClipIndex = math.random(1, #animclips_kenny_leans);
-        local leanClip = animclips_kenny_leans[randomLeansClipIndex];
-        
-        local leanController = PlayAnimation(kenny_agent, leanClip);
-        ControllerSetLooping(leanController, false);
-        
-        --reset so this only is played once (until its played again later)
-        tick_kenny_idle_leans = 0;
-    end
-    
-    --if the tick rate for eye darts is greater than the max, time to play an animation
-    if(tick_kenny_idle_emotion > maxTick_kenny_idle_emotion) then
-        local randomEmotionsClipIndex = math.random(1, #choreclips_kenny_emotions);
-        local emotionClip = choreclips_kenny_emotions[randomEmotionsClipIndex];
 
-        local emotionController = KTBM_ChorePlayOnAgent(emotionClip, kenny_agent, nil, nil);
-        ControllerSetLooping(emotionController, false);
+    if(number_currentTotalGameTime > number_randomEmotionNextTime) then
+        local number_randomEmotionsClipIndex = math.random(1, #strings_kennyEmotionsChoreClips);
+        local string_kennyEmotionsChoreClip = strings_kennyEmotionsChoreClips[number_randomEmotionsClipIndex];
+
+        local controller_emotion = KTBM_ChorePlayOnAgent(string_kennyEmotionsChoreClip, agent_kenny, nil, nil);
+        ControllerSetLooping(controller_emotion, false);
+        ControllerFadeIn(controller_emotion, 2.0);
+
+        number_randomEmotionNextTime = number_currentTotalGameTime + number_randomEmotionTime;
+    end
+
+    if(number_currentTotalGameTime > number_randomEyeDartsNextTime) then
+        local number_randomEyeDartClipIndex = math.random(1, #strings_kennyEyeDartAnimations);
+        local string_kennyEyeDartAnimation = strings_kennyEyeDartAnimations[number_randomEyeDartClipIndex];
         
-        --reset so this only is played once (until its played again later)
-        tick_kenny_idle_emotion = 0;
+        local controller_eyeDart = PlayAnimation(agent_kenny, string_kennyEyeDartAnimation);
+        ControllerSetLooping(controller_eyeDart, false);
+
+        number_randomEyeDartsNextTime = number_currentTotalGameTime + number_randomEyeDartsTime;
+    end
+
+    if(number_currentTotalGameTime > number_randomHeadGestureNextTime) then
+        local number_randomHeadGestureClipIndex = math.random(1, #strings_kennyHeadGesturesAnimations);
+        local string_kennyHeadGesturesAnimation = strings_kennyHeadGesturesAnimations[number_randomHeadGestureClipIndex];
+        
+        local controller_headGesture = PlayAnimation(agent_kenny, string_kennyHeadGesturesAnimation);
+        ControllerSetLooping(controller_headGesture, false);
+
+        number_randomHeadGestureNextTime = number_currentTotalGameTime + number_randomHeadGestureTime;
+    end
+
+    if(number_currentTotalGameTime > number_randomLeansNextTime) then
+        local number_randomLeansClipIndex = math.random(1, #strings_kennyLeansAnimations);
+        local string_kennyLeanAnimation = strings_kennyLeansAnimations[number_randomLeansClipIndex];
+        
+        local controller_lean = PlayAnimation(agent_kenny, string_kennyLeanAnimation);
+        ControllerSetLooping(controller_lean, false);
+
+        number_randomLeansNextTime = number_currentTotalGameTime + number_randomLeansTime;
+    end
+
+    ----------------------------------------------
+    if(number_currentTotalGameTime > number_sceneStartTime + 4.0) then
+        if(bool_marker_voiceLine1 == false) then
+            KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415606", 2.0, 1.0);
+
+            bool_marker_voiceLine1 = true;
+        end
+    end
+
+    if(number_currentTotalGameTime > number_sceneStartTime + 10.0) then
+        if(bool_marker_voiceLine2 == false) then
+            KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415609", 5.0, 1.0);
+
+            bool_marker_voiceLine2 = true;
+        end
+    end
+
+    if(number_currentTotalGameTime > number_sceneStartTime + 21.0) then
+        if(bool_marker_voiceLine3 == false) then
+            KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415610", 2.0, 1.0);
+
+            bool_marker_voiceLine3 = true;
+        end
     end
 end
 
-local voiceLineTick = 0;
-local maxVoiceLineTick = 19200;
 
-KTBM_Cutscene_Menu_KennyVoiceLineTest = function()
-    voiceLineTick = voiceLineTick + 1;
 
-    if(voiceLineTick == 300) then
-        KTBM_Cutscene_PlayVoiceLine(kenny_agent, "310415606", 2.0, 1.0);
-    end
-    
-    if(voiceLineTick == 600) then
-        KTBM_Cutscene_PlayVoiceLine(kenny_agent, "310415609", 5.0, 1.0);
-    end
-    
-    if(voiceLineTick == 1200) then
-        KTBM_Cutscene_PlayVoiceLine(kenny_agent, "310415610", 2.0, 1.0);
-    end
-end
 
 
 

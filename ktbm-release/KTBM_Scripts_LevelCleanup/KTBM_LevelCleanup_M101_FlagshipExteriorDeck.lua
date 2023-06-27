@@ -92,7 +92,7 @@ KTBM_LevelCleanup_M101_FlagshipExteriorDeck_Purge = function(kScene)
    KTBM_RemoveAgent("obj_flatsFlagshipExteriorDeckB02", kScene);
    KTBM_RemoveAgent("obj_flatsFlagshipExteriorDeckB03", kScene);
    KTBM_RemoveAgent("obj_flatsFlagshipExteriorDeckA01", kScene);
-   --KTBM_RemoveAgent("obj_matteSkydomeOvercastHorizon", kScene);
+   KTBM_RemoveAgent("obj_matteSkydomeOvercastHorizon", kScene);
    KTBM_RemoveAgent("obj_matteSkydomeOvercastPainted", kScene);
    --KTBM_RemoveAgent("obj_matteSkydomeOvercastSkyGrad", kScene);
    KTBM_RemoveAgent("obj_matteSkydomeOvercastTile", kScene);

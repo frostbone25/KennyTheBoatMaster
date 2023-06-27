@@ -30,12 +30,17 @@ end
 
 --Unpacks a (4 byte) 32-bit signed integer string into a number.
 --RETURNS: Number
-KTBM_Binary_UnpackInt32 = function(encodedString)
+KTBM_Binary_UnpackInt32 = function(string_binaryEncodedString)
+    if(string_binaryEncodedString == nil) then
+        print("[KTBM_Binary_UnpackInt32] ERROR! Failed to unpack Int32 from binary encoded string because the string was nil!");
+        return 0;
+    end
+
     -- Extracting individual bytes from the encoded string
-    local number_byte1 = encodedString:byte(1);
-    local number_byte2 = encodedString:byte(2);
-    local number_byte3 = encodedString:byte(3);
-    local number_byte4 = encodedString:byte(4);
+    local number_byte1 = string_binaryEncodedString:byte(1);
+    local number_byte2 = string_binaryEncodedString:byte(2);
+    local number_byte3 = string_binaryEncodedString:byte(3);
+    local number_byte4 = string_binaryEncodedString:byte(4);
 
     -- Calculating the integer value by combining the bytes
     local number_result = number_byte1 + number_byte2 * 256 + number_byte3 * 65536 + number_byte4 * 16777216;
@@ -75,12 +80,17 @@ end
 
 --Unpacks a (4 byte) 32-bit unsigned integer string into a number.
 --RETURNS: Number
-KTBM_Binary_UnpackUInt32 = function(encodedString)
+KTBM_Binary_UnpackUInt32 = function(string_binaryEncodedString)
+    if(string_binaryEncodedString == nil) then
+        print("[KTBM_Binary_UnpackUInt32] ERROR! Failed to unpack UInt32 from binary encoded string because the string was nil!");
+        return 0;
+    end
+
     -- Extracting individual bytes from the encoded string
-    local number_byte1 = encodedString:byte(1);
-    local number_byte2 = encodedString:byte(2);
-    local number_byte3 = encodedString:byte(3);
-    local number_byte4 = encodedString:byte(4);
+    local number_byte1 = string_binaryEncodedString:byte(1);
+    local number_byte2 = string_binaryEncodedString:byte(2);
+    local number_byte3 = string_binaryEncodedString:byte(3);
+    local number_byte4 = string_binaryEncodedString:byte(4);
 
     -- Calculating the integer value by combining the bytes
     return number_byte1 + number_byte2 * 256 + number_byte3 * 65536 + number_byte4 * 16777216;
@@ -112,11 +122,16 @@ end
 
 --Unpacks a (3 byte) 24-bit unsigned integer string into a number.
 --RETURNS: Number
-KTBM_Binary_UnpackUInt24 = function(encodedString)
+KTBM_Binary_UnpackUInt24 = function(string_binaryEncodedString)
+    if(string_binaryEncodedString == nil) then
+        print("[KTBM_Binary_UnpackUInt24] ERROR! Failed to unpack UInt24 from binary encoded string because the string was nil!");
+        return 0;
+    end
+
     -- Extracting individual bytes from the encoded string
-    local number_byte1 = encodedString:byte(1);
-    local number_byte2 = encodedString:byte(2);
-    local number_byte3 = encodedString:byte(3);
+    local number_byte1 = string_binaryEncodedString:byte(1);
+    local number_byte2 = string_binaryEncodedString:byte(2);
+    local number_byte3 = string_binaryEncodedString:byte(3);
 
     -- Calculating the integer value by combining the bytes
     local result = number_byte1 + number_byte2 * 256 + number_byte3 * 65536;
@@ -149,10 +164,15 @@ end
 
 --Unpacks a (2 byte) 16-bit unsigned integer string into a number.
 --RETURNS: Number
-KTBM_Binary_UnpackUInt16 = function(encodedString)
+KTBM_Binary_UnpackUInt16 = function(string_binaryEncodedString)
+    if(string_binaryEncodedString == nil) then
+        print("[KTBM_Binary_UnpackUInt16] ERROR! Failed to unpack UInt16 from binary encoded string because the string was nil!");
+        return 0;
+    end
+
     -- Extracting individual bytes from the encoded string
-    local number_byte1 = encodedString:byte(1);
-    local number_byte2 = encodedString:byte(2);
+    local number_byte1 = string_binaryEncodedString:byte(1);
+    local number_byte2 = string_binaryEncodedString:byte(2);
 
     -- Calculating the integer value by combining the bytes
     local result = number_byte1 + number_byte2 * 256;
@@ -220,11 +240,21 @@ end
 --Unpacks a (4 bytes) 32-bit single precision number string into a lua number.
 --RETURNS: Number
 KTBM_Binary_UnpackFloat = function(string_binaryEncodedString)
+    if(string_binaryEncodedString == nil) then
+        print("[KTBM_Binary_UnpackFloat] ERROR! Failed to unpack Float from binary encoded string because the string was nil!");
+        return 0;
+    end
+
+    local number_byte1 = string_binaryEncodedString:byte(1);
+    local number_byte2 = string_binaryEncodedString:byte(2);
+    local number_byte3 = string_binaryEncodedString:byte(3);
+    local number_byte4 = string_binaryEncodedString:byte(4);
+
     -- Extracting the significand bytes and combining them
-    local number_significand = (string_binaryEncodedString:byte(3) % 0x80) * 0x10000 + string_binaryEncodedString:byte(2) * 0x100 + string_binaryEncodedString:byte(1);
+    local number_significand = (number_byte3 % 0x80) * 0x10000 + number_byte2 * 0x100 + number_byte1;
 
     -- Extracting the exponent byte and calculating the exponent value
-    local number_exponent = (string_binaryEncodedString:byte(4) % 0x80) * 2 + math.floor(string_binaryEncodedString:byte(3) / 0x80) - 0x7F;
+    local number_exponent = (number_byte4 % 0x80) * 2 + math.floor(number_byte3 / 0x80) - 0x7F;
 
     -- Handling special case: if exponent is 0x7F, the value is 0
     if (number_exponent == 0x7F) then
@@ -232,5 +262,5 @@ KTBM_Binary_UnpackFloat = function(string_binaryEncodedString)
     end
 
     -- Calculating the decoded float value
-    return math.ldexp(math.ldexp(number_significand, -23) + 1, number_exponent) * (string_binaryEncodedString:byte(4) < 0x80 and 1 or -1);
+    return math.ldexp(math.ldexp(number_significand, -23) + 1, number_exponent) * (number_byte4 < 0x80 and 1 or -1);
 end

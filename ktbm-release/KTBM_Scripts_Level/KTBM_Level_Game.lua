@@ -49,7 +49,7 @@ KTBM_Gameplay_CrashSequenceUpdate = function()
         return;
     end
 
-    KTBM_Gameplay_EnvironmentMovementSpeed = 0;
+    KTBM_Gameplay_EnvironmentCurrentMovementSpeed = 0;
 end
 
 KTBM_Gameplay_GameLoopStart = function()
@@ -67,6 +67,8 @@ local bool_triggerOnce_ingameDeath = false;
 local bool_triggerOnce_gameDataSave = false;
 
 KTBM_Gameplay_GameLoopUpdate = function()
+    local number_deltaTime = GetFrameTime();
+
     KTBM_Gameplay_PlayerInputUpdate();
     KTBM_Gameplay_PhysicsUpdate();
     KTBM_Gameplay_CrashSequenceUpdate();
@@ -80,11 +82,24 @@ KTBM_Gameplay_GameLoopUpdate = function()
 
     if(KTBM_Gameplay_State_Paused == true) and (KTBM_Gameplay_State_HasCrashed == false) then
         SceneSetTimeScale(KTBM_Gameplay_kScene, 0);
-        KTBM_Gameplay_EnvironmentMovementSpeed = 0;
+        KTBM_Gameplay_EnvironmentCurrentMovementSpeed = 0;
         return;
     else
         SceneSetTimeScale(KTBM_Gameplay_kScene, 1);
-        KTBM_Gameplay_EnvironmentMovementSpeed = KTBM_Gameplay_DefaultEnvironmentMovementSpeed;
+
+        if(KTBM_Gameplay_State_IsSpeeding == true) then
+            --KTBM_Gameplay_EnvironmentCurrentMovementSpeed = KTBM_Gameplay_SpeedBoostEnvironmentMovementSpeed;
+            --KTBM_Gameplay_CurrentDistanceTraveledRate = KTBM_Gameplay_SpeedBoostDistanceTraveledRate;
+
+            KTBM_Gameplay_EnvironmentCurrentMovementSpeed = KTBM_NumberLerp(KTBM_Gameplay_EnvironmentCurrentMovementSpeed, KTBM_Gameplay_SpeedBoostEnvironmentMovementSpeed, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+            KTBM_Gameplay_CurrentDistanceTraveledRate = KTBM_NumberLerp(KTBM_Gameplay_CurrentDistanceTraveledRate, KTBM_Gameplay_SpeedBoostDistanceTraveledRate, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+        else
+            --KTBM_Gameplay_EnvironmentCurrentMovementSpeed = KTBM_Gameplay_DefaultEnvironmentMovementSpeed;
+            --KTBM_Gameplay_CurrentDistanceTraveledRate = KTBM_Gameplay_DefaultDistanceTraveledRate;
+
+            KTBM_Gameplay_EnvironmentCurrentMovementSpeed = KTBM_NumberLerp(KTBM_Gameplay_EnvironmentCurrentMovementSpeed, KTBM_Gameplay_DefaultEnvironmentMovementSpeed, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+            KTBM_Gameplay_CurrentDistanceTraveledRate = KTBM_NumberLerp(KTBM_Gameplay_CurrentDistanceTraveledRate, KTBM_Gameplay_DefaultDistanceTraveledRate, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+        end
     end
 
     --this isnt necessary for all of these functions, ideally i'd avoid it.
@@ -105,7 +120,7 @@ KTBM_Gameplay_GameLoopUpdate = function()
 
     --keep tracking these stats until we crash
     if(KTBM_Gameplay_State_HasCrashed == false) then
-        KTBM_Gameplay_Stats_DistanceTraveled = KTBM_Gameplay_Stats_DistanceTraveled + (KTBM_Gameplay_DistanceTraveledRate * GetFrameTime());
+        KTBM_Gameplay_Stats_DistanceTraveled = KTBM_Gameplay_Stats_DistanceTraveled + (KTBM_Gameplay_CurrentDistanceTraveledRate * GetFrameTime());
 
         KTBM_Gameplay_Stats_EndTime = GetTotalTime();
         KTBM_Gameplay_Stats_TotalTime = KTBM_Gameplay_Stats_EndTime - KTBM_Gameplay_Stats_StartTime;
@@ -172,6 +187,8 @@ KTBM_Level_Game = function()
         KTBM_Development_DevelopmentBuildText_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_DevelopmentBuildText_Update);
     end
+
+    Callback_OnPostUpdate:Add(KTBM_LevelRelight_M101_FlagshipExteriorDeck_UpdateLighting);
 end
 
 SceneOpen(kScene, kScript);

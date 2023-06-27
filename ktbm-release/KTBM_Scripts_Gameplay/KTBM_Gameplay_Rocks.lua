@@ -66,7 +66,7 @@ KTBM_Gameplay_RocksUpdate = function()
         local number_newPosition_z = vector_currentRockPosition.z;
         local number_newPosition_y = vector_currentRockPosition.y;
 
-        number_newPosition_z = number_newPosition_z - (KTBM_Gameplay_EnvironmentMovementSpeed * number_deltaTime);
+        number_newPosition_z = number_newPosition_z - (KTBM_Gameplay_EnvironmentCurrentMovementSpeed * number_deltaTime);
 
         if(number_newPosition_y < KTBM_Gameplay_RocksEndingHeight + KTBM_Gameplay_EnvironmentHeightOffset) then
             number_newPosition_y = number_newPosition_y + (KTBM_Gameplay_RocksHeightRiseSpeed * number_deltaTime);

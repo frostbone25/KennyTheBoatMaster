@@ -46,7 +46,7 @@ KTBM_Gameplay_EnvironmentScrolling = function()
 
         local vector_currentPosition = AgentGetWorldPos(agent_Environment);
 
-        vector_agentPosition.z = vector_currentPosition.z - (KTBM_Gameplay_EnvironmentMovementSpeed * deltaTime);
+        vector_agentPosition.z = vector_currentPosition.z - (KTBM_Gameplay_EnvironmentCurrentMovementSpeed * deltaTime);
         vector_agentPosition.y = KTBM_Gameplay_EnvironmentHeightOffset + KTBM_Gameplay_EnvironmentSpawnHeight;
 
         if(vector_agentPosition.z < KTBM_Gameplay_EnvironmentMinimumDistance) then

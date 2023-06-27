@@ -31,12 +31,21 @@ KTBM_Gameplay_Input_CurrentHorizontalRotationValue = 0;
 KTBM_Gameplay_Input_IMAP_File = "KTBM_Gameplay_Input.imap";
 KTBM_Gameplay_Input_MovementAxis = Vector(0, 0, 0);
 
+--[[
+Commented these IMAP functions out in favor of using a hardcoded one.
+These still work and are bound in the .imap files however
+I found that these generally aren't the best when it comes to movement.
+They can feel rather sticky versus with the hardcoded movement where
+we check for those input presses for every frame.
+
 KTBM_Gameplay_Input_IMAP_Left_Begin = function()
     KTBM_Gameplay_Input_MovementAxis.x = 1;
 end
 
 KTBM_Gameplay_Input_IMAP_Left_End = function()
-    KTBM_Gameplay_Input_MovementAxis.x = 0;
+    if(KTBM_Gameplay_Input_MovementAxis > 0) then
+        KTBM_Gameplay_Input_MovementAxis.x = 0;
+    end
 end
 
 KTBM_Gameplay_Input_IMAP_Right_Begin = function()
@@ -44,8 +53,19 @@ KTBM_Gameplay_Input_IMAP_Right_Begin = function()
 end
 
 KTBM_Gameplay_Input_IMAP_Right_End = function()
-    KTBM_Gameplay_Input_MovementAxis.x = 0;
+    if(KTBM_Gameplay_Input_MovementAxis < 0) then
+        KTBM_Gameplay_Input_MovementAxis.x = 0;
+    end
 end
+
+KTBM_Gameplay_Input_IMAP_SpeedBoost_Begin = function()
+    KTBM_Gameplay_State_IsSpeeding = true;
+end
+
+KTBM_Gameplay_Input_IMAP_SpeedBoost_End = function()
+    KTBM_Gameplay_State_IsSpeeding = false;
+end
+]]
 
 KTBM_Gameplay_Input_IMAP_Pause_Begin = function()
     KTBM_Gameplay_State_Paused = not KTBM_Gameplay_State_Paused;
@@ -67,31 +87,46 @@ KTBM_Gameplay_PlayerInputUpdate = function()
     --|||||||||||||||||||||||||||| IMAP INPUT ||||||||||||||||||||||||||||
     --|||||||||||||||||||||||||||| IMAP INPUT ||||||||||||||||||||||||||||
     --|||||||||||||||||||||||||||| IMAP INPUT ||||||||||||||||||||||||||||
-    --The current implementation, which uses Telltale's native Input Mapping (IMAP) system to handle input.
+    --The older implementation, which uses Telltale's native Input Mapping (IMAP) system to handle input.
+    --This does work, however these movement keys are pressed reguarly and on some events the controls
+    --Can feel rather sticky and unresponsive, so instead opted for a hardcoded implementation
+    --Where we have more control and can actually check for every single frame when a key
+    --is active (versus with imap keys only fire events on the frame that they are pressed/released).
 
-    KTBM_Gameplay_Input_CurrentHorizontalPositionValue = KTBM_Gameplay_Input_MovementAxis.x * KTBM_Gameplay_BoatMovementSpeed * number_deltaTime;
-    KTBM_Gameplay_Input_CurrentHorizontalRotationValue = KTBM_Gameplay_Input_MovementAxis.x * KTBM_Gameplay_BoatMaxRotationAngle;
+    --KTBM_Gameplay_Input_CurrentHorizontalPositionValue = KTBM_Gameplay_Input_MovementAxis.x * KTBM_Gameplay_BoatCurrentMovementSpeed * number_deltaTime;
+    --KTBM_Gameplay_Input_CurrentHorizontalRotationValue = KTBM_Gameplay_Input_MovementAxis.x * KTBM_Gameplay_BoatCurrentMaxRotationAngle;
 
     --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
     --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
     --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
-    --This is an older input implementation and is purely hardcoded.
-    --This doesn't utilize the native input system within the telltale tool (.imaps)
-    --But I kept it here (but commented out) so one can see how you can do input if you prefer not to use imaps.
 
-    --local bool_moveLeft = Input_IsVKeyPressed(KTBM_Core_Keycodes_A) or Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftArrow);
-    --local bool_moveRight = Input_IsVKeyPressed(KTBM_Core_Keycodes_D) or Input_IsVKeyPressed(KTBM_Core_Keycodes_RightArrow);
+    local bool_moveLeft = Input_IsVKeyPressed(KTBM_Core_Keycodes_A) or Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftArrow);
+    local bool_moveRight = Input_IsVKeyPressed(KTBM_Core_Keycodes_D) or Input_IsVKeyPressed(KTBM_Core_Keycodes_RightArrow);
 
-    --if bool_moveLeft then
-        --KTBM_Gameplay_Input_CurrentHorizontalPositionValue = KTBM_Gameplay_BoatMovementSpeed * deltaTime;
-        --KTBM_Gameplay_Input_CurrentHorizontalRotationValue = KTBM_Gameplay_BoatMaxRotationAngle;
-    --elseif bool_moveRight then
-        --KTBM_Gameplay_Input_CurrentHorizontalPositionValue = -KTBM_Gameplay_BoatMovementSpeed * deltaTime;
-        --KTBM_Gameplay_Input_CurrentHorizontalRotationValue = -KTBM_Gameplay_BoatMaxRotationAngle;
-    --else
-        --KTBM_Gameplay_Input_CurrentHorizontalPositionValue = 0;
-        --KTBM_Gameplay_Input_CurrentHorizontalRotationValue = 0;
-    --end
+    if bool_moveLeft then
+        KTBM_Gameplay_Input_CurrentHorizontalPositionValue = KTBM_Gameplay_BoatCurrentMovementSpeed * number_deltaTime;
+        KTBM_Gameplay_Input_CurrentHorizontalRotationValue = KTBM_Gameplay_BoatCurrentMaxRotationAngle;
+    elseif bool_moveRight then
+        KTBM_Gameplay_Input_CurrentHorizontalPositionValue = -KTBM_Gameplay_BoatCurrentMovementSpeed * number_deltaTime;
+        KTBM_Gameplay_Input_CurrentHorizontalRotationValue = -KTBM_Gameplay_BoatCurrentMaxRotationAngle;
+    else
+        KTBM_Gameplay_Input_CurrentHorizontalPositionValue = 0;
+        KTBM_Gameplay_Input_CurrentHorizontalRotationValue = 0;
+    end
+
+    KTBM_Gameplay_State_IsSpeeding = Input_IsVKeyPressed(160) or Input_IsVKeyPressed(161);
+
+    if(KTBM_Gameplay_State_IsSpeeding == true) then
+        --KTBM_Gameplay_BoatCurrentMovementSpeed = KTBM_Gameplay_SpeedBoostBoatMovementSpeed;
+        --KTBM_Gameplay_BoatCurrentMaxRotationAngle = KTBM_Gameplay_BoatSpeedBoostMaxRotationAngle;
+        KTBM_Gameplay_BoatCurrentMovementSpeed = KTBM_NumberLerp(KTBM_Gameplay_BoatCurrentMovementSpeed, KTBM_Gameplay_SpeedBoostBoatMovementSpeed, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+        KTBM_Gameplay_BoatCurrentMaxRotationAngle = KTBM_NumberLerp(KTBM_Gameplay_BoatCurrentMaxRotationAngle, KTBM_Gameplay_BoatSpeedBoostMaxRotationAngle, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+    else
+        --KTBM_Gameplay_BoatCurrentMovementSpeed = KTBM_Gameplay_DefaultBoatMovementSpeed;
+        --KTBM_Gameplay_BoatCurrentMaxRotationAngle = KTBM_Gameplay_BoatDefaultMaxRotationAngle;
+        KTBM_Gameplay_BoatCurrentMovementSpeed = KTBM_NumberLerp(KTBM_Gameplay_BoatCurrentMovementSpeed, KTBM_Gameplay_DefaultBoatMovementSpeed, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+        KTBM_Gameplay_BoatCurrentMaxRotationAngle = KTBM_NumberLerp(KTBM_Gameplay_BoatCurrentMaxRotationAngle, KTBM_Gameplay_BoatDefaultMaxRotationAngle, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+    end
 end
 
 KTBM_Gameplay_Player_CreateGameCamera = function(kScene)
@@ -148,6 +183,11 @@ KTBM_Gameplay_PlayerUpdate = function()
     KTBM_Gameplay_Boat_DesiredPosition.x = KTBM_Gameplay_Boat_DesiredPosition.x + KTBM_Gameplay_Input_CurrentHorizontalPositionValue;
     KTBM_Gameplay_Boat_DesiredPosition.y = KTBM_Gameplay_EnvironmentHeightOffset;
     KTBM_Gameplay_Boat_DesiredRotation = Vector(number_newBoatBobbingValue, KTBM_Gameplay_Input_CurrentHorizontalRotationValue, 0);
+
+    if(KTBM_Gameplay_State_IsSpeeding == true) then
+        KTBM_Gameplay_Boat_DesiredRotation.x = KTBM_Gameplay_Boat_DesiredRotation.x - KTBM_Gameplay_BoatSpeedBoostMaxRotationVerticalAngle;
+        KTBM_Gameplay_Boat_DesiredPosition.y = KTBM_Gameplay_Boat_DesiredPosition.y + KTBM_Gameplay_BoatSpeedBoostPositionRiseHeight;
+    end
 
     if (KTBM_Gameplay_Boat_DesiredPosition.x < -KTBM_Gameplay_BoatHorizontalBoundarySize - 0.01) or (KTBM_Gameplay_Boat_DesiredPosition.x > KTBM_Gameplay_BoatHorizontalBoundarySize - 0.01) then
         KTBM_Gameplay_Boat_DesiredRotation = Vector(number_newBoatBobbingValue, 0, 0);

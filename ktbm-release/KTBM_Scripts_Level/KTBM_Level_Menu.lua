@@ -77,8 +77,8 @@ KTBM_DOF_AUTOFOCUS_BokehSettings =
     BokehBrightnessThreshold = 0.15,
     BokehBlurThreshold = 0.02,
     BokehMinSize = 0.0,
-    BokehMaxSize = 0.025,
-    BokehFalloff = 0.75,
+    BokehMaxSize = 0.0225,
+    BokehFalloff = 0.9,
     MaxBokehBufferAmount = 1.0,
     BokehPatternTexture = "bokeh_circle.d3dtx"
 };
@@ -88,7 +88,7 @@ LensFlareEffect_kScene = kScene;
 --main level function (called when scene starts)
 KTBM_Level_Menu = function()    
     KTBM_LevelCleanup_M101_FlagshipExteriorDeck_Purge(kScene);
-    KTBM_LevelRelight_M101_FlagshipExteriorDeck_Build(kScene, kSceneAgentName);
+    KTBM_LevelRelight_M101_FlagshipExteriorDeck_Menu_Build(kScene, kSceneAgentName);
     Callback_OnPostUpdate:Add(KTBM_LevelRelight_M101_FlagshipExteriorDeck_UpdateLighting);
 
     KTBM_Cutscene_Menu_PrepareCamera(kScene);
@@ -124,6 +124,8 @@ KTBM_Level_Menu = function()
 
         Callback_OnPostUpdate:Add(KTBM_UI_Update);
         Callback_OnPostUpdate:Add(KTBM_UI_YesNoDialogBox_Update);
+
+        Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_Update);
     end
 
     --LensFlareEffect_Initalize();
@@ -131,6 +133,7 @@ KTBM_Level_Menu = function()
 
     KTBM_DepthOfFieldAutofocus_SetupDOF();
     Callback_OnPostUpdate:Add(KTBM_DepthOfFieldAutofocus_PerformAutofocus);
+    Callback_OnPostUpdate:Add(KTBM_LevelRelight_M101_FlagshipExteriorDeck_UpdateLighting);
 
     if (KTBM_Core_Project_DebugAllowBoundsDebug) then
         KTBM_Development_BoundsDebug_Initalize();

@@ -42,6 +42,7 @@ local agent_pageScoreboard_rightArrow = nil;
 local number_gameResultsDataArraySize = 0;
 local number_gameResultsPages = 0;
 local number_gameResultsIndex = 1;
+local number_gameResultsPageIndex = 1;
 local gameResultsDataArray = nil;
 local gameResultsObject_mostDistance = nil;
 local gameResultsObject_mostKills = nil;
@@ -510,6 +511,10 @@ KTBM_UI_Update = function()
     local defaultColor = Color(1.0, 1.0, 1.0, 1.0);
     local rolloverColor = Color(0.25, 0.25, 0.25, 1.0);
     local pressedColor = Color(0.1, 0.0, 0.0, 1.0);
+
+    local bestRunColor = Color(0.75, 1.0, 0.75, 1.0);
+    local bestDistanceColor = Color(0.75, 0.75, 1.0, 1.0);
+    local mostKillsColor = Color(1.0, 0.75, 0.75, 1.0);
     
     --||||||||||||||||||||||||||||| BUTTON VISIBILITY |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| BUTTON VISIBILITY |||||||||||||||||||||||||||||
@@ -853,9 +858,11 @@ KTBM_UI_Update = function()
             TextSet(agent_pageScoreboard_item2, "");
             TextSet(agent_pageScoreboard_item3, "");
         else
-            number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, number_gameResultsPages);
+            --number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, #gameResultsDataArray - 1);
+            number_gameResultsIndex = KTBM_Clamp(number_gameResultsIndex, 1, #gameResultsDataArray);
+            number_gameResultsPageIndex = KTBM_Clamp(number_gameResultsPageIndex, 1, number_gameResultsPages);
             
-            local string_pageNumberText = "(" .. tostring(number_gameResultsIndex) .. "/" .. tostring(number_gameResultsPages) .. ")";
+            local string_pageNumberText = "(" .. tostring(number_gameResultsPageIndex) .. "/" .. tostring(number_gameResultsPages) .. ")";
 
             local gameResultsObject_selectedObject1 = gameResultsDataArray[number_gameResultsIndex];
             local gameResultsObject_selectedObject2 = gameResultsDataArray[number_gameResultsIndex + 1];
@@ -865,17 +872,80 @@ KTBM_UI_Update = function()
             local string_scoreboardItemText2 = "";
             local string_scoreboardItemText3 = "";
 
+            local string_fileNameForBestDistance = KTBM_Data_GameResultsObject_GetFileName(gameResultsObject_mostDistance);
+            local string_fileNameForBestKills = KTBM_Data_GameResultsObject_GetFileName(gameResultsObject_mostKills);
+
             if(gameResultsObject_selectedObject1 ~= nil) then
+                local string_fileNameForSelectedObject1 = KTBM_Data_GameResultsObject_GetFileName(gameResultsObject_selectedObject1);
+                local bool_case1 = string_fileNameForSelectedObject1 == string_fileNameForBestDistance;
+                local bool_case2 = string_fileNameForSelectedObject1 == string_fileNameForBestKills;
+
+                if(bool_case1 and bool_case2) then
+                    string_scoreboardItemText1 = string_scoreboardItemText1 .. "[BEST RUN]";
+                    string_scoreboardItemText1 = string_scoreboardItemText1 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item1, bestRunColor);
+                elseif(bool_case1 and not bool_case2) then
+                    string_scoreboardItemText1 = string_scoreboardItemText1 .. "[BEST DISTANCE]";
+                    string_scoreboardItemText1 = string_scoreboardItemText1 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item1, bestDistanceColor);
+                elseif(not bool_case1 and bool_case2) then
+                    string_scoreboardItemText1 = string_scoreboardItemText1 .. "[MOST KILLS]";
+                    string_scoreboardItemText1 = string_scoreboardItemText1 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item1, mostKillsColor);
+                else
+                    TextSetColor(agent_pageScoreboard_item1, defaultColor);
+                end
+
                 string_scoreboardItemText1 = string_scoreboardItemText1 .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject1);
                 string_scoreboardItemText1 = string_scoreboardItemText1 .. "\n"; --new line
             end
 
             if(gameResultsObject_selectedObject2 ~= nil) then
+                local string_fileNameForSelectedObject2 = KTBM_Data_GameResultsObject_GetFileName(gameResultsObject_selectedObject2);
+                local bool_case1 = string_fileNameForSelectedObject2 == string_fileNameForBestDistance;
+                local bool_case2 = string_fileNameForSelectedObject2 == string_fileNameForBestKills;
+
+                if(bool_case1 and bool_case2) then
+                    string_scoreboardItemText2 = string_scoreboardItemText2 .. "[BEST RUN]";
+                    string_scoreboardItemText2 = string_scoreboardItemText2 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item2, bestRunColor);
+                elseif(bool_case1 and not bool_case2) then
+                    string_scoreboardItemText2 = string_scoreboardItemText2 .. "[BEST DISTANCE]";
+                    string_scoreboardItemText2 = string_scoreboardItemText2 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item2, bestDistanceColor);
+                elseif(not bool_case1 and bool_case2) then
+                    string_scoreboardItemText2 = string_scoreboardItemText2 .. "[MOST KILLS]";
+                    string_scoreboardItemText2 = string_scoreboardItemText2 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item2, mostKillsColor);
+                else
+                    TextSetColor(agent_pageScoreboard_item2, defaultColor);
+                end
+
                 string_scoreboardItemText2 = string_scoreboardItemText2 .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject2);
                 string_scoreboardItemText2 = string_scoreboardItemText2 .. "\n"; --new line
             end
 
             if(gameResultsObject_selectedObject3 ~= nil) then
+                local string_fileNameForSelectedObject3 = KTBM_Data_GameResultsObject_GetFileName(gameResultsObject_selectedObject3);
+                local bool_case1 = string_fileNameForSelectedObject3 == string_fileNameForBestDistance;
+                local bool_case2 = string_fileNameForSelectedObject3 == string_fileNameForBestKills;
+
+                if(bool_case1 and bool_case2) then
+                    string_scoreboardItemText3 = string_scoreboardItemText3 .. "[BEST RUN]";
+                    string_scoreboardItemText3 = string_scoreboardItemText3 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item3, bestRunColor);
+                elseif(bool_case1 and not bool_case2) then
+                    string_scoreboardItemText3 = string_scoreboardItemText3 .. "[BEST DISTANCE]";
+                    string_scoreboardItemText3 = string_scoreboardItemText3 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item3, bestDistanceColor);
+                elseif(not bool_case1 and bool_case2) then
+                    string_scoreboardItemText3 = string_scoreboardItemText3 .. "[MOST KILLS]";
+                    string_scoreboardItemText3 = string_scoreboardItemText3 .. "\n"; --new line
+                    TextSetColor(agent_pageScoreboard_item3, mostKillsColor);
+                else
+                    TextSetColor(agent_pageScoreboard_item3, defaultColor);
+                end
+
                 string_scoreboardItemText3 = string_scoreboardItemText3 .. KTBM_Data_GameResultsObjectToString(gameResultsObject_selectedObject3);
                 string_scoreboardItemText3 = string_scoreboardItemText3 .. "\n"; --new line
             end
@@ -909,7 +979,8 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_pageScoreboard_leftArrow, pressedColor);
                 PlayClickSound();
 
-                number_gameResultsIndex = number_gameResultsIndex - 1;
+                number_gameResultsIndex = number_gameResultsIndex - 3;
+                number_gameResultsPageIndex = number_gameResultsPageIndex - 1;
 
                 KTBM_UI_Input_Clicked = false;
             else
@@ -926,7 +997,8 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_pageScoreboard_rightArrow, pressedColor);
                 PlayClickSound();
 
-                number_gameResultsIndex = number_gameResultsIndex + 1;
+                number_gameResultsIndex = number_gameResultsIndex + 3;
+                number_gameResultsPageIndex = number_gameResultsPageIndex + 1;
 
                 KTBM_UI_Input_Clicked = false;
             else

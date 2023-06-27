@@ -1,5 +1,26 @@
 local controller_music = nil;
 local controller_sound_sceneAmbient = nil;
+local controller_sound_zombieKill = nil;
+local controller_sound_zombieDeathVoice = nil;
+local agent_kenny = nil;
+
+local strings_zombieDeathVoiceSounds = {
+    "vox_susan_hit_2_alt10.wav",
+    "vox_susan_hit_2_alt8.wav",
+    "vox_susan_hit_2_alt1.wav",
+    "vox_susan_hit_2_alt6.wav",
+    "vox_susan_hit_2_alt9.wav",
+    "vox_susan_hit_2_alt7.wav",
+    "vox_susan_hit_2_alt11.wav",
+    "vox_susan_hit_2_alt2.wav",
+    "vox_susan_hit_2_alt5.wav",
+    "vox_susan_hit_2_alt4.wav",
+    "vox_susan_hit_2_alt3.wav",
+    "vox_susan_hit_2_alt12.wav",
+    "vox_zomb_will_death_1.wav",
+    "vox_zomb_nickM_death_6.wav",
+    "vox_zomb_mark_death1.wav"
+};
 
 --main function that prepares the level enviorment
 KTBM_Cutscene_Game_Start = function(kScene)
@@ -17,7 +38,7 @@ KTBM_Cutscene_Game_Start = function(kScene)
     ControllerSetLooping(controller_boatObj_idle, true);
 
     --spawn the legend himself, kenny, into the scene
-    local agent_kenny = AgentFindInScene("Kenny", kScene);
+    agent_kenny = AgentFindInScene("Kenny", kScene);
     KTBM_AgentSetProperty("Kenny", "Walk Animation - Idle", nil, kScene)
     --KTBM_AgentSetProperty("Kenny", "Eye Look-At Properties", nil, kScene)
     KTBM_AgentSetProperty("Kenny", "Walk Animation - Eyes", nil, kScene)
@@ -65,11 +86,13 @@ KTBM_Cutscene_Game_Start = function(kScene)
     controller_music = SoundPlay("mus_loop_action_11.wav");
     ControllerSetLooping(controller_music, true);
     ControllerSetSoundVolume(controller_music, 1.0);
+    ControllerFadeIn(controller_music, 2.0);
     
     --do scene ambient sound
     controller_sound_sceneAmbient = SoundPlay("amb_river_shore_calm_water.wav");
     ControllerSetLooping(controller_sound_sceneAmbient, true);
     ControllerSetSoundVolume(controller_sound_sceneAmbient, 0.25);
+    ControllerFadeIn(controller_sound_sceneAmbient, 2.0);
     
     --------------------------------------------------------
     --prepare kennys base idle animations
@@ -87,6 +110,41 @@ KTBM_Cutscene_Game_Start = function(kScene)
 end
 
 KTBM_Cutscene_Game_End = function(kScene)
-    ControllerKill(controller_music);
-    ControllerKill(controller_sound_sceneAmbient);
+    ControllerFadeOut(controller_music, 1.0);
+    ControllerFadeOut(controller_sound_sceneAmbient, 1.0);
+    --ControllerKill(controller_music);
+    --ControllerKill(controller_sound_sceneAmbient);
+end
+
+KTBM_Cutscene_Game_PlayZombieKill = function(agent_zombie)
+    if(controller_sound_zombieKill ~= nil) then
+        ControllerKill(controller_sound_zombieKill);
+        controller_sound_zombieKill = nil;
+    end
+
+    if(controller_sound_zombieDeathVoice ~= nil) then
+        ControllerKill(controller_sound_zombieDeathVoice);
+        controller_sound_zombieDeathVoice = nil;
+    end
+
+    controller_sound_zombieKill = SoundPlay("KTBM_Sound_KillZombie.wav");
+    ControllerSetLooping(controller_sound_zombieKill, false);
+    ControllerSetSoundVolume(controller_sound_zombieKill, 1.0);
+
+    local number_randomClip = KTBM_RandomIntegerValue(1, #strings_zombieDeathVoiceSounds);
+    local string_zombieDeathVoice = strings_zombieDeathVoiceSounds[number_randomClip];
+    controller_sound_zombieDeathVoice = SoundPlay(string_zombieDeathVoice);
+    ControllerSetLooping(controller_sound_zombieDeathVoice, false);
+    ControllerSetSoundVolume(controller_sound_zombieDeathVoice, 0.25);
+
+
+    local controllers_zombieControllers = AgentGetControllers(agent_zombie);
+    
+    for index, controller_item in ipairs(controllers_zombieControllers) do
+        ControllerKill(controller_item);
+    end
+end
+
+KTBM_Cutscene_Game_PlayVoiceLineZombieKills = function()
+
 end

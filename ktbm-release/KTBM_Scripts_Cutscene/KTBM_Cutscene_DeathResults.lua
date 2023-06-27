@@ -254,6 +254,7 @@ KTBM_Cutscene_DeathResults_Update = function()
             controller_fireAmbience = SoundPlay("fireplace_lp.wav");
             ControllerSetLooping(controller_fireAmbience, true);
             ControllerSetSoundVolume(controller_fireAmbience, 1);
+            ControllerFadeIn(controller_fireAmbience, 2.0);
 
             KTBM_Cutscene_DeathResults_ShowUI = true;
             KTBM_Cutscene_Skip_CutsceneFinished = true;
@@ -333,6 +334,7 @@ KTBM_Cutscene_DeathResults_Update = function()
             controller_fireAmbience = SoundPlay("fireplace_lp.wav");
             ControllerSetLooping(controller_fireAmbience, true);
             ControllerSetSoundVolume(controller_fireAmbience, 1);
+            ControllerFadeIn(controller_fireAmbience, 2.0);
 
             RenderDelay(1);
 

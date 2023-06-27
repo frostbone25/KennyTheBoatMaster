@@ -82,6 +82,30 @@
         "mEvent": 0,
         "mScriptFunction": "KTBM_Gameplay_Input_IMAP_Pause_Begin",
         "mControllerIndexOverride": -1
+      },
+      {
+        "mInputCode": 160,
+        "mEvent": 0,
+        "mScriptFunction": "KTBM_Gameplay_Input_IMAP_SpeedBoost_Begin",
+        "mControllerIndexOverride": -1
+      },
+      {
+        "mInputCode": 160,
+        "mEvent": 1,
+        "mScriptFunction": "KTBM_Gameplay_Input_IMAP_SpeedBoost_End",
+        "mControllerIndexOverride": -1
+      },
+      {
+        "mInputCode": 161,
+        "mEvent": 0,
+        "mScriptFunction": "KTBM_Gameplay_Input_IMAP_SpeedBoost_Begin",
+        "mControllerIndexOverride": -1
+      },
+      {
+        "mInputCode": 161,
+        "mEvent": 1,
+        "mScriptFunction": "KTBM_Gameplay_Input_IMAP_SpeedBoost_End",
+        "mControllerIndexOverride": -1
       }
     ]
   }

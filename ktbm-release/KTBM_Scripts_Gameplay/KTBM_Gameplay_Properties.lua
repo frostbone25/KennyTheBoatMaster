@@ -26,6 +26,8 @@ KTBM_Gameplay_EnvironmentHeightOffset = 0;
     Which if you've already looked through it, that is why you see that appear alot.
 ]]
 
+KTBM_Gameplay_SpeedBoostTransitionLerpFactor = 5;
+
 --||||||||||||||||||||||||||||||| ENVIORMENT SCROLLING PROPERTIES |||||||||||||||||||||||||||||||
 --||||||||||||||||||||||||||||||| ENVIORMENT SCROLLING PROPERTIES |||||||||||||||||||||||||||||||
 --||||||||||||||||||||||||||||||| ENVIORMENT SCROLLING PROPERTIES |||||||||||||||||||||||||||||||
@@ -36,9 +38,10 @@ KTBM_Gameplay_EnvironmentHeightOffset = 0;
 --(Lower Value = Slower | Higher Value = Faster)
 KTBM_Gameplay_DefaultEnvironmentMovementSpeed = 25;
 
---The current speed at which the world will scroll.
---This will change during gameplay, so don't change this value.
-KTBM_Gameplay_EnvironmentMovementSpeed = KTBM_Gameplay_DefaultEnvironmentMovementSpeed;
+--The default speed at which the world will scroll.
+--This controls the speed for EVERYTHING in the world.
+--(Lower Value = Slower | Higher Value = Faster)
+KTBM_Gameplay_SpeedBoostEnvironmentMovementSpeed = 75;
 
 --How far out left/right the enviorment will be from the player.
 --(Lower Value = Closer | Higher Value = Farther)
@@ -67,15 +70,28 @@ KTBM_Gameplay_BoatHorizontalBoundarySize = 25;
 
 --Controls the speed at which the boat can move from side to side.
 --(Lower Value = Slower | Higher Value = Faster)
-KTBM_Gameplay_BoatMovementSpeed = 20;
+KTBM_Gameplay_DefaultBoatMovementSpeed = 20;
+
+--Controls the speed at which the boat can move from side to side.
+--(Lower Value = Slower | Higher Value = Faster)
+KTBM_Gameplay_SpeedBoostBoatMovementSpeed = 10;
 
 --Controls the angle at which the boat will take when moving from side to side
 --(Less than 0 = Max Angle In Opposite Direction | 0 = Straight | More than 0 = Max Angle)
-KTBM_Gameplay_BoatMaxRotationAngle = 25;
+KTBM_Gameplay_BoatDefaultMaxRotationAngle = 25;
+
+--Controls the angle at which the boat will take when moving from side to side
+--(Less than 0 = Max Angle In Opposite Direction | 0 = Straight | More than 0 = Max Angle)
+KTBM_Gameplay_BoatSpeedBoostMaxRotationAngle = 15;
+
+KTBM_Gameplay_BoatSpeedBoostMaxRotationVerticalAngle = 5;
+KTBM_Gameplay_BoatSpeedBoostPositionRiseHeight = 0.25;
 
 --NOTE: 13.4112 meters per second (30 miles per hour)
+KTBM_Gameplay_DefaultDistanceTraveledRate = 13.4112;
+
 --NOTE: 22.352 meters per second (50 miles per hour)
-KTBM_Gameplay_DistanceTraveledRate = 13.4112;
+KTBM_Gameplay_SpeedBoostDistanceTraveledRate = 22.352;
 
 --Controls the global scale of the boat collision box
 --(Lower Value = Smaller Collision Box | Higher Value = Larger Collision Box)
@@ -164,6 +180,9 @@ KTBM_Gameplay_ZombiesHeightRiseSpeed = 15;
 --Has the player crashed into a rock yet?
 KTBM_Gameplay_State_HasCrashed = false;
 
+--Is the player currently speeding?
+KTBM_Gameplay_State_IsSpeeding = false;
+
 --Has the player paused the game?
 KTBM_Gameplay_State_Paused = false;
 
@@ -187,3 +206,15 @@ KTBM_Gameplay_Stats_EndTime = 0;
 --The total time of the run.
 --This is calculated simply with (KTBM_Gameplay_Stats_EndTime - KTBM_Gameplay_Stats_EndTime)
 KTBM_Gameplay_Stats_TotalTime = 0;
+
+--||||||||||||||||||||||||||||||| DYNAMIC VARIABLES |||||||||||||||||||||||||||||||
+--||||||||||||||||||||||||||||||| DYNAMIC VARIABLES |||||||||||||||||||||||||||||||
+--||||||||||||||||||||||||||||||| DYNAMIC VARIABLES |||||||||||||||||||||||||||||||
+
+KTBM_Gameplay_EnvironmentCurrentMovementSpeed = KTBM_Gameplay_DefaultEnvironmentMovementSpeed;
+
+KTBM_Gameplay_BoatCurrentMovementSpeed = KTBM_Gameplay_DefaultBoatMovementSpeed;
+
+KTBM_Gameplay_BoatCurrentMaxRotationAngle = KTBM_Gameplay_BoatDefaultMaxRotationAngle;
+
+KTBM_Gameplay_CurrentDistanceTraveledRate = KTBM_Gameplay_DefaultDistanceTraveledRate;

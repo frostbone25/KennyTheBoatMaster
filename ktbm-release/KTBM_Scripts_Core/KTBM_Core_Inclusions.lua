@@ -1,5 +1,5 @@
 ---------------------------------------------
-print("Main Inclusions Block")
+print("[KTBM_Core_Inclusions.lua] Main Inclusions Block")
 
 require("KTBM_Core_Project.lua");
 require("KTBM_Core_Utilities.lua");
@@ -26,7 +26,7 @@ require("KTBM_Effects_DepthOfFieldAutofocus.lua");
 require("KTBM_Effects_LensFlare.lua");
 
 ---------------------------------------------
-print("Development Inclusions Block")
+print("[KTBM_Core_Inclusions.lua] Development Inclusions Block")
 
 require("KTBM_Development_Freecam.lua");
 require("KTBM_Development_AgentBrowser.lua");
@@ -37,4 +37,4 @@ require("KTBM_Development_DevelopmentBuildText.lua");
 
 ---------------------------------------------
 
-print("END INCLUSIONS")
+print("[KTBM_Core_Inclusions.lua] END INCLUSIONS")

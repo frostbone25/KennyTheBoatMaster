@@ -50,9 +50,9 @@ KTBM_Data_GameResults_GetDateTimeFromFileName = function(string_gameResultFileNa
 
     local string_monthName = string_monthNames[number_month];
 
-    local formattedDate = string_monthName .. " " .. string_day .. ", " .. string_year;
-    local formattedTime = string.format("%02d:%02d:%02d %s", number_formattedHours, string_minutes, string_seconds, string_timePeriod);
-    local string_finalFormattedString = formattedDate .. " at " .. formattedTime;
+    local string_formattedDate = string_monthName .. " " .. string_day .. ", " .. string_year;
+    local string_formattedTime = string.format("%02d:%02d:%02d %s", number_formattedHours, string_minutes, string_seconds, string_timePeriod);
+    local string_finalFormattedString = string_formattedDate .. " at " .. string_formattedTime;
 
     return string_finalFormattedString;
 end
@@ -207,15 +207,20 @@ KTBM_Data_SerializeGameResultsObject_Binary = function(gameResults_object, strin
     string_binaryData = string_binaryData .. KTBM_Binary_PackFloat(gameResults_object["TotalTime"]);
 
     --create our file and write the binary string data.
-    local file = io.open(string_resultsFilePath, "w");
+    local file = io.open(string_resultsFilePath, "wb");
     file:write(string_binaryData);
     file:close();
 end
 
 --This reads in a binary file from the disk and returns a 'gameResults_object'.
 KTBM_Data_DeserializeGameResultsObject_Binary = function(string_resultsFilePath)
-    local file = io.open(string_resultsFilePath, "r");
-    local string_binaryData = file:read("*a");
+    if(string_resultsFilePath == nil) then
+        print("[KTBM_Data_DeserializeGameResultsObject_Binary] string_resultsFilePath was nil!");
+        return;
+    end
+
+    local file = io.open(string_resultsFilePath, "rb");
+    local string_binaryData = file:read("*all");
     file:close();
 
     local string_extractedFileName = string_resultsFilePath:sub(#string_mainDirectoryName + 1);
@@ -250,6 +255,7 @@ KTBM_Data_DeserializeGameResultsObject_Binary = function(string_resultsFilePath)
             number_pointerPosition = number_pointerPosition + 4; --4 bytes for a 32-bit float
 
             local number_parsedValue = KTBM_Binary_UnpackFloat(string_bytes);
+
             gameResults_parsedObject["TotalTime"] = number_parsedValue;
         end
 
@@ -274,23 +280,23 @@ KTBM_Data_SaveGameResults = function(gameResults_object)
     string_resultsFilePath = string_resultsFilePath .. "-" .. table_osTime["day"];
     string_resultsFilePath = string_resultsFilePath .. "-" .. table_osTime["year"];
 
-    print(" ");
-    print("---SAVING GAME RESULTS---");
+    print("[KTBM_Data_SaveGameResults] ");
+    print("[KTBM_Data_SaveGameResults] ---SAVING GAME RESULTS---");
 
     if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
-        print("Saving Results in Binary Format...");
-        print(string_resultsFilePath .. ".bin");
+        print("[KTBM_Data_SaveGameResults] Saving Results in Binary Format...");
+        print("[KTBM_Data_SaveGameResults] " .. string_resultsFilePath .. ".bin");
 
         KTBM_Data_SerializeGameResultsObject_Binary(gameResults_object, string_resultsFilePath .. ".bin");
     else
-        print("Saving Results in Text Format...");
-        print(string_resultsFilePath .. ".txt");
+        print("[KTBM_Data_SaveGameResults] Saving Results in Text Format...");
+        print("[KTBM_Data_SaveGameResults] " .. string_resultsFilePath .. ".txt");
 
         KTBM_Data_SerializeGameResultsObject_Text(gameResults_object, string_resultsFilePath .. ".txt");
     end
 
-    print("---FINISHED SAVING GAME RESULTS---");
-    print(" ");
+    print("[KTBM_Data_SaveGameResults] ---FINISHED SAVING GAME RESULTS---");
+    print("[KTBM_Data_SaveGameResults] ");
 end
 
 KTBM_Data_GetAllGameResultFilePaths = function()
@@ -320,56 +326,61 @@ KTBM_Data_GetAllGameResultFilePaths = function()
 end
 
 KTBM_Data_GetPreviousGameResults = function()
-    print(" ");
-    print("---GETTING MOST RECENT GAME RESULTS---");
+    print("[KTBM_Data_GetPreviousGameResults] ");
+    print("[KTBM_Data_GetPreviousGameResults] ---GETTING MOST RECENT GAME RESULTS---");
 
     if(strings_gameResultFilePaths == nil) then
+        print("[KTBM_Data_GetPreviousGameResults] strings_gameResultFilePaths was nil!");
         return;
     end
 
     if(#strings_gameResultFilePaths < 1) then
-        return;
+        print("[KTBM_Data_GetPreviousGameResults] strings_gameResultFilePaths count is less than 1, returning nil.");
+        return nil;
     end
     
     local string_mostRecentFilePath = strings_gameResultFilePaths[#strings_gameResultFilePaths];
 
     if(string_mostRecentFilePath == nil) then
-        return;
+        print("[KTBM_Data_GetPreviousGameResults] string_mostRecentFilePath was nil!");
+        return nil;
     end
 
     ---------------------------------------------------
     --After getting the most recent file, get the data from it.
 
-    local gameResults_parsedObject = {};
+    local gameResults_parsedObject = nil;
 
     if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
-        print("Getting most recent 'Game Results' in binary from the following file path...");
-        print(string_mostRecentFilePath);
+        print("[KTBM_Data_GetPreviousGameResults] Getting most recent 'Game Results' in binary from the following file path...");
+        print("[KTBM_Data_GetPreviousGameResults] " .. string_mostRecentFilePath);
 
         gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(string_mostRecentFilePath);
     else
-        print("Getting most recent 'Game Results' in text from the following file path...");
+        print("[KTBM_Data_GetPreviousGameResults] Getting most recent 'Game Results' in text from the following file path...");
         print(string_mostRecentFilePath);
 
         gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Text(string_mostRecentFilePath);
     end
 
-    print("---FINISHED GETTING MOST RECENT GAME RESULTS---");
-    print(" ");
+    print("[KTBM_Data_GetPreviousGameResults] ---FINISHED GETTING MOST RECENT GAME RESULTS---");
+    print("[KTBM_Data_GetPreviousGameResults] ");
 
     return gameResults_parsedObject;
 end
 
 KTBM_Data_GetAllGameResults = function()
-    print(" ");
-    print("---GETTING ALL GAME RESULTS---");
+    print("[KTBM_Data_GetAllGameResults] ");
+    print("[KTBM_Data_GetAllGameResults] ---GETTING ALL GAME RESULTS---");
 
     if(strings_gameResultFilePaths == nil) then
-        return;
+        print("[KTBM_Data_GetAllGameResults] strings_gameResultFilePaths was nil!");
+        return nil;
     end
 
     if(#strings_gameResultFilePaths < 1) then
-        return;
+        print("[KTBM_Data_GetAllGameResults] strings_gameResultFilePaths count is less than 1, returning nil.");
+        return nil;
     end
 
     ---------------------------------------------------
@@ -378,7 +389,7 @@ KTBM_Data_GetAllGameResults = function()
     local gameResults_array = {};
 
     for index, string_filePath in ipairs(strings_gameResultFilePaths) do
-        local gameResults_parsedObject = {};
+        local gameResults_parsedObject = nil;
 
         if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
             gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(string_filePath);
@@ -389,25 +400,27 @@ KTBM_Data_GetAllGameResults = function()
         table.insert(gameResults_array, gameResults_parsedObject);
     end
 
-    print("---FINISHED GETTING ALL GAME RESULTS---");
-    print(" ");
+    print("[KTBM_Data_GetAllGameResults] ---FINISHED GETTING ALL GAME RESULTS---");
+    print("[KTBM_Data_GetAllGameResults] ");
 
     return gameResults_array;
 end
 
 KTBM_Data_GetBestGameResultByStatistic = function(string_variableName)
-    print(" ");
-    print("---GETTING BEST GAME RESULT---");
+    print("[KTBM_Data_GetBestGameResultByStatistic] ");
+    print("[KTBM_Data_GetBestGameResultByStatistic] ---GETTING BEST GAME RESULT---");
 
     ---------------------------------------------------
     --Get all files in the directory sorted by creation date
 
     if(strings_gameResultFilePaths == nil) then
-        return;
+        print("[KTBM_Data_GetAllGameResults] strings_gameResultFilePaths was nil!");
+        return nil;
     end
 
     if(#strings_gameResultFilePaths < 1) then
-        return;
+        print("[KTBM_Data_GetAllGameResults] strings_gameResultFilePaths count is less than 1, returning nil.");
+        return nil;
     end
 
     ---------------------------------------------------
@@ -436,8 +449,8 @@ KTBM_Data_GetBestGameResultByStatistic = function(string_variableName)
         end
     end
 
-    print("---FINISHED GETTING BEST GAME RESULT---");
-    print(" ");
+    print("[KTBM_Data_GetBestGameResultByStatistic] ---FINISHED GETTING BEST GAME RESULT---");
+    print("[KTBM_Data_GetBestGameResultByStatistic] ");
 
     return gameResultsObject_bestResults;
 end

@@ -77,7 +77,7 @@ KTBM_Gameplay_ZombiesUpdate = function()
         local number_newPosition_z = vector_currentZombiePosition.z;
         local number_newPosition_y = vector_currentZombiePosition.y;
 
-        number_newPosition_z = number_newPosition_z - (KTBM_Gameplay_EnvironmentMovementSpeed * number_deltaTime);
+        number_newPosition_z = number_newPosition_z - (KTBM_Gameplay_EnvironmentCurrentMovementSpeed * number_deltaTime);
 
         if(number_newPosition_y < KTBM_Gameplay_ZombiesEndingHeight + KTBM_Gameplay_EnvironmentHeightOffset) then
             number_newPosition_y = number_newPosition_y + (KTBM_Gameplay_ZombiesHeightRiseSpeed * number_deltaTime);

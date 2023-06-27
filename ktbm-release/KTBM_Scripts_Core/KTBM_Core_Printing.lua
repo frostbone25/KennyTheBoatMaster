@@ -1221,3 +1221,342 @@ KTBM_PrintValidNodeNames = function(agent)
 
     txt_file_agentValidPropertiesTxtFile:close()
 end
+
+
+
+
+KTBM_PrintMatchingAgentProperties = function(agent_one, agent_two)
+    local string_agentOneName = AgentGetName(agent_one);
+    local string_agentTwoName = AgentGetName(agent_two);
+
+    local strings_matchingPropertySymbols = {};
+
+    local strings_agentOnePropertyValues = {};
+    local strings_agentOnePropertyValueTypes = {};
+    local strings_agentTwoPropertyValues = {};
+    local strings_agentTwoPropertyValueTypes = {};
+
+    local propertySet_agentOne = AgentGetRuntimeProperties(agent_one);
+    local propertySet_agentTwo = AgentGetRuntimeProperties(agent_two);
+    local propertyKeys_agentOne = PropertyGetKeys(propertySet_agentOne);
+    local propertyKeys_agentTwo = PropertyGetKeys(propertySet_agentTwo);
+
+    local bool_printValues = true;
+    local bool_printValueTypes = true;
+
+    for index1, propertyKey_agentOne in ipairs(propertyKeys_agentOne) do
+        local string_agentOnePropertyName = tostring(propertyKey_agentOne) .. " (" .. SymbolToString(propertyKey_agentOne) .. ")";
+        local type_agentOnePropertyValue = PropertyGet(propertySet_agentOne, propertyKey_agentOne);
+        local type_agentOnePropertyValueType = TypeName(type_agentOnePropertyValue);
+        local string_agentOnePropertyValue = tostring(type_agentOnePropertyValue);
+        local string_agentOnePropertyValueType = tostring(type_agentOnePropertyValueType);
+
+        for index2, propertyKey_agentTwo in ipairs(propertyKeys_agentTwo) do
+            local string_agentTwoPropertyName = tostring(propertyKey_agentTwo) .. " (" .. SymbolToString(propertyKey_agentTwo) .. ")";
+            local type_agentTwoPropertyValue = PropertyGet(propertySet_agentTwo, propertyKey_agentTwo);
+            local type_agentTwoPropertyValueType = TypeName(type_agentTwoPropertyValue);
+            local string_agentTwoPropertyValue = tostring(type_agentTwoPropertyValue);
+            local string_agentTwoPropertyValueType = tostring(type_agentTwoPropertyValueType);
+
+            if(string_agentOnePropertyName == string_agentTwoPropertyName) then
+                table.insert(strings_matchingPropertySymbols, string_agentOnePropertyName);
+                table.insert(strings_agentOnePropertyValues, string_agentOnePropertyValue);
+                table.insert(strings_agentOnePropertyValueTypes, string_agentOnePropertyValueType);
+                table.insert(strings_agentTwoPropertyValues, string_agentTwoPropertyValue);
+                table.insert(strings_agentTwoPropertyValueTypes, string_agentTwoPropertyValueType);
+            end
+        end
+    end
+    
+    local string_fileName = "MATCHING-PROPERTIES_" .. AgentGetName(agent_one) .. "_AND_" .. AgentGetName(agent_two) .. ".txt";
+    local file_textFile = io.open(string_fileName, "w");
+
+    file_textFile:write(" ", "\n");
+    file_textFile:write("-------------Matching Properties In Both Agents-------------", "\n");
+    file_textFile:write("[AGENT ONE]: " .. string_agentOneName, "\n");
+    file_textFile:write("[AGENT TWO]: " .. string_agentTwoName, "\n");
+
+    for index1, string_matchingPropertySymbol in pairs(strings_matchingPropertySymbols) do
+        file_textFile:write(" [NAME]: " .. string_matchingPropertySymbol, "\n");
+    end
+
+    file_textFile:close();
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KTBM_PrintInvalidPropertyNames = function(agent)
+    local theAgentName = AgentGetName(agent)
+
+    --clear the lists
+    local agentName_propertyName_validOnesFromFile = {}
+
+    local txtFile = io.open("strings.txt", "r")
+    local txtFile2 = io.open("strings.txt", "r")
+
+    --local agent_properties = AgentGetRuntimeProperties(agent)
+    local agent_properties = AgentGetProperties(agent)
+    local agent_property_keys = PropertyGetKeys(agent_properties)
+
+    local printValues = true
+    local printValueTypes = true
+    
+    for line in txtFile:lines() do
+        ---------------------------------------------------
+        --print classic properties from file
+        if PropertyExists(agent_properties, line) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(line)))
+        end
+
+        ---------------------------------------------------
+        --print mesh properties from file
+        local meshPropLineStart = "Mesh " .. line .. " - Visible";
+
+        if PropertyExists(agent_properties, meshPropLineStart) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(meshPropLineStart)))
+        end
+
+        ---------------------------------------------------
+        --print base textures from file
+        local baseTexPropLine = line .. " - Texture";
+
+        if PropertyExists(agent_properties, baseTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(baseTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print base2 textures from file
+        local base2TexPropLine = line .. " - Base Texture";
+
+        if PropertyExists(agent_properties, base2TexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(base2TexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print diffuse textures from file
+        local diffuseTexPropLine = line .. " - Diffuse Texture";
+
+        if PropertyExists(agent_properties, diffuseTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(diffuseTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print normal textures from file
+        local normalTexPropLine = line .. " - Normal Map Texture";
+
+        if PropertyExists(agent_properties, normalTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(normalTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print normalmap textures from file
+        local normalmapTexPropLine = line .. " - Normalmap Texture";
+
+        if PropertyExists(agent_properties, normalmapTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(normalmapTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print lightmap textures from file
+        local lightmapTexPropLine = line .. " - Lightmap Texture";
+
+        if PropertyExists(agent_properties, lightmapTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(lightmapTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print detail textures from file
+        local detailTexPropLine = line .. " - Detail Texture";
+
+        if PropertyExists(agent_properties, detailTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(detailTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print ao textures from file
+        local aoTexPropLine = line .. " - AO Texture";
+
+        if PropertyExists(agent_properties, aoTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(aoTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print font textures from file
+        local fontTexPropLine = line .. " - Font Texture";
+
+        if PropertyExists(agent_properties, fontTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(fontTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print particle textures from file
+        local particleTexPropLine = line .. " - Particle Texture";
+
+        if PropertyExists(agent_properties, particleTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(particleTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print misc textures from file
+        local miscTexPropLine = line .. " - Misc Texture";
+
+        if PropertyExists(agent_properties, miscTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(miscTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print specular textures from file
+        local specularTexPropLine = line .. " - Specular Map Texture";
+
+        if PropertyExists(agent_properties, specularTexPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(specularTexPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print diffuse albedo color from file
+        local diffuseAlbedoColorPropLine = line .. " - Diffuse Albedo Color";
+
+        if PropertyExists(agent_properties, diffuseAlbedoColorPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(diffuseAlbedoColorPropLine)))
+        end
+
+        ---------------------------------------------------
+        --print light color diffuse from file
+        local lightColorDiffusePropLine = line .. " - Light Color Diffuse";
+
+        if PropertyExists(agent_properties, lightColorDiffusePropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(lightColorDiffusePropLine)))
+        end
+
+        ---------------------------------------------------
+        --print double sided from file
+        local doubleSidedPropLine = line .. " - Double Sided";
+
+        if PropertyExists(agent_properties, doubleSidedPropLine) then
+            table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(doubleSidedPropLine)))
+        end
+
+        ---------------------------------------------------
+        --test 1
+        local testPropLine1_start = line .. " - ";
+
+        for line2 in txtFile2:lines() do
+            local testPropLine1_final = testPropLine1_start .. line2;
+
+            if PropertyExists(agent_properties, testPropLine1_final) then
+                table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(testPropLine1_start)))
+            end
+        end
+
+        ---------------------------------------------------
+        --test 2
+        local testPropLine2_start = line .. " ";
+
+        for line2 in txtFile2:lines() do
+            local testPropLine2_final = testPropLine2_start .. line2;
+
+            if PropertyExists(agent_properties, testPropLine2_final) then
+                table.insert(agentName_propertyName_validOnesFromFile, tostring(StringToSymbol(testPropLine2_start)))
+            end
+        end
+    end
+    
+    txtFile:close()
+
+    local strings_unfoundPropSymbols = {};
+    local strings_unfoundPropValues = {};
+    local strings_unfoundPropValueTypes = {};
+
+    local propertySet_agentOne = AgentGetRuntimeProperties(agent);
+    local propertyKeys_agentOne = PropertyGetKeys(propertySet_agentOne);
+
+    for index1, propertyKey_agentOne in ipairs(propertyKeys_agentOne) do
+        for index2, string_foundPropName in pairs(agentName_propertyName_validOnesFromFile) do
+            if not (string_foundPropName == tostring(propertyKey_agentOne)) then
+                local string_agentOnePropertyName = tostring(propertyKey_agentOne) .. " (" .. SymbolToString(propertyKey_agentOne) .. ")";
+                local type_agentOnePropertyValue = PropertyGet(agent, propertyKey_agentOne);
+                local type_agentOnePropertyValueType = TypeName(type_agentOnePropertyValue);
+                local string_agentOnePropertyValue = tostring(type_agentOnePropertyValue);
+                local string_agentOnePropertyValueType = tostring(type_agentOnePropertyValueType);
+
+                table.insert(strings_unfoundPropSymbols, string_agentOnePropertyName);
+                table.insert(strings_unfoundPropValues, string_agentOnePropertyValue);
+                table.insert(strings_unfoundPropValueTypes, string_agentOnePropertyValueType);
+            end
+        end
+    end
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    local agentValidPropertiesTxtFile = AgentGetName(agent) .. "_unfoundpropnames.txt"
+    local txt_file_agentValidPropertiesTxtFile = io.open(agentValidPropertiesTxtFile, "w")
+
+    txt_file_agentValidPropertiesTxtFile:write(" ", "\n")
+    txt_file_agentValidPropertiesTxtFile:write("-------------Found Invalid Properties (By Name)-------------", "\n")
+    txt_file_agentValidPropertiesTxtFile:write("[AGENT NAME]: " .. theAgentName, "\n")
+
+    local index = 1;
+    for _, line in pairs(strings_unfoundPropSymbols) do
+        local totalNameLine = "[NAME ]: " .. line;
+        local totalLine = "[VALUE]: (" .. strings_unfoundPropValueTypes[index] .. ") " .. strings_unfoundPropValues[index];
+        txt_file_agentValidPropertiesTxtFile:write(totalNameLine, "\n")
+        txt_file_agentValidPropertiesTxtFile:write(totalLine, "\n")
+        index = index + 1;
+    end
+
+    txt_file_agentValidPropertiesTxtFile:close()
+end
