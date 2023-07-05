@@ -25,14 +25,24 @@ local GenerateNewINI_PlayerSettings = function()
         Video = 
         {
             RenderScale = 1.0,
-            DisableDOF = false,
-            DisableBloom = false
+            RenderResolutionWidth = 1920,
+            RenderResolutionHeight = 1080,
+            RenderAspectRatioCustom = 1.0,
+            RenderAspectRatio16x9 = true,
+            DepthOfField = true,
+            DepthOfFieldBokeh = true,
+            Bloom = true,
+            MotionBlur = true,
+            HBAO = true, --Horizon Based Ambient Occlusion
+            AntiAliasing = true, --Temporal Anti Aliasing
+            TextureQualityLevel = 0
         },
         Audio = 
         {
+            MasterVolume = 1.0,
             MusicVolume = 1.0,
             VoiceVolume = 1.0,
-            SoundVolume = 1.0
+            AmbientVolume = 1.0
         }
     };
         

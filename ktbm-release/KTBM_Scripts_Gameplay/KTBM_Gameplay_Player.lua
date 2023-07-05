@@ -132,10 +132,17 @@ end
 KTBM_Gameplay_Player_CreateGameCamera = function(kScene)
     local agent_gameCamera = AgentCreate("camera_gameCamera", "module_camera.prop", KTBM_Gameplay_Camera_OriginalPosition, KTBM_Gameplay_Camera_OriginalRotation, kScene, false, false);
     
-    KTBM_AgentSetProperty("camera_gameCamera", "Clip Plane - Far", 2500, kScene);
-    KTBM_AgentSetProperty("camera_gameCamera", "Clip Plane - Near", 0.05, kScene);
-    KTBM_AgentSetProperty("camera_gameCamera", "Field Of View", 90, kScene);
-    KTBM_AgentSetProperty("camera_gameCamera", "Lens - Current Lens", nil, kScene);
+    KTBM_PropertySet(agent_gameCamera, "Clip Plane - Far", 2500);
+    KTBM_PropertySet(agent_gameCamera, "Clip Plane - Near", 0.05);
+    KTBM_PropertySet(agent_gameCamera, "Field Of View", 90);
+    KTBM_PropertySet(agent_gameCamera, "Lens - Current Lens", nil);
+
+    KTBM_PropertySet(agent_gameCamera, "FX Motion Blur Enabled", true);
+    KTBM_PropertySet(agent_gameCamera, "FX Motion Blur Intensity", 5.0);
+    KTBM_PropertySet(agent_gameCamera, "FX Motion Blur Movement Threshold Enabled", false);
+    KTBM_PropertySet(agent_gameCamera, "FX Motion Blur Movement Threshold", 0.0);
+    KTBM_PropertySet(agent_gameCamera, "FX Motion Blur Rotation Threshold Enabled", false);
+    KTBM_PropertySet(agent_gameCamera, "FX Motion Blur Rotation Threshold", 0.0);
 
     CameraPush("camera_gameCamera");
     --CameraActivate("camera_gameCamera");

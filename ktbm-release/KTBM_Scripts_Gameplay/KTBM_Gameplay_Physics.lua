@@ -55,6 +55,7 @@ KTBM_Gameplay_PhysicsUpdate = function()
         if(bool_intersectionTest == true) and (KTBM_Core_Project_DebugDisableZombieCollisions == false) then
             --KTBM_Cutscene_Game_PlayZombieKill(agent_zombieChild);
             local status_KTBM_Cutscene_Game_PlayZombieKill = pcall(KTBM_Cutscene_Game_PlayZombieKill, agent_zombieChild);
+            local status_KTBM_Cutscene_Game_PlayVoiceLineAfterZombieKill = pcall(KTBM_Cutscene_Game_PlayVoiceLineAfterZombieKill);
 
             table.insert(agentArray_zombiesToDestroy, agent_zombieGroup);
             break;

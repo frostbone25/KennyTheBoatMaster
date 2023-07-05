@@ -8,11 +8,11 @@ KTBM_UI_Input_IMAP_Click_Begin = function()
 end
 
 KTBM_UI_Input_IMAP_Click_End = function()
-    --KTBM_UI_Input_Clicked = false;
+
 end
 
 KTBM_UI_Input_IMAP_Update = function()
-    --KTBM_UI_Input_Clicked = false;
+
 
     if (Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftMouse)) then
     

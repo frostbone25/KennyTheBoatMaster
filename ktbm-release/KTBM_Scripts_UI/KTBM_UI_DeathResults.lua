@@ -1,5 +1,7 @@
 require("KTBM_UI_Input.lua");
+require("KTBM_UI_YesNoDialogBox.lua");
 
+local agent_deathResultsUIGroup = nil;
 local agent_deathTextTitle = nil;
 local agent_deathTextScoreboard = nil;
 local agent_retryText = nil;
@@ -51,6 +53,8 @@ local PlayRolloverSound = function()
 end
 
 KTBM_UI_PrepareDeathResultsUI = function()
+    agent_deathResultsUIGroup = AgentCreate("agent_deathResultsUIGroup", "group.prop", Vector(0,0,0), Vector(0,0,0), KTBM_Gameplay_kScene, false, false);
+
     --create our main menu text
     agent_deathTextTitle = KTBM_TextUI_CreateTextAgent("agent_deathTextTitle", "You Died!", Vector(0, 0, 0), 0, 0);
     agent_deathTextScoreboard = KTBM_TextUI_CreateTextAgent("agent_deathTextScoreboard", "Scoreboard", Vector(0, 0, 0), 0, 0);
@@ -58,6 +62,13 @@ KTBM_UI_PrepareDeathResultsUI = function()
     agent_returnToMenuText = KTBM_TextUI_CreateTextAgent("agent_returnToMenuText", "Return To Menu", Vector(0, 0, 0), 0, 0);
     agent_returnToDefinitiveMenuText = KTBM_TextUI_CreateTextAgent("agent_returnToDefinitiveMenuText", "Return To Definitive Menu", Vector(0, 0, 0), 0, 0);
     agent_quitToDesktopText = KTBM_TextUI_CreateTextAgent("agent_quitToDesktopText", "Quit To Desktop", Vector(0, 0, 0), 0, 0);
+
+    AgentAttach(agent_deathTextTitle, agent_deathResultsUIGroup);
+    AgentAttach(agent_deathTextScoreboard, agent_deathResultsUIGroup);
+    AgentAttach(agent_retryText, agent_deathResultsUIGroup);
+    AgentAttach(agent_returnToMenuText, agent_deathResultsUIGroup);
+    AgentAttach(agent_returnToDefinitiveMenuText, agent_deathResultsUIGroup);
+    AgentAttach(agent_quitToDesktopText, agent_deathResultsUIGroup);
 
     --scale note
     --1.0 = default
@@ -83,10 +94,13 @@ KTBM_UI_PrepareDeathResultsUI = function()
     gameResults_object = KTBM_Data_GetPreviousGameResults();
     gameResultsObject_mostDistance = KTBM_Data_GetBestGameResultByStatistic("DistanceTraveled");
     gameResultsObject_mostKills = KTBM_Data_GetBestGameResultByStatistic("ZombiesKilled");
+
+    KTBM_UI_YesNoDialogBox_Start(0.65);
 end
 
 KTBM_UI_UpdateDeathResultsUI = function()  
     KTBM_UI_Input_IMAP_Update();
+    KTBM_UI_YesNoDialogBox_Update();
     PlayRolloverSound();
 
     local string_scoreboardText = "";
@@ -121,12 +135,14 @@ KTBM_UI_UpdateDeathResultsUI = function()
 
     TextSet(agent_deathTextScoreboard, string_scoreboardText);
 
-    KTBM_PropertySet(agent_deathTextTitle, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
-    KTBM_PropertySet(agent_deathTextScoreboard, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
-    KTBM_PropertySet(agent_retryText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
-    KTBM_PropertySet(agent_returnToMenuText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
-    KTBM_PropertySet(agent_returnToDefinitiveMenuText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
-    KTBM_PropertySet(agent_quitToDesktopText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI);
+    KTBM_PropertySet(agent_deathTextTitle, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI and (not KTBM_UI_YesNoDialogBox_IsOpen));
+    KTBM_PropertySet(agent_deathTextScoreboard, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI and (not KTBM_UI_YesNoDialogBox_IsOpen));
+    KTBM_PropertySet(agent_retryText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI and (not KTBM_UI_YesNoDialogBox_IsOpen));
+    KTBM_PropertySet(agent_returnToMenuText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI and (not KTBM_UI_YesNoDialogBox_IsOpen));
+    KTBM_PropertySet(agent_returnToDefinitiveMenuText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI and (not KTBM_UI_YesNoDialogBox_IsOpen));
+    KTBM_PropertySet(agent_quitToDesktopText, "Runtime: Visible", KTBM_Cutscene_DeathResults_ShowUI and (not KTBM_UI_YesNoDialogBox_IsOpen));
+
+    KTBM_PropertySet(agent_deathResultsUIGroup, "Group - Visible", not KTBM_UI_YesNoDialogBox_IsOpen);
 
     KTBM_SetExtents(agent_retryText, Vector(0, 0, 0), Vector(0, 0, 0));
     KTBM_SetExtents(agent_returnToMenuText, Vector(0, 0, 0), Vector(0, 0, 0));
@@ -136,6 +152,45 @@ KTBM_UI_UpdateDeathResultsUI = function()
     local defaultColor = Color(1.0, 1.0, 1.0, 1.0);
     local rolloverColor = Color(0.25, 0.25, 0.25, 1.0);
     local pressedColor = Color(0.1, 0.0, 0.0, 1.0);
+
+    --||||||||||||||||||||||||||||| YES NO HANDLING |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| YES NO HANDLING |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| YES NO HANDLING |||||||||||||||||||||||||||||
+
+    local string_dialog_quitToDesktop = "Are you sure you want\n to quit to the desktop?";
+    local string_dialog_returnToDE = "Are you sure you want to\n return to the definitive menu?";
+
+    if(KTBM_UI_YesNoDialogBox_CurrentDialog == string_dialog_quitToDesktop) then
+        if not (KTBM_UI_YesNoDialogBox_Response == nil) then
+            if(KTBM_UI_YesNoDialogBox_Response == true) then
+                EngineQuit();
+            end
+
+            KTBM_UI_YesNoDialogBox_Response = nil;
+            KTBM_UI_YesNoDialogBox_CurrentDialog = "";
+            KTBM_UI_YesNoDialogBox_IsOpen = false;
+        end
+    end
+
+    if(KTBM_UI_YesNoDialogBox_CurrentDialog == string_dialog_returnToDE) then
+        if not (KTBM_UI_YesNoDialogBox_Response == nil) then
+            if(KTBM_UI_YesNoDialogBox_Response == true) then
+                dofile("Menu_KTBM_QuitToDE.lua");
+            end
+
+            KTBM_UI_YesNoDialogBox_Response = nil;
+            KTBM_UI_YesNoDialogBox_CurrentDialog = "";
+            KTBM_UI_YesNoDialogBox_IsOpen = false;
+        end
+    end
+
+    if(KTBM_UI_YesNoDialogBox_IsOpen == true) then
+        return;
+    end
+
+    --||||||||||||||||||||||||||||| BUTTON HANDLING |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| BUTTON HANDLING |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| BUTTON HANDLING |||||||||||||||||||||||||||||
 
     --option 1 (retry)
     if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_retryText)) then
@@ -183,7 +238,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
             PlayClickSound();
 
             RenderDelay(1);
-            dofile("Menu_KTBM_QuitToDE.lua");
+            KTBM_UI_PopYesNoDialogBox(string_dialog_returnToDE);
 
             KTBM_UI_Input_Clicked = false;
         else
@@ -200,7 +255,7 @@ KTBM_UI_UpdateDeathResultsUI = function()
             TextSetColor(agent_quitToDesktopText, pressedColor);
             PlayClickSound();
 
-            EngineQuit();
+            KTBM_UI_PopYesNoDialogBox(string_dialog_quitToDesktop);
 
             KTBM_UI_Input_Clicked = false;
         else

@@ -98,6 +98,43 @@ KTBM_Bounds_AgentSetCorrectBounds = function(agent_object, number_scaleFactor)
     PropertySet(props_agentProperties, "Extents Max", vector_adjustedExtentsMax);
 end
 
+--Corrects the bounding box on an agent to factor in the objects scale.
+KTBM_Bounds_AgentSetBoundsWithScale = function(agent_object, number_scaleFactor)
+    --we need to access the agent properties to get what we need
+    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
+
+    --get the native extents values that are already defined on these objects
+    local vector_extentsMin = PropertyGet(props_agentProperties, "Extents Min");
+    local vector_extentsMax = PropertyGet(props_agentProperties, "Extents Max");
+
+    --now it's important to note that after some testing its apparent that these extents do not factor in scaling.
+    --so we have to modify them to factor in scaling to ensure that they will work correctly for objects even if their scale changes.
+
+    --store these in a new variable so we don't override the original value
+    local vector_adjustedExtentsMin = vector_extentsMin;
+    local vector_adjustedExtentsMax = vector_extentsMax;
+
+    ---------------------------------------------------------
+    --all that needs to be done is apply object scaling.
+    
+    --apply a user adjustale scale factor
+    vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_scaleFactor);
+    vector_adjustedExtentsMax = VectorScale(vector_adjustedExtentsMax, number_scaleFactor);
+
+    --now apply the modified extents
+    PropertySet(props_agentProperties, "Extents Min", vector_adjustedExtentsMin);
+    PropertySet(props_agentProperties, "Extents Max", vector_adjustedExtentsMax);
+end
+
+KTBM_Bounds_AgentSetCustomBounds = function(agent_object, vector_extentsMin, vector_extentsMax)
+    --we need to access the agent properties to get what we need
+    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
+
+    --now apply the modified extents
+    PropertySet(props_agentProperties, "Extents Min", vector_adjustedExtentsMin);
+    PropertySet(props_agentProperties, "Extents Max", vector_adjustedExtentsMax);
+end
+
 --|||||||||||||||||||||||||||||||||||||||||||||| AXIS-ALIGNED BOUNDING BOX (AABB) ||||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||||| AXIS-ALIGNED BOUNDING BOX (AABB) ||||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||||| AXIS-ALIGNED BOUNDING BOX (AABB) ||||||||||||||||||||||||||||||||||||||||||||||
@@ -155,6 +192,62 @@ KTBM_Bounds_GetAgentWorldBounds_AABB = function(agent_object)
     --transform these local space vectors into world space (this will natrually apply position and rotation transformations)
     vector_adjustedExtentsMin = AgentLocalToWorld(agent_object, vector_adjustedExtentsMin);
     vector_adjustedExtentsMax = AgentLocalToWorld(agent_object, vector_adjustedExtentsMax);
+
+    ---------------------------------------------------------
+    --calculate the following values that we can store in our new "Bounds" object.
+
+    --calculate extents from min and max
+    local vector_extents = VectorSubtract(vector_adjustedExtentsMax, vector_adjustedExtentsMin);
+    vector_extents = VectorScale(vector_extents, 0.5);
+
+    --calculate scale, which is just extents * 2
+    local vector_scale = VectorScale(vector_extents, 2.0);
+
+    --calculate the origin point of this bounds object
+    local vector_center = VectorAdd(vector_adjustedExtentsMin, vector_extents);
+
+    --build our bounds object and store the computed values
+    local boundsAABB_newBoundsObject = {
+        size = vector_scale,
+        extents = vector_extents,
+        center = vector_center,
+        min = vector_adjustedExtentsMin,
+        max = vector_adjustedExtentsMax
+    };
+
+    return boundsAABB_newBoundsObject;
+end
+
+KTBM_Bounds_GetAgentLocalBounds_AABB = function(agent_object)
+    --we need to access the agent properties to get what we need
+    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
+
+    --get the native extents values that are already defined on these objects
+    local vector_extentsMin = PropertyGet(props_agentProperties, "Extents Min");
+    local vector_extentsMax = PropertyGet(props_agentProperties, "Extents Max");
+
+    --now it's important to note that after some testing its apparent that these extents are only in "local" object space.
+    --when any transformations are applied on the object (position, rotation, scale) these values are unaffected.
+    --so in order to use them we need to adjust these values to work for world space.
+
+    --store these in a new variable so we don't override the original value
+    local vector_adjustedExtentsMin = vector_extentsMin;
+    local vector_adjustedExtentsMax = vector_extentsMax;
+
+    ---------------------------------------------------------
+    --first step is to apply the object scaling, which is thankfully very simple to do
+    
+    --get the render scaling values
+    local number_renderGlobalScale = PropertyGet(props_agentProperties, "Render Global Scale"); --single scalar value
+    local vector_renderAxisScale = PropertyGet(props_agentProperties, "Render Axis Scale"); --vector scale value
+
+    --apply the render scalar value
+    vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_renderGlobalScale);
+    vector_adjustedExtentsMax = VectorScale(vector_adjustedExtentsMax, number_renderGlobalScale);
+
+    --apply the render axis scale vector
+    vector_adjustedExtentsMin = KTBM_VectorMultiply(vector_adjustedExtentsMin, vector_renderAxisScale);
+    vector_adjustedExtentsMax = KTBM_VectorMultiply(vector_adjustedExtentsMax, vector_renderAxisScale);
 
     ---------------------------------------------------------
     --calculate the following values that we can store in our new "Bounds" object.

@@ -25,10 +25,24 @@ KTBM_Costumes_Boat_Build = function(kScene)
     --------------------------------------------------------
     --here we are adding some original props to the boat itself
 
+    local agent_painting1 = AgentCreate("agent_painting1", "obj_photoClementineFamily.prop", Vector(0.72, 0.636, -1.301), Vector(-14, 5, 90), kScene, false, false);
+    KTBM_PropertySet(agent_painting1, "Render Axis Scale", Vector(1.0, 1.0, 1.0));
+    KTBM_PropertySet(agent_painting1, "Render Global Scale", 1.0);
+    KTBM_PropertySet(agent_painting1, "Render Cull", false);
+    ShaderSwapTexture(agent_painting1, "obj_photoClementineFamily.d3dtx", "KTBM_Texture_TCOK_Painting1.d3dtx"); --pirates of savannah
+
+    local agent_painting2 = AgentCreate("agent_painting2", "obj_photoClementineFamily.prop", Vector(0.0, 0.51, -2.71), Vector(0, 0, 0), kScene, false, false);
+    KTBM_PropertySet(agent_painting2, "Render Axis Scale", Vector(1.0, 1.0, 1.0));
+    KTBM_PropertySet(agent_painting2, "Render Global Scale", 2);
+    KTBM_PropertySet(agent_painting2, "Render Cull", false);
+    ShaderSwapTexture(agent_painting2, "obj_photoClementineFamily.d3dtx", "KTBM_Texture_TCOK_Painting2.d3dtx");
+
     local agent_saltLick = AgentCreate("obj_saltLick", "obj_saltLick.prop", Vector(0,0,0), Vector(0,0,0), kScene, false, false);
     --KTBM_SetAgentWorldPosition("obj_saltLick", Vector(0.153338, 0.253860, -2.431206), kScene); --proper position
     KTBM_SetAgentWorldPosition("obj_saltLick", Vector(0.053338, 0.353860, -2.431206), kScene);
     KTBM_SetAgentWorldRotation("obj_saltLick", Vector(0,-41,0), kScene);
+
+    --KTBM_PrintValidPropertyNames(agent_saltLick);
 
 
 
@@ -97,7 +111,30 @@ KTBM_Costumes_Boat_Build = function(kScene)
     --ShaderOverrideTexture(agent_doubleBarrelShotgun, "obj_shotgunIntruder_spec.d3dtx", "black-test-10-alpha.d3dtx");
 
     --ShaderOverrideTexture(agent_doubleBarrelShotgun, "obj_shotgunIntruder_detail.d3dtx", "color_000.d3dtx");
+    --material_environment_base - Diffuse Texture
+    --material_environment_base - Specular Map Texture
 
+
+        --MeshGetMaterials();
+    local table_propSetTable = MeshGetMaterials("obj_shotgunIntruder.d3dmesh");
+
+    for index, propSet in ipairs(table_propSetTable) do
+        PropertySet(propSet, "Material - Gloss Exponent", 5);
+        PropertySet(propSet, "Material - Specular Power", 5);
+
+        --print(tostring(propSet));
+        --print(KTBM_GetCacheObjectName(tostring(propSet), "cacheObjectNamesPart2.txt"));
+    end
+
+    --KTBM_PrintValidPropertyNames(agent_doubleBarrelShotgun);
+    --KTBM_PropertySet = function(agent_object, string_propertyName, type_propertyValue)
+
+    --KTBM_PropertySet(agent_doubleBarrelShotgun, "material_environment_base - Diffuse Texture", "color_fFFFFF.d3dtx");
+    --KTBM_PropertySet(agent_doubleBarrelShotgun, "material_environment_base - Specular Map Texture", "color_fFFFFF.d3dtx");
+    KTBM_PropertySet(agent_doubleBarrelShotgun, "material_environment_base - Diffuse Texture", "color_000.d3dtx");
+    KTBM_PropertySet(agent_doubleBarrelShotgun, "material_environment_base - Specular Map Texture", "color_000.d3dtx");
+    KTBM_PropertySet(agent_doubleBarrelShotgun, "material_environment_base - Gloss Exponent", 255);
+    KTBM_PropertySet(agent_doubleBarrelShotgun, "material_environment_base - Specular Power", 255);
 
 
 
@@ -195,6 +232,8 @@ KTBM_Costumes_Boat_Build = function(kScene)
     AgentAttach(agent_binoculars, agent_boat_group2);
     AgentAttach(agent_glock, agent_boat_group2);
     AgentAttach(agent_rope, agent_boat_group2);
+    AgentAttach(agent_painting1, agent_boat_group2);
+    AgentAttach(agent_painting2, agent_boat_group2);
     
     --attach the boat anim group to the main boat group parent for gameplay/cutscene moving
     AgentAttach(agent_boat_group2, agent_boat_group1);
@@ -220,6 +259,15 @@ KTBM_Costumes_Boat_ApplySelectedOutfit = function(kScene)
     if(string.match(KTBM_Costumes_Boat_SelectedOutfit, "Skin3")) then
         KTBM_Costumes_Boat_ApplySkin3(kScene);
     end
+
+    if(string.match(KTBM_Costumes_Boat_SelectedOutfit, "Skin4")) then
+        KTBM_Costumes_Boat_ApplySkin4(kScene);
+    end
+
+    if(string.match(KTBM_Costumes_Boat_SelectedOutfit, "Skin5")) then
+        KTBM_Costumes_Boat_ApplySkin5(kScene);
+    end
+
 end
 
 KTBM_Costumes_Boat_ApplySkinDefault = function(kScene)
@@ -357,6 +405,74 @@ KTBM_Costumes_Boat_ApplySkin3 = function(kScene)
     end
 end
 
+KTBM_Costumes_Boat_ApplySkin4 = function(kScene)
+    --get the existing boat object in the scene and reset the position and rotation
+    local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", kScene);
+
+    --this custom skin doesn't mess with these textures, so just apply the default ones.
+    ShaderRestoreAllTextures(agent_boat);
+
+    --apply upscaled default textures
+    ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "KTBM_Texture_Upscaled_obj_motorBoatChesapeak.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_trashRiverCampB.d3dtx", "KTBM_Texture_Upscaled_obj_trashRiverCampB.d3dtx");
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "KTBM_Texture_Upscaled_tile_hullMetalBoatChesapeakeA.d3dtx");
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "KTBM_Texture_Upscaled_tile_hullMetalBoatChesapeakeB.d3dtx");
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "KTBM_Texture_Upscaled_tile_hullMetalBoatChesapeakeC.d3dtx");
+    ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "KTBM_Texture_Upscaled_env_drugstoreOfficeCalendar.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "KTBM_Texture_Upscaled_obj_beerCanFlagshipExteriorDeck.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_campDebrisRiverCampB.d3dtx", "KTBM_Texture_Upscaled_obj_campDebrisRiverCampB.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_gasTankPlastic.d3dtx", "KTBM_Texture_Upscaled_obj_gasTankPlastic.d3dtx");
+
+    --ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "env_drugstoreOfficeCalendar.d3dtx"); --some papers around the boat
+    --ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "obj_beerCanFlagshipExteriorDeck.d3dtx"); --beer cans
+    ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "KTBM_Texture_Skin4_obj_motorBoatChesapeak.d3dtx"); --main motor
+    ShaderOverrideTexture(agent_boat, "obj_stickersBoatChesapeake.d3dtx", "KTBM_Texture_Skin4_obj_stickersBoatChesapeake.d3dtx"); --stickers on the boat
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "KTBM_Texture_Skin4_tile_hullMetalBoatChesapeakeA.d3dtx"); --trim parts of the boat
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "KTBM_Texture_Skin4_tile_hullMetalBoatChesapeakeC.d3dtx"); --floor/bottom of boat
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "KTBM_Texture_Skin4_tile_hullMetalBoatChesapeakeB.d3dtx"); --side walls of the boat
+
+    KTBM_Costumes_Boat_SelectedOutfit = "Skin4";
+
+    if(KTBM_Data_PlayerSettings ~= nil) then
+        KTBM_Data_PlayerSettings.Gameplay.BoatOutfitProfile = KTBM_Costumes_Boat_SelectedOutfit;
+        KTBM_Data_Configuration_Save();
+    end
+end
+
+KTBM_Costumes_Boat_ApplySkin5 = function(kScene)
+    --get the existing boat object in the scene and reset the position and rotation
+    local agent_boat = AgentFindInScene("obj_boatMotorChesapeake", kScene);
+
+    --this custom skin doesn't mess with these textures, so just apply the default ones.
+    ShaderRestoreAllTextures(agent_boat);
+
+    --apply upscaled default textures
+    ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "KTBM_Texture_Upscaled_obj_motorBoatChesapeak.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_trashRiverCampB.d3dtx", "KTBM_Texture_Upscaled_obj_trashRiverCampB.d3dtx");
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "KTBM_Texture_Upscaled_tile_hullMetalBoatChesapeakeA.d3dtx");
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "KTBM_Texture_Upscaled_tile_hullMetalBoatChesapeakeB.d3dtx");
+    ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "KTBM_Texture_Upscaled_tile_hullMetalBoatChesapeakeC.d3dtx");
+    ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "KTBM_Texture_Upscaled_env_drugstoreOfficeCalendar.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "KTBM_Texture_Upscaled_obj_beerCanFlagshipExteriorDeck.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_campDebrisRiverCampB.d3dtx", "KTBM_Texture_Upscaled_obj_campDebrisRiverCampB.d3dtx");
+    ShaderOverrideTexture(agent_boat, "obj_gasTankPlastic.d3dtx", "KTBM_Texture_Upscaled_obj_gasTankPlastic.d3dtx");
+
+    --ShaderOverrideTexture(agent_boat, "env_drugstoreOfficeCalendar.d3dtx", "env_drugstoreOfficeCalendar.d3dtx"); --some papers around the boat
+    --ShaderOverrideTexture(agent_boat, "obj_beerCanFlagshipExteriorDeck.d3dtx", "obj_beerCanFlagshipExteriorDeck.d3dtx"); --beer cans
+
+    --ShaderOverrideTexture(agent_boat, "obj_motorBoatChesapeak.d3dtx", "KTBM_Texture_Skin5_obj_motorBoatChesapeak.d3dtx"); --main motor
+    --ShaderOverrideTexture(agent_boat, "obj_stickersBoatChesapeake.d3dtx", "KTBM_Texture_Skin5_obj_stickersBoatChesapeake.d3dtx"); --stickers on the boat
+    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeA.d3dtx", "KTBM_Texture_Skin5_tile_hullMetalBoatChesapeakeA.d3dtx"); --trim parts of the boat
+    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeC.d3dtx", "KTBM_Texture_Skin5_tile_hullMetalBoatChesapeakeC.d3dtx"); --floor/bottom of boat
+    --ShaderOverrideTexture(agent_boat, "tile_hullMetalBoatChesapeakeB.d3dtx", "KTBM_Texture_Skin5_tile_hullMetalBoatChesapeakeB.d3dtx"); --side walls of the boat
+
+    KTBM_Costumes_Boat_SelectedOutfit = "Skin5";
+
+    if(KTBM_Data_PlayerSettings ~= nil) then
+        KTBM_Data_PlayerSettings.Gameplay.BoatOutfitProfile = KTBM_Costumes_Boat_SelectedOutfit;
+        KTBM_Data_Configuration_Save();
+    end
+end
 
 KTBM_Costumes_Boat_ApplySkinTest = function(kScene)
     --get the existing boat object in the scene and reset the position and rotation

@@ -2,6 +2,7 @@ KTBM_Core_Project_Version = "1.0.0";
 
 --debugging options
 KTBM_Core_Project_DebugPrinting = false;
+KTBM_Core_Project_DebugEditorMode = true;
 KTBM_Core_Project_DebugFreecamMode = false;
 KTBM_Core_Project_DebugPeformanceMetrics = false;
 KTBM_Core_Project_DebugAllowBoundsDebug = true;
@@ -79,8 +80,11 @@ KTBM_Core_Project_EnableGameArchives = function()
     ResourceSetEnable("WalkingDeadM102");
     --ResourceSetEnable("WalkingDeadM103");
 
+    ResourceSetEnable("WalkingDead101");
     ResourceSetEnable("WalkingDead102");
+    ResourceSetEnable("WalkingDead103");
     ResourceSetEnable("WalkingDead104");
+    ResourceSetEnable("WalkingDead105");
 
     ResourceSetEnable("WalkingDead201");
     ResourceSetEnable("WalkingDead202");

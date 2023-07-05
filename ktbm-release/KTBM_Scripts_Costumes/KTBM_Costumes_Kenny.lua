@@ -27,6 +27,32 @@ KTBM_Costumes_Kenny_ApplySelectedOutfit = function(kScene)
     if(string.match(KTBM_Costumes_Kenny_SelectedOutfit, "202")) then
         KTBM_Costumes_Kenny_SetCostume_To202(kScene);
     end
+
+    local agent_kenny = AgentFindInScene("Kenny", kScene);
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "KTBM_Texture_EyeImproved.d3dtx");
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "KTBM_Texture_EyeImproved.d3dtx");
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown200.d3dtx", "KTBM_Texture_EyeImproved.d3dtx");
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "KTBM_Texture_EyeImprovedColored.d3dtx");
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "KTBM_Texture_EyeImprovedColored.d3dtx");
+    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown200.d3dtx", "KTBM_Texture_EyeImprovedColored.d3dtx");
+    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "KTBM_Texture_EyeImprovedColored2.d3dtx");
+    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "KTBM_Texture_EyeImprovedColored2.d3dtx");
+    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown200.d3dtx", "KTBM_Texture_EyeImprovedColored2.d3dtx");
+
+    --MeshGetMaterials();
+    local table_propSetTable = MeshGetMaterials("sk54_kenny202.d3dmesh");
+
+    for index, propSet in ipairs(table_propSetTable) do
+        PropertySet(propSet, "Material - Gloss Exponent", 5);
+        PropertySet(propSet, "Material - Specular Power", 5);
+
+        --print(tostring(propSet));
+        --print(KTBM_GetCacheObjectName(tostring(propSet), "cacheObjectNamesPart2.txt"));
+    end
+
+    --print(tostring(KTBM_TablePrint(table_propSetTable)));
 end
 
 KTBM_Costumes_Kenny_SetCostume_To101 = function(kScene)
@@ -42,9 +68,6 @@ KTBM_Costumes_Kenny_SetCostume_To101 = function(kScene)
     KTBM_PropertySet(agent_kenny, "D3D Mesh", mesh_kennyCostumeProxy);
 
     AgentDestroy(agent_kennyCostumeProxy);
-
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
 
     KTBM_Costumes_Kenny_SelectedOutfit = "101";
 
@@ -70,10 +93,6 @@ KTBM_Costumes_Kenny_SetCostume_To102 = function(kScene)
 
     AgentDestroy(agent_kennyCostumeProxy);
 
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_darkBrown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-
     KTBM_Costumes_Kenny_SelectedOutfit = "102";
 
     if(KTBM_Data_PlayerSettings ~= nil) then
@@ -98,10 +117,6 @@ KTBM_Costumes_Kenny_SetCostume_To103 = function(kScene)
 
     AgentDestroy(agent_kennyCostumeProxy);
 
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_darkBrown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-
     KTBM_Costumes_Kenny_SelectedOutfit = "103";
 
     if(KTBM_Data_PlayerSettings ~= nil) then
@@ -125,10 +140,6 @@ KTBM_Costumes_Kenny_SetCostume_To202 = function(kScene)
     KTBM_PropertySet(agent_kenny, "D3D Mesh", mesh_kennyCostumeProxy);
 
     AgentDestroy(agent_kennyCostumeProxy);
-
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-    ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_brown106.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
-    --ShaderOverrideTexture(agent_kenny, "sk_wdSharedParts_eye_darkBrown.d3dtx", "sk_wdSharedParts_eye_brown200.d3dtx");
 
     KTBM_Costumes_Kenny_SelectedOutfit = "202";
 

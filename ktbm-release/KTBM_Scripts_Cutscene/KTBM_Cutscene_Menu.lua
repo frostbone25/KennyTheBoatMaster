@@ -97,9 +97,11 @@ local strings_kennyEmotionsChoreClips =
 };
 
 
+local bool_doIntroductionVoiceLines = true;
 local bool_marker_voiceLine1 = false;
 local bool_marker_voiceLine2 = false;
 local bool_marker_voiceLine3 = false;
+local bool_introductionVoiceLinesComplete = false;
 
 local number_blinkTime = 2.5;
 local number_nextBlinkTime = 0;
@@ -119,15 +121,40 @@ local number_randomLeansNextTime = 0;
 --102 - 308617547 - "thats what i'm thinkin"
 --102 - 310411539 - "you found it too eh?"
 --102 - 310416205 - "I could eat a horse"
---102 - 310419862 - "you got any ideas?"
 --102 - 310480962 - "so, uh... whats up?"
 --102 - 310522918 - "you might earn yourself a place on the rv after all"
 --103 - 312483841 - "looks like this is our lucky day"
---103 - 312484054 - "you made up your mind yet?"
 --103 - 312504603 - "i apprecaite it though"
 --103 - 312705025 - "next stop, the atlantic"
---103 - 314609782 - "oh yeah? know alot about boats do ya?"
 --103 - 314720438 - "what about the boat?"
+
+local bool_kennyVoiceLineQuip_browsingBoatSkins = false;
+local bool_kennyVoiceLineQuip_browsingKennySkins = false;
+local bool_kennyVoiceLineQuip_leavingKennySkins = false;
+
+KTBM_Cutscene_Menu_PlayVoiceLine_BrowsingBoatSkins = function()
+    if(bool_kennyVoiceLineQuip_browsingBoatSkins == false) and (bool_introductionVoiceLinesComplete == true) then
+        KTBM_Cutscene_PlayVoiceLine(agent_kenny, "314609782", 1.0, 1.0); --103 - 314609782 - "oh yeah? know alot about boats do ya?"
+
+        bool_kennyVoiceLineQuip_browsingBoatSkins = true;
+    end
+end
+
+KTBM_Cutscene_Menu_PlayVoiceLine_BrowsingKennySkins = function()
+    if(bool_kennyVoiceLineQuip_browsingKennySkins == false) and (bool_introductionVoiceLinesComplete == true) then
+        KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310419862", 1.0, 1.0); --102 - 310419862 - "you got any ideas?"
+
+        bool_kennyVoiceLineQuip_browsingKennySkins = true;
+    end
+end
+
+KTBM_Cutscene_Menu_PlayVoiceLine_LeavingKennySkins = function()
+    if(bool_kennyVoiceLineQuip_leavingKennySkins == false) and (bool_introductionVoiceLinesComplete == true) then
+        KTBM_Cutscene_PlayVoiceLine(agent_kenny, "312484054", 1.0, 1.0); --103 - 312484054 - "you made up your mind yet?"
+
+        bool_kennyVoiceLineQuip_leavingKennySkins = true;
+    end
+end
 
 KTBM_Cutscene_Menu_Update = function()
     local number_currentDeltaTime = GetFrameTime();
@@ -184,28 +211,33 @@ KTBM_Cutscene_Menu_Update = function()
     end
 
     ----------------------------------------------
-    if(number_currentTotalGameTime > number_sceneStartTime + 4.0) then
-        if(bool_marker_voiceLine1 == false) then
-            KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415606", 2.0, 1.0);
+    if(bool_doIntroductionVoiceLines == true) then
+        if(number_currentTotalGameTime > number_sceneStartTime + 4.0) then
+            if(bool_marker_voiceLine1 == false) then
+                KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415606", 2.0, 1.0);
 
-            bool_marker_voiceLine1 = true;
+                bool_marker_voiceLine1 = true;
+            end
         end
-    end
 
-    if(number_currentTotalGameTime > number_sceneStartTime + 10.0) then
-        if(bool_marker_voiceLine2 == false) then
-            KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415609", 5.0, 1.0);
+        if(number_currentTotalGameTime > number_sceneStartTime + 10.0) then
+            if(bool_marker_voiceLine2 == false) then
+                KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415609", 5.0, 1.0);
 
-            bool_marker_voiceLine2 = true;
+                bool_marker_voiceLine2 = true;
+            end
         end
-    end
 
-    if(number_currentTotalGameTime > number_sceneStartTime + 21.0) then
-        if(bool_marker_voiceLine3 == false) then
-            KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415610", 2.0, 1.0);
+        if(number_currentTotalGameTime > number_sceneStartTime + 21.0) then
+            if(bool_marker_voiceLine3 == false) then
+                KTBM_Cutscene_PlayVoiceLine(agent_kenny, "310415610", 2.0, 1.0);
 
-            bool_marker_voiceLine3 = true;
+                bool_introductionVoiceLinesComplete = true;
+                bool_marker_voiceLine3 = true;
+            end
         end
+    else
+        bool_introductionVoiceLinesComplete = true;
     end
 end
 

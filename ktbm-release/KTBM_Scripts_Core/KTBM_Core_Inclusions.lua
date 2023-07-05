@@ -20,6 +20,7 @@ require("KTBM_Core_PropertyKeys.lua");
 require("KTBM_Core_Keycodes.lua");
 
 require("KTBM_Data_Configuration.lua");
+require("KTBM_Data_ConfigurationOptions.lua");
 require("KTBM_Data_GameResults.lua");
 
 require("KTBM_Effects_DepthOfFieldAutofocus.lua");
@@ -34,6 +35,10 @@ require("KTBM_Development_PerformanceMetrics.lua");
 require("KTBM_Development_LuaHelper.lua");
 require("KTBM_Development_BoundsDebug.lua");
 require("KTBM_Development_DevelopmentBuildText.lua");
+
+require("KTBM_Development_Editor_Input.lua");
+require("KTBM_Development_Editor_TransformTool.lua");
+require("KTBM_Development_Editor_SceneCamera.lua");
 
 ---------------------------------------------
 

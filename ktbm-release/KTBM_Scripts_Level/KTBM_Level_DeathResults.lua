@@ -21,18 +21,21 @@ KTBM_Core_Project_EnableGameArchives();
 
 KTBM_Cutscene_DeathResults_kScene = kScene;
 KTBM_LevelRelight_kScene = kScene;
+KTBM_Gameplay_kScene = kScene;
 
 KTBM_Development_SceneObject = kScene;
 KTBM_Development_SceneObjectAgentName = kSceneAgentName;
 KTBM_Development_UseSeasonOneAPI = false;
 KTBM_Development_FreecamUseFOVScale = false;
 
-KTBM_Development_BoundsDebug_ExtentsDebugging = false;
+KTBM_Development_BoundsDebug_ExtentsDebugging = true;
 KTBM_Development_BoundsDebug_Agents = {
-    "agent_retryText",
-    "agent_returnToMenuText",
-    "agent_returnToDefinitiveMenuText",
-    "agent_quitToDesktopText"
+    --"agent_retryText",
+    --"agent_returnToMenuText",
+    --"agent_returnToDefinitiveMenuText",
+    --"agent_quitToDesktopText"
+    "agent_yesText",
+    "agent_noText"
 };
 
 KTBM_Cutscene_DeathResults_ShowUI = false;

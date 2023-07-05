@@ -1,3 +1,5 @@
+require("KTBM_Cutscene_Utilities.lua");
+
 local controller_music = nil;
 local controller_sound_sceneAmbient = nil;
 local controller_sound_zombieKill = nil;
@@ -116,6 +118,46 @@ KTBM_Cutscene_Game_End = function(kScene)
     --ControllerKill(controller_sound_sceneAmbient);
 end
 
+local strings_voiceLinesAfterZombieKill = {
+    "308285656", --101 - "you're a prick"
+    "308285662", --101 - "murdering a bunch of folks don't make ya tough"
+    "308285737", --101 - "ah screw you"
+    "308285980", --101 - "there we go!"
+    "308286078", --101 - "i'm not lettin sombody else get eaten today"
+    "310391163", --102 - "lets go lets go!"
+    "310498920", --102 - "nice air"
+    "310521905", --102 - "i'm gettin sick of this shit"
+    "310657067", --102 - "you're so full of bullshit"
+    "312492120", --103 - "got em"
+    "312492127", --103 - "lets go!"
+    "312504622", --103 - "your wasting my time here"
+    "312537212", --103 - "ugh this dumb fuck walker"
+    "312537222", --103 - "gah there we go you ugly shit"
+    "312537247", --103 - "there! i got em"
+    "312590970", --103 - "lets fuckin enjoy this"
+    "312591173", --103 - "thats the spirit"
+    "312591765", --103 - "now we're talkin"
+    "312594891", --103 - "you smug son of a bitch"
+    "312594940", --103 - "just leave me the fuck alone!"
+    "312700930", --103 - "fuuuuuck youuuuu"
+    "312700937", --103 - "this aint shit"
+    "312701387", --103 - "fuuuuuuuuuuck youuuuuuuuuuuuuuuu"
+    "314593309", --104 - "hey, fuck you!"
+    "314724360", --104 - "motherfucker"
+    "316744386" --105 - "i gotcha"
+};
+
+KTBM_Cutscene_Game_PlayVoiceLineAfterZombieKill = function()
+    if not (KTBM_Gameplay_Stats_ZombiesKilled % 5 == 0) then
+        return
+    end
+
+    local number_randomClip = KTBM_RandomIntegerValue(1, #strings_voiceLinesAfterZombieKill);
+    local string_voiceLineAfterZombieKill = strings_voiceLinesAfterZombieKill[number_randomClip];
+
+    KTBM_Cutscene_PlayVoiceLine(agent_kenny, string_voiceLineAfterZombieKill, 1.0, 1.0);
+end
+
 KTBM_Cutscene_Game_PlayZombieKill = function(agent_zombie)
     if(controller_sound_zombieKill ~= nil) then
         ControllerKill(controller_sound_zombieKill);
@@ -143,8 +185,4 @@ KTBM_Cutscene_Game_PlayZombieKill = function(agent_zombie)
     for index, controller_item in ipairs(controllers_zombieControllers) do
         ControllerKill(controller_item);
     end
-end
-
-KTBM_Cutscene_Game_PlayVoiceLineZombieKills = function()
-
 end

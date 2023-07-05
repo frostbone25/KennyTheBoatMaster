@@ -3,6 +3,7 @@
 ]]--
 
 require("KTBM_UI_Input.lua");
+require("KTBM_UI_YesNoDialogBox.lua");
 
 local string_currentPage = "main";
 
@@ -33,6 +34,8 @@ local agent_pageCostumesBoat_skinDefault = nil;
 local agent_pageCostumesBoat_skin1 = nil;
 local agent_pageCostumesBoat_skin2 = nil;
 local agent_pageCostumesBoat_skin3 = nil;
+local agent_pageCostumesBoat_skin4 = nil;
+local agent_pageCostumesBoat_skin5 = nil;
 
 local agent_pageHelp_goBack = nil;
 local agent_pageHelp_help = nil;
@@ -148,6 +151,8 @@ local GetCreditsText = function()
     string_credits = string_credits .. "\n"; --new line
     string_credits = string_credits .. "Violet (droyti)";
     string_credits = string_credits .. "\n"; --new line
+    string_credits = string_credits .. "ThirdComingOfKenny";
+    string_credits = string_credits .. "\n"; --new line
 
     return string_credits;
 end
@@ -195,7 +200,7 @@ KTBM_UI_MainMenu_Start = function()
     KTBM_UI_PrepareCreditsMenuText();
     KTBM_UI_PrepareScoreboardMenuText();
 
-    KTBM_UI_YesNoDialogBox_Start();
+    KTBM_UI_YesNoDialogBox_Start(0.075);
 
     CursorHide(false);
     CursorEnable(true);
@@ -211,8 +216,6 @@ KTBM_UI_MainMenu_Start = function()
         number_gameResultsPages = number_gameResultsDataArraySize / 3;
         number_gameResultsPages = KTBM_NumberRound(number_gameResultsPages, 0);
     end
-
-    --InputMapperActivate(KTBM_UI_IMAP_File);
 end
 
 KTBM_UI_PrepareMainMenuText = function()
@@ -412,12 +415,16 @@ KTBM_UI_PrepareBoatCostumeMenuText = function()
     agent_pageCostumesBoat_skin1 = KTBM_TextUI_CreateTextAgent("agent_pageCostumesBoat_skin1", "Nautical", Vector(0, 0, 0), 0, 0);
     agent_pageCostumesBoat_skin2 = KTBM_TextUI_CreateTextAgent("agent_pageCostumesBoat_skin2", "Delta Boat", Vector(0, 0, 0), 0, 0);
     agent_pageCostumesBoat_skin3 = KTBM_TextUI_CreateTextAgent("agent_pageCostumesBoat_skin3", "Naughty Boat", Vector(0, 0, 0), 0, 0);
+    agent_pageCostumesBoat_skin4 = KTBM_TextUI_CreateTextAgent("agent_pageCostumesBoat_skin4", "Snow", Vector(0, 0, 0), 0, 0);
+    agent_pageCostumesBoat_skin5 = KTBM_TextUI_CreateTextAgent("agent_pageCostumesBoat_skin5", "Camo", Vector(0, 0, 0), 0, 0);
 
     AgentAttach(agent_pageCostumesBoat_goBack, agent_mainMenuGroup);
     AgentAttach(agent_pageCostumesBoat_skinDefault, agent_mainMenuGroup);
     AgentAttach(agent_pageCostumesBoat_skin1, agent_mainMenuGroup);
     AgentAttach(agent_pageCostumesBoat_skin2, agent_mainMenuGroup);
     AgentAttach(agent_pageCostumesBoat_skin3, agent_mainMenuGroup);
+    AgentAttach(agent_pageCostumesBoat_skin4, agent_mainMenuGroup);
+    AgentAttach(agent_pageCostumesBoat_skin5, agent_mainMenuGroup);
 
     --scale note
     --1.0 = default
@@ -428,6 +435,8 @@ KTBM_UI_PrepareBoatCostumeMenuText = function()
     TextSetScale(agent_pageCostumesBoat_skin1, 1.0);
     TextSetScale(agent_pageCostumesBoat_skin2, 1.0);
     TextSetScale(agent_pageCostumesBoat_skin3, 1.0);
+    TextSetScale(agent_pageCostumesBoat_skin4, 1.0);
+    TextSetScale(agent_pageCostumesBoat_skin5, 1.0);
 
     --color note
     --text colors are additive on the scene
@@ -436,6 +445,8 @@ KTBM_UI_PrepareBoatCostumeMenuText = function()
     TextSetColor(agent_pageCostumesBoat_skin1, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageCostumesBoat_skin2, Color(1.0, 1.0, 1.0, 1.0));
     TextSetColor(agent_pageCostumesBoat_skin3, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageCostumesBoat_skin4, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageCostumesBoat_skin5, Color(1.0, 1.0, 1.0, 1.0));
 
     --set properties on menu texts
     SetMenuOptionProperties("agent_pageCostumesBoat_goBack");
@@ -443,6 +454,8 @@ KTBM_UI_PrepareBoatCostumeMenuText = function()
     SetMenuOptionProperties("agent_pageCostumesBoat_skin1");
     SetMenuOptionProperties("agent_pageCostumesBoat_skin2");
     SetMenuOptionProperties("agent_pageCostumesBoat_skin3");
+    SetMenuOptionProperties("agent_pageCostumesBoat_skin4");
+    SetMenuOptionProperties("agent_pageCostumesBoat_skin5");
 
     --screen pos notes
     --0.0 0.0 0.0 = top left
@@ -455,6 +468,8 @@ KTBM_UI_PrepareBoatCostumeMenuText = function()
     AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumesBoat_skin1, Vector(0.105 + menuOffsetX, 0.4 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumesBoat_skin2, Vector(0.105 + menuOffsetX, 0.45 + menuOffsetY, 0.0));
     AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumesBoat_skin3, Vector(0.105 + menuOffsetX, 0.5 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumesBoat_skin4, Vector(0.105 + menuOffsetX, 0.55 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageCostumesBoat_skin5, Vector(0.105 + menuOffsetX, 0.6 + menuOffsetY, 0.0));
 end
 
 KTBM_UI_PrepareCreditsMenuText = function()
@@ -605,14 +620,9 @@ end
 
 KTBM_UI_Update = function()  
     KTBM_UI_Input_IMAP_Update();
+    KTBM_UI_YesNoDialogBox_Update();
 
     PlayRolloverSound();
-
-    KTBM_PropertySet(agent_mainMenuGroup, "Group - Visible", not KTBM_UI_YesNoDialogBox_IsOpen);
-
-    if(KTBM_UI_YesNoDialogBox_IsOpen == true) then
-        return;
-    end
 
     local defaultColor = Color(1.0, 1.0, 1.0, 1.0);
     local rolloverColor = Color(0.25, 0.25, 0.25, 1.0);
@@ -626,13 +636,13 @@ KTBM_UI_Update = function()
     --||||||||||||||||||||||||||||| BUTTON VISIBILITY |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| BUTTON VISIBILITY |||||||||||||||||||||||||||||
 
-    local bool_onMainMenuPage = string_currentPage == "main";
-    local bool_onCostumePage = string_currentPage == "costumes";
-    local bool_onCostumeKennyPage = string_currentPage == "costumesKenny";
-    local bool_onCostumeBoatPage = string_currentPage == "costumesBoat";
-    local bool_onHelpPage = string_currentPage == "help";
-    local bool_onCreditsPage = string_currentPage == "credits";
-    local bool_onScoreboardPage = string_currentPage == "scoreboard";
+    local bool_onMainMenuPage = string_currentPage == "main" and (not KTBM_UI_YesNoDialogBox_IsOpen);
+    local bool_onCostumePage = string_currentPage == "costumes" and (not KTBM_UI_YesNoDialogBox_IsOpen);
+    local bool_onCostumeKennyPage = string_currentPage == "costumesKenny" and (not KTBM_UI_YesNoDialogBox_IsOpen);
+    local bool_onCostumeBoatPage = string_currentPage == "costumesBoat" and (not KTBM_UI_YesNoDialogBox_IsOpen);
+    local bool_onHelpPage = string_currentPage == "help" and (not KTBM_UI_YesNoDialogBox_IsOpen);
+    local bool_onCreditsPage = string_currentPage == "credits" and (not KTBM_UI_YesNoDialogBox_IsOpen);
+    local bool_onScoreboardPage = string_currentPage == "scoreboard" and (not KTBM_UI_YesNoDialogBox_IsOpen);
 
     KTBM_PropertySet(agent_page0_play, "Runtime: Visible", bool_onMainMenuPage);
     KTBM_PropertySet(agent_page0_costumes, "Runtime: Visible", bool_onMainMenuPage);
@@ -658,6 +668,8 @@ KTBM_UI_Update = function()
     KTBM_PropertySet(agent_pageCostumesBoat_skin1, "Runtime: Visible", bool_onCostumeBoatPage);
     KTBM_PropertySet(agent_pageCostumesBoat_skin2, "Runtime: Visible", bool_onCostumeBoatPage);
     KTBM_PropertySet(agent_pageCostumesBoat_skin3, "Runtime: Visible", bool_onCostumeBoatPage);
+    KTBM_PropertySet(agent_pageCostumesBoat_skin4, "Runtime: Visible", bool_onCostumeBoatPage);
+    KTBM_PropertySet(agent_pageCostumesBoat_skin5, "Runtime: Visible", bool_onCostumeBoatPage);
 
     KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", bool_onHelpPage);
     KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", bool_onHelpPage);
@@ -673,6 +685,43 @@ KTBM_UI_Update = function()
     KTBM_PropertySet(agent_pageScoreboard_leftArrow, "Runtime: Visible", bool_onScoreboardPage);
     KTBM_PropertySet(agent_pageScoreboard_pageNumber, "Runtime: Visible", bool_onScoreboardPage);
     KTBM_PropertySet(agent_pageScoreboard_rightArrow, "Runtime: Visible", bool_onScoreboardPage);
+
+    KTBM_PropertySet(agent_mainMenuGroup, "Group - Visible", not KTBM_UI_YesNoDialogBox_IsOpen);
+
+    --||||||||||||||||||||||||||||| YES NO HANDLING |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| YES NO HANDLING |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| YES NO HANDLING |||||||||||||||||||||||||||||
+
+    local string_dialog_quitToDesktop = "Are you sure you want\n to quit to the desktop?";
+    local string_dialog_returnToDE = "Are you sure you want to\n return to the definitive menu?";
+
+    if(KTBM_UI_YesNoDialogBox_CurrentDialog == string_dialog_quitToDesktop) then
+        if not (KTBM_UI_YesNoDialogBox_Response == nil) then
+            if(KTBM_UI_YesNoDialogBox_Response == true) then
+                EngineQuit();
+            end
+
+            KTBM_UI_YesNoDialogBox_Response = nil;
+            KTBM_UI_YesNoDialogBox_CurrentDialog = "";
+            KTBM_UI_YesNoDialogBox_IsOpen = false;
+        end
+    end
+
+    if(KTBM_UI_YesNoDialogBox_CurrentDialog == string_dialog_returnToDE) then
+        if not (KTBM_UI_YesNoDialogBox_Response == nil) then
+            if(KTBM_UI_YesNoDialogBox_Response == true) then
+                dofile("Menu_KTBM_QuitToDE.lua");
+            end
+
+            KTBM_UI_YesNoDialogBox_Response = nil;
+            KTBM_UI_YesNoDialogBox_CurrentDialog = "";
+            KTBM_UI_YesNoDialogBox_IsOpen = false;
+        end
+    end
+
+    if(KTBM_UI_YesNoDialogBox_IsOpen == true) then
+        return;
+    end
 
     --||||||||||||||||||||||||||||| MAIN MENU |||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||| MAIN MENU |||||||||||||||||||||||||||||
@@ -713,6 +762,7 @@ KTBM_UI_Update = function()
                 PlayClickSound();
 
                 string_currentPage = "costumes";
+                KTBM_Cutscene_Menu_PlayVoiceLine_BrowsingKennySkins();
 
                 KTBM_UI_Input_Clicked = false;
             else
@@ -795,7 +845,7 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_page0_returnToDE, pressedColor);
                 PlayClickSound();
             
-                dofile("Menu_KTBM_QuitToDE.lua");
+                KTBM_UI_PopYesNoDialogBox(string_dialog_returnToDE);
                 
                 KTBM_UI_Input_Clicked = false;
             else
@@ -812,7 +862,7 @@ KTBM_UI_Update = function()
                 TextSetColor(agent_page0_quit, pressedColor);
                 PlayClickSound();
 
-                EngineQuit();
+                KTBM_UI_PopYesNoDialogBox(string_dialog_quitToDesktop);
 
                 KTBM_UI_Input_Clicked = false;
             else
@@ -872,6 +922,8 @@ KTBM_UI_Update = function()
 
                 string_currentPage = "costumesBoat";
 
+                KTBM_Cutscene_Menu_PlayVoiceLine_BrowsingBoatSkins();
+
                 KTBM_UI_Input_Clicked = false;
             else
                 TextSetColor(agent_pageCostumes_boat, rolloverColor);
@@ -896,6 +948,7 @@ KTBM_UI_Update = function()
                 PlayClickSound();
             
                 string_currentPage = "costumes";
+                KTBM_Cutscene_Menu_PlayVoiceLine_LeavingKennySkins();
 
                 KTBM_UI_Input_Clicked = false;
             else
@@ -1065,6 +1118,40 @@ KTBM_UI_Update = function()
             end
         else
             TextSetColor(agent_pageCostumesBoat_skin3, defaultColor);
+        end
+
+        --option 6 (boat skin 4)
+        if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumesBoat_skin4)) then
+            if (KTBM_UI_Input_Clicked == true) then
+                TextSetColor(agent_pageCostumesBoat_skin4, pressedColor);
+                PlayClickSound();
+
+                KTBM_Costumes_Boat_ApplySkin4(KTBM_Cutscene_Menu_kScene);
+
+                KTBM_UI_Input_Clicked = false;
+            else
+                TextSetColor(agent_pageCostumesBoat_skin4, rolloverColor);
+                string_currentRolloverItem = "pageCostumeBoat_skin4";
+            end
+        else
+            TextSetColor(agent_pageCostumesBoat_skin4, defaultColor);
+        end
+
+        --option 7 (boat skin 5)
+        if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageCostumesBoat_skin5)) then
+            if (KTBM_UI_Input_Clicked == true) then
+                TextSetColor(agent_pageCostumesBoat_skin5, pressedColor);
+                PlayClickSound();
+
+                KTBM_Costumes_Boat_ApplySkin5(KTBM_Cutscene_Menu_kScene);
+
+                KTBM_UI_Input_Clicked = false;
+            else
+                TextSetColor(agent_pageCostumesBoat_skin5, rolloverColor);
+                string_currentRolloverItem = "pageCostumeBoat_skin5";
+            end
+        else
+            TextSetColor(agent_pageCostumesBoat_skin5, defaultColor);
         end
 
     end

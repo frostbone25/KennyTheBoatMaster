@@ -39,14 +39,15 @@ KTBM_Development_Freecam_PrevCamRot = Vector(0,0,0);
 KTBM_Development_Freecam_PrevCursorPos = Vector(0,0,0);
 KTBM_Development_Freecam_InputMouseAmountX = 0;
 KTBM_Development_Freecam_InputMouseAmountY = 0;
-KTBM_Development_Freecam_InputFieldOfViewAmount = 90;
+KTBM_Development_Freecam_InputFieldOfViewAmount = 100;
 KTBM_Development_Freecam_PrevTime = 0;
 KTBM_Development_Freecam_Frozen = false;
-KTBM_Development_Freecam_CameraName = "myNewFreecamera";
+KTBM_Development_Freecam_CameraName = "DevelopmentFreecamera";
+KTBM_Development_Freecam_Camera = nil;
 
 --user configruable
 KTBM_Development_Freecam_SnappyMovement = false;
-KTBM_Development_Freecam_SnappyRotation = false;
+KTBM_Development_Freecam_SnappyRotation = true;
 KTBM_Development_Freecam_PositionLerpFactor = 5.0;
 KTBM_Development_Freecam_RotationLerpFactor = 7.5;
 KTBM_Development_Freecam_PositionIncrementDefault = 0.025;
@@ -55,7 +56,7 @@ KTBM_Development_Freecam_FovIncrement = 0.5;
 
 --input workaround because S1 has different API
 local KTBM_InputKeyPress = function(keyCode)
-    if (KTBM_Development_UseSeasonOneAPI == true) then
+    if(KTBM_Development_UseSeasonOneAPI == true) then
         return Input_IsPressed(keyCode);
     else
         return Input_IsVKeyPressed(keyCode);
@@ -63,147 +64,139 @@ local KTBM_InputKeyPress = function(keyCode)
 end
 
 KTBM_Development_CreateFreeCamera = function()
-    local cam_prop = "module_camera.prop"
-    
-    local newPosition = Vector(0,0,0)
-    local newRotation = Vector(90,0,0)
-    
-    local cameraAgent = AgentCreate(KTBM_Development_Freecam_CameraName, cam_prop, newPosition, newRotation, KTBM_Development_SceneObject, false, false)
-    
-    KTBM_AgentSetProperty(KTBM_Development_Freecam_CameraName, "Clip Plane - Far", 2500, KTBM_Development_SceneObject)
-    KTBM_AgentSetProperty(KTBM_Development_Freecam_CameraName, "Clip Plane - Near", 0.05, KTBM_Development_SceneObject)
-    KTBM_AgentSetProperty(KTBM_Development_Freecam_CameraName, "Lens - Current Lens", nil, KTBM_Development_SceneObject)
+    KTBM_Development_Freecam_Camera = AgentCreate(KTBM_Development_Freecam_CameraName, "module_camera.prop", Vector(0,0,0), Vector(90,0,0), KTBM_Development_SceneObject, false, false);
+    KTBM_PropertySet(KTBM_Development_Freecam_Camera, "Clip Plane - Far", 2500);
+    KTBM_PropertySet(KTBM_Development_Freecam_Camera, "Clip Plane - Near", 0.05);
+    KTBM_PropertySet(KTBM_Development_Freecam_Camera, "Lens - Current Lens", nil);
 
-    KTBM_RemovingAgentsWithPrefix(KTBM_Development_SceneObject, "cam_")
+    KTBM_RemovingAgentsWithPrefix(KTBM_Development_SceneObject, "cam_");
 
     CameraPush(KTBM_Development_Freecam_CameraName);
 end
 
 KTBM_Development_UpdateFreeCamera = function()
-    local currFrameTime = GetFrameTime();
+    local number_frameTime = GetFrameTime();
 
     --freecamera freezing
-    if KTBM_InputKeyPress(82) then
-        --R key
+    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_R)) then
         KTBM_Development_Freecam_Frozen = false;
-    elseif KTBM_InputKeyPress(70) then
-        --F key
+    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_F)) then
+        KTBM_Development_Freecam_Frozen = true;
+    end
+
+    --freecamera freezing
+    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_RightMouse)) then
+        KTBM_Development_Freecam_Frozen = false;
+    else
         KTBM_Development_Freecam_Frozen = true;
     end
 
     --hide/show the cursor
-    if (KTBM_Development_Freecam_Frozen == true) then
+    if(KTBM_Development_Freecam_Frozen == true) then
         CursorHide(false);
         CursorEnable(true);
-        do return end --don't conitnue with the rest of the function
+
+        KTBM_Development_Freecam_InputHeightValue = 0;
+        KTBM_Development_Freecam_InputVerticalValue = 0;
+
+        return
     else
         CursorHide(true);
         CursorEnable(true);
     end
 
     ------------------------------MOVEMENT------------------------------
-    local positionIncrement = KTBM_Development_Freecam_PositionIncrementDefault;
+    local number_positionIncrement = KTBM_Development_Freecam_PositionIncrementDefault;
     
-    if KTBM_InputKeyPress(16) then
-        --key shift
-        positionIncrement = KTBM_Development_Freecam_PositionIncrementShift;
+    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_LeftShift)) then
+        number_positionIncrement = KTBM_Development_Freecam_PositionIncrementShift;
     end
     
-    if KTBM_InputKeyPress(81) then
-        --key q (decrease)
-        KTBM_Development_Freecam_InputHeightValue = -positionIncrement;
-    elseif KTBM_InputKeyPress(69) then
-        --key e (increase)
-        KTBM_Development_Freecam_InputHeightValue = positionIncrement;
+    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_Q)) then
+        KTBM_Development_Freecam_InputHeightValue = -number_positionIncrement;
+    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_E)) then
+        KTBM_Development_Freecam_InputHeightValue = number_positionIncrement;
     else
         KTBM_Development_Freecam_InputHeightValue = 0;
     end
     
-    if KTBM_InputKeyPress(87) then
-        --key w (increase)
-        KTBM_Development_Freecam_InputVerticalValue = positionIncrement;
-    elseif KTBM_InputKeyPress(83) then
-        --key s (decrease)
-        KTBM_Development_Freecam_InputVerticalValue = -positionIncrement;
+    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_W)) then
+        KTBM_Development_Freecam_InputVerticalValue = number_positionIncrement;
+    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_S)) then
+        KTBM_Development_Freecam_InputVerticalValue = -number_positionIncrement;
     else
         KTBM_Development_Freecam_InputVerticalValue = 0;
     end
     
-    if KTBM_InputKeyPress(65) then
-        --key a (decrease)
-        KTBM_Development_Freecam_InputHorizontalValue = positionIncrement;
-    elseif KTBM_InputKeyPress(68) then
-        --key d (increase)
-        KTBM_Development_Freecam_InputHorizontalValue = -positionIncrement;
+    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_A)) then
+        KTBM_Development_Freecam_InputHorizontalValue = number_positionIncrement;
+    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_D)) then
+        KTBM_Development_Freecam_InputHorizontalValue = -number_positionIncrement;
     else
         KTBM_Development_Freecam_InputHorizontalValue = 0;
     end
     
     ------------------------------ZOOMING------------------------------
-    local fovIncrement = KTBM_Development_Freecam_FovIncrement
+    local number_fovIncrement = KTBM_Development_Freecam_FovIncrement;
     
-    if KTBM_InputKeyPress(1) then
-        --left mouse (decrease)
-        KTBM_Development_Freecam_InputFieldOfViewAmount = KTBM_Development_Freecam_InputFieldOfViewAmount - fovIncrement;
-    elseif KTBM_InputKeyPress(2) then
-        --right mouse (increase)
-        KTBM_Development_Freecam_InputFieldOfViewAmount = KTBM_Development_Freecam_InputFieldOfViewAmount + fovIncrement;
+    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_LeftMouse)) then
+        KTBM_Development_Freecam_InputFieldOfViewAmount = KTBM_Development_Freecam_InputFieldOfViewAmount - number_fovIncrement;
+    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_RightMouse)) then
+        KTBM_Development_Freecam_InputFieldOfViewAmount = KTBM_Development_Freecam_InputFieldOfViewAmount + number_fovIncrement;
     end
     
     ------------------------------MOUSELOOK------------------------------
-    local currCursorPos = CursorGetPos()
+    local vector_cursorPos = CursorGetPos();
     
-    local minThreshold = 0.01
-    local maxThreshold = 0.99
+    local number_minThreshold = 0.01;
+    local number_maxThreshold = 0.99;
     
     --reset the cursor pos to the center of the screen when they get near the edges of the screen
-    if (currCursorPos.x > maxThreshold) or (currCursorPos.x < minThreshold) or (currCursorPos.y > maxThreshold) or (currCursorPos.y < minThreshold) then
+    if(vector_cursorPos.x > number_maxThreshold) or (vector_cursorPos.x < number_minThreshold) or (vector_cursorPos.y > number_maxThreshold) or (vector_cursorPos.y < number_minThreshold) then
         CursorSetPos(Vector(0.5, 0.5, 0));
     end
     
-    local xCursorDifference = currCursorPos.x - KTBM_Development_Freecam_PrevCursorPos.x
-    local yCursorDifference = currCursorPos.y - KTBM_Development_Freecam_PrevCursorPos.y
+    local vector_cursorDifference = Vector(vector_cursorPos.x - KTBM_Development_Freecam_PrevCursorPos.x, vector_cursorPos.y - KTBM_Development_Freecam_PrevCursorPos.y, 0);
     
-    local sensitivity = 180.0
-    KTBM_Development_Freecam_InputMouseAmountX = KTBM_Development_Freecam_InputMouseAmountX - (xCursorDifference * sensitivity)
-    KTBM_Development_Freecam_InputMouseAmountY = KTBM_Development_Freecam_InputMouseAmountY + (yCursorDifference * sensitivity)
+    local number_sensitivity = 180.0;
+    KTBM_Development_Freecam_InputMouseAmountX = KTBM_Development_Freecam_InputMouseAmountX - (vector_cursorDifference.x * number_sensitivity);
+    KTBM_Development_Freecam_InputMouseAmountY = KTBM_Development_Freecam_InputMouseAmountY + (vector_cursorDifference.y * number_sensitivity);
 
-    local newRotation = Vector(KTBM_Development_Freecam_InputMouseAmountY - 90, KTBM_Development_Freecam_InputMouseAmountX, 0);
+    local vector_newRotation = Vector(KTBM_Development_Freecam_InputMouseAmountY - 90, KTBM_Development_Freecam_InputMouseAmountX, 0);
     
-    if newRotation.x > 90 then
-        newRotation.x = 90;
-    elseif newRotation.x < -90 then
-        newRotation.x = -90;
+    if(vector_newRotation.x > 90) then
+        vector_newRotation.x = 90;
+    elseif(vector_newRotation.x < -90) then
+        vector_newRotation.x = -90;
     end
     
     ------------------------------BUILD FINAL MOVEMENT/ROTATION------------------------------
-    local newPosition = Vector(KTBM_Development_Freecam_InputHorizontalValue, KTBM_Development_Freecam_InputHeightValue, KTBM_Development_Freecam_InputVerticalValue);
+    local vector_newPosition = Vector(KTBM_Development_Freecam_InputHorizontalValue, KTBM_Development_Freecam_InputHeightValue, KTBM_Development_Freecam_InputVerticalValue);
 
-    if (KTBM_Development_Freecam_SnappyMovement == true) then
-        KTBM_Development_Freecam_PrevCamPos = newPosition;
+    if(KTBM_Development_Freecam_SnappyMovement == true) then
+        KTBM_Development_Freecam_PrevCamPos = vector_newPosition;
     else
-        KTBM_Development_Freecam_PrevCamPos = KTBM_VectorLerp(KTBM_Development_Freecam_PrevCamPos, newPosition, currFrameTime * KTBM_Development_Freecam_PositionLerpFactor);
+        KTBM_Development_Freecam_PrevCamPos = KTBM_VectorLerp(KTBM_Development_Freecam_PrevCamPos, vector_newPosition, number_frameTime * KTBM_Development_Freecam_PositionLerpFactor);
     end
     
-    if (KTBM_Development_Freecam_SnappyRotation == true) then
+    if(KTBM_Development_Freecam_SnappyRotation == true) then
         KTBM_Development_Freecam_PrevCamRot = newRotation;
     else
-        KTBM_Development_Freecam_PrevCamRot = KTBM_VectorLerp(KTBM_Development_Freecam_PrevCamRot, newRotation, currFrameTime * KTBM_Development_Freecam_RotationLerpFactor);
+        KTBM_Development_Freecam_PrevCamRot = KTBM_VectorLerp(KTBM_Development_Freecam_PrevCamRot, newRotation, number_frameTime * KTBM_Development_Freecam_RotationLerpFactor);
     end
     
     ------------------------------ASSIGNMENT------------------------------
-    local myCameraAgent = AgentFindInScene(KTBM_Development_Freecam_CameraName, KTBM_Development_SceneObject); --Agent type
-    local result = AgentLocalToWorld(myCameraAgent, KTBM_Development_Freecam_PrevCamPos);
+    local vector_cameraPosition = AgentLocalToWorld(KTBM_Development_Freecam_Camera, KTBM_Development_Freecam_PrevCamPos);
     
-    KTBM_SetAgentPosition(KTBM_Development_Freecam_CameraName, result, KTBM_Development_SceneObject)
-    KTBM_SetAgentRotation(KTBM_Development_Freecam_CameraName, KTBM_Development_Freecam_PrevCamRot, KTBM_Development_SceneObject)
+    AgentSetWorldPos(KTBM_Development_Freecam_Camera, vector_cameraPosition, KTBM_Development_SceneObject);
+    AgentSetWorldRot(KTBM_Development_Freecam_Camera, KTBM_Development_Freecam_PrevCamRot, KTBM_Development_SceneObject);
 
-    if (KTBM_Development_FreecamUseFOVScale == true) then
-        local fovScale = KTBM_Development_Freecam_InputFieldOfViewAmount / 50.0;
+    if(KTBM_Development_FreecamUseFOVScale == true) then
+        local number_fovScale = KTBM_Development_Freecam_InputFieldOfViewAmount / 50.0;
 
-        KTBM_AgentSetProperty(KTBM_Development_Freecam_CameraName, "Field of View Scale", fovScale, KTBM_Development_SceneObject);
+        KTBM_PropertySet(KTBM_Development_Freecam_Camera, "Field of View Scale", number_fovScale);
     else
-        KTBM_AgentSetProperty(KTBM_Development_Freecam_CameraName, "Field of View", KTBM_Development_Freecam_InputFieldOfViewAmount, KTBM_Development_SceneObject);
+        KTBM_PropertySet(KTBM_Development_Freecam_Camera, "Field of View", KTBM_Development_Freecam_InputFieldOfViewAmount);
     end
 
     KTBM_Development_Freecam_PrevCursorPos = CursorGetPos();

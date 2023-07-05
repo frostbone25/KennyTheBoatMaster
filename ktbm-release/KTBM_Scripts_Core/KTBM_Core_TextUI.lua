@@ -47,7 +47,8 @@ KTBM_TextUI_IsCursorOverTextAgentFix = function(textAgent)
     --TextGetWorldExtents do not properly factor in rotations well, despite the fact that visually text objects are always oriented towards the screen.
     --Their actual agent rotations are not, so the bounds will appear out of whack.
     --To fix this, we just simply match the agent rotations of the text to the camera.
-    local camera_sceneCamera = AgentGetCamera(textAgent);
+    local string_agentScene = AgentGetScene(textAgent);
+    local camera_sceneCamera = SceneGetSceneCamera(string_agentScene);
     local vector_sceneCameraRotation = AgentGetWorldRot(camera_sceneCamera);
     AgentSetWorldRot(textAgent, vector_sceneCameraRotation);
 

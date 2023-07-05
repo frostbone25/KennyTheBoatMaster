@@ -188,6 +188,8 @@ KTBM_Level_Game = function()
         KTBM_Development_DevelopmentBuildText_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_DevelopmentBuildText_Update);
     end
+    
+    KTBM_Data_ConfigurationOptions_Video_ApplySettings(kScene, kSceneAgentName);
 
     Callback_OnPostUpdate:Add(KTBM_LevelRelight_M101_FlagshipExteriorDeck_UpdateLighting);
 end
