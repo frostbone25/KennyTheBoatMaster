@@ -34,8 +34,8 @@ end
 --RETURNS: Nothing
 --NOTE: type_propertyValue can be any value type.
 KTBM_PropertySet = function(agent_object, string_propertyName, type_propertyValue)
-    local propertySet_agentProps = AgentGetRuntimeProperties(agent_object);
-    PropertySet(propertySet_agentProps, string_propertyName, type_propertyValue);
+    local propertySet_agentObject = AgentGetRuntimeProperties(agent_object);
+    PropertySet(propertySet_agentObject, string_propertyName, type_propertyValue);
 end
 
 --Finds an agent in a scene by it's name, it sets a property on it.
@@ -65,9 +65,9 @@ end
 --RETURNS: Nothing
 --NOTE: type_propertyValue can be any value type.
 KTBM_SetPropertyOnAgentsWithPrefix = function(string_scene, string_prefix, string_propertyName, type_propertyValue)
-    local agents_sceneAgents = SceneGetAgents(string_scene);
+    local agentTable_sceneAgents = SceneGetAgents(string_scene);
 
-    for i, agent_sceneAgent in pairs(agents_sceneAgents) do
+    for i, agent_sceneAgent in pairs(agentTable_sceneAgents) do
         local string_agentName = tostring(AgentGetName(agent_sceneAgent));
 
         if (string.match)(string_agentName, string_prefix) then
@@ -80,9 +80,9 @@ end
 --RETURNS: Nothing
 --NOTE: type_propertyValue can be any value type.
 KTBM_SetPropertyOnAllCameras = function(string_scene, string_propertyName, type_propertyValue)
-    local agents_sceneAgents = SceneGetAgents(string_scene);
+    local agentTable_sceneAgents = SceneGetAgents(string_scene);
 
-    for i, agent_sceneAgent in pairs(agents_sceneAgents) do
+    for i, agent_sceneAgent in pairs(agentTable_sceneAgents) do
         local string_agentName = tostring(AgentGetName(agent_sceneAgent));
 
         if (string.match)(string_agentName, "cam_") then
@@ -98,11 +98,11 @@ end
 KTBM_SetTexturesOnAgentWithNamePrefix = function(string_agentName, string_texturePrefix, type_newPropertyValue, string_cacheObjectListFileName, string_scene)
     local agent_object = AgentFindInScene(string_agentName, string_scene);
     local propertySet_agentObject = AgentGetProperties(agent_object);
-    local propertyKeys_agentObject = PropertyGetKeys(propertySet_agentObject);
+    local propertyKeyTable_agentObject = PropertyGetKeys(propertySet_agentObject);
     
-    local propertyKeys_textureKeys = {};
+    local propertyKeyTable_textureKeys = {};
 
-    for index1, propertyKey_key in ipairs(propertyKeys_agentObject) do
+    for index1, propertyKey_key in ipairs(propertyKeyTable_agentObject) do
         local type_propertyValue = PropertyGet(propertySet_agentObject, propertyKey_key);
 
         if (type_propertyValue) then
@@ -118,7 +118,7 @@ KTBM_SetTexturesOnAgentWithNamePrefix = function(string_agentName, string_textur
                     if (string.find)(string_line, string_shortened2) then
                         if (string.find)(string_line, ".d3dtx") then
                             if (string.find)(string_line, string_texturePrefix) then
-                                table.insert(propertyKeys_textureKeys, propertyKey_key);
+                                table.insert(propertyKeyTable_textureKeys, propertyKey_key);
                             end
                         end
                     end
@@ -129,7 +129,7 @@ KTBM_SetTexturesOnAgentWithNamePrefix = function(string_agentName, string_textur
         end
     end
 
-    for index2, propertyKey_textureKey in ipairs(propertyKeys_textureKeys) do
+    for index2, propertyKey_textureKey in ipairs(propertyKeyTable_textureKeys) do
         PropertySet(propertySet_agentObject, propertyKey_textureKey, type_newPropertyValue);
     end
 end
@@ -139,9 +139,9 @@ end
 --NOTE: THIS REQUIRES A TEXT FILE WITH ALL TELLTALE PROP NAMES AND FILE NAMES ON IT (Most likely you won't have it)
 --NOTE: type_newPropertyValue can be any value type.
 KTBM_SetTexturesOnAgentsWithNamePrefixes = function(string_agentNamePrefix, string_texturePrefix, type_newPropertyValue, string_cacheObjectListFileName, string_scene)
-    local agents_sceneAgents = SceneGetAgents(string_scene);
+    local agentTable_sceneAgents = SceneGetAgents(string_scene);
 
-    for index, agent_sceneAgent in pairs(agents_sceneAgents) do
+    for index, agent_sceneAgent in pairs(agentTable_sceneAgents) do
         local string_agentName = tostring(AgentGetName(agent_sceneAgent));
 
         if (string.match)(string_agentName, string_agentNamePrefix) then
@@ -155,19 +155,19 @@ end
 --NOTE: THIS REQUIRES A TEXT FILE WITH ALL TELLTALE PROP NAMES AND FILE NAMES ON IT (Most likely you won't have it)
 --NOTE: type_newPropertyValue can be any value type.
 KTBM_SetDiffuseTexturesOnAgentsWithNamePrefixes = function(string_agentNamePrefix, type_newPropertyValue, string_cacheObjectListFileName, string_scene)
-    local agents_sceneAgents = SceneGetAgents(string_scene);
+    local agentTable_sceneAgents = SceneGetAgents(string_scene);
 
-    for index1, agent_sceneAgent in pairs(agents_sceneAgents) do
+    for index1, agent_sceneAgent in pairs(agentTable_sceneAgents) do
         local string_agentName = tostring(AgentGetName(agent_sceneAgent));
 
         if (string.match)(string_agentName, string_agentNamePrefix) then
             local agent_object = AgentFindInScene(string_agentName, string_scene);
             local propertySet_agentObject = AgentGetProperties(agent_object);
-            local propertyKeys_agentObject = PropertyGetKeys(propertySet_agentObject);
+            local propertyKeyTable_agentObject = PropertyGetKeys(propertySet_agentObject);
     
-            local propertyKeys_textureKeys = {};
+            local propertyKeyTable_textureKeys = {};
 
-            for index2, propertyKey_key in ipairs(propertyKeys_agentObject) do
+            for index2, propertyKey_key in ipairs(propertyKeyTable_agentObject) do
                 local type_propertyValue = PropertyGet(propertySet_agentObject, propertyKey_key);
 
                 if (type_propertyValue) then
@@ -193,7 +193,7 @@ KTBM_SetDiffuseTexturesOnAgentsWithNamePrefixes = function(string_agentNamePrefi
                                     local bool_combinedCases = (not bool_case1) and (not bool_case2) and (not bool_case3) and (not bool_case4) and (not bool_case5) and (not bool_case6) and (not bool_case7) and (not bool_case8);
 
                                     if(bool_combinedCases == true) then
-                                        table.insert(propertyKeys_textureKeys, propertyKey_key);
+                                        table.insert(propertyKeyTable_textureKeys, propertyKey_key);
                                     end
                                 end
                             end
@@ -204,7 +204,7 @@ KTBM_SetDiffuseTexturesOnAgentsWithNamePrefixes = function(string_agentNamePrefi
                 end
             end
 
-            for index3, propertyKey_textureKey in ipairs(propertyKeys_textureKeys) do
+            for index3, propertyKey_textureKey in ipairs(propertyKeyTable_textureKeys) do
                 PropertySet(propertySet_agentObject, propertyKey_textureKey, type_newPropertyValue);
             end
         end

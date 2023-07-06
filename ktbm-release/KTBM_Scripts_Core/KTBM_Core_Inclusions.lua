@@ -13,18 +13,20 @@ require("KTBM_Core_INI.lua");
 require("KTBM_Core_FileUtils.lua");
 require("KTBM_Core_TextUI.lua");
 require("KTBM_Core_Math.lua");
-require("KTBM_Core_Bounds.lua");
+require("KTBM_Core_BoundsAABB.lua");
+require("KTBM_Core_BoundsOBB.lua");
+require("KTBM_Core_BoundsTelltale.lua");
 require("KTBM_Core_Printing.lua");
 require("KTBM_Core_Strings.lua");
 require("KTBM_Core_PropertyKeys.lua");
 require("KTBM_Core_Keycodes.lua");
 
+require("KTBM_Effects_DepthOfFieldAutofocus.lua");
+require("KTBM_Effects_LensFlare.lua");
+
 require("KTBM_Data_Configuration.lua");
 require("KTBM_Data_ConfigurationOptions.lua");
 require("KTBM_Data_GameResults.lua");
-
-require("KTBM_Effects_DepthOfFieldAutofocus.lua");
-require("KTBM_Effects_LensFlare.lua");
 
 ---------------------------------------------
 print("[KTBM_Core_Inclusions.lua] Development Inclusions Block")
@@ -39,7 +41,9 @@ require("KTBM_Development_DevelopmentBuildText.lua");
 require("KTBM_Development_Editor_Input.lua");
 require("KTBM_Development_Editor_TransformTool.lua");
 require("KTBM_Development_Editor_SceneCamera.lua");
+require("KTBM_Development_Editor_ObjectIcons.lua");
+require("KTBM_Development_Editor_MainGUI.lua");
 
 ---------------------------------------------
 
-print("[KTBM_Core_Inclusions.lua] END INCLUSIONS")
+print("[KTBM_Core_Inclusions.lua] End Inclusions Block")

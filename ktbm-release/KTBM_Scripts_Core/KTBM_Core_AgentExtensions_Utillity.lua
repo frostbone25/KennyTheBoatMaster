@@ -125,10 +125,10 @@ end
 --Finds all scene agents, checks if they match the given prefix and removes them if they exist.
 --RETURNS: Nothing
 KTBM_RemovingAgentsWithPrefix = function(string_scene, string_agentNamePrefix)
-    local agents_sceneAgents = SceneGetAgents(string_scene);
+    local agentTable_sceneAgents = SceneGetAgents(string_scene);
 
-    for index, agent_object in pairs(agents_sceneAgents) do
-        local string_agentName = tostring(AgentGetName(agent_object));
+    for index, agent_sceneAgent in pairs(agentTable_sceneAgents) do
+        local string_agentName = tostring(AgentGetName(agent_sceneAgent));
 
         if (string.match)(string_agentName, string_agentNamePrefix) then
             KTBM_RemoveAgent(string_agentName, string_scene);
@@ -143,10 +143,10 @@ end
 --Finds all scene agents, checks if they match the given prefix and replaces them with a dummy agent.
 --RETURNS: Nothing
 KTBM_ReplaceAgentsWithPrefixWithDummy = function(string_scene, string_agentNamePrefix)
-    local agents_sceneAgents = SceneGetAgents(string_scene);
+    local agentTable_sceneAgents = SceneGetAgents(string_scene);
 
-    for index, agent_object in pairs(agents_sceneAgents) do
-        local string_agentName = tostring(AgentGetName(agent_object));
+    for index, agent_sceneAgent in pairs(agentTable_sceneAgents) do
+        local string_agentName = tostring(AgentGetName(agent_sceneAgent));
 
         if (string.match)(string_agentName, string_agentNamePrefix) then
             KTBM_RemoveAgent(string_agentName, string_scene);
@@ -190,10 +190,10 @@ KTBM_RaycastFromAgentToAgent = function(agent_from, agent_to)
 	--calculate ray origin
 	local vector_rayOrigin = AgentGetWorldPos(agent_from);
 	
-	if AgentHasNode(agent_from, "eye_L") and AgentHasNode(agent_from, "eye_R") then
+	if (AgentHasNode(agent_from, "eye_L")) and (AgentHasNode(agent_from, "eye_R")) then
 		vector_rayOrigin = AgentGetWorldPosBetweenNodes(agent_from, "eye_R", "eye_L");
 	else
-		if AgentHasNode(agent_from, "Head") then
+		if (AgentHasNode(agent_from, "Head")) then
 			vector_rayOrigin = AgentGetWorldPos(agent_from, "Head");
 		end
 	end
@@ -201,16 +201,16 @@ KTBM_RaycastFromAgentToAgent = function(agent_from, agent_to)
 	--calculate ray direction
 	local vector_rayDirection = AgentGetWorldPos(agent_to) - vector_rayOrigin;
 	
-	if AgentHasNode(agent_to, "Root") then
+	if (AgentHasNode(agent_to, "Root")) then
 		vector_rayDirection = AgentGetWorldPos(agent_to, "Root") - vector_rayOrigin;
     else
-		if AgentHasNode(agent_to, "Head") then
+		if (AgentHasNode(agent_to, "Head")) then
 			vector_rayDirection = AgentGetWorldPos(agent_to, "Head") - vector_rayOrigin;
 		end
     end
 	
 	--perform a raycast
-	if MathRaySceneIntersect(vector_rayOrigin, vector_rayDirection, AgentGetScene(agent_from)) then
+	if (MathRaySceneIntersect(vector_rayOrigin, vector_rayDirection, AgentGetScene(agent_from))) then
 		return true;
     else
 		return false;
@@ -218,7 +218,7 @@ KTBM_RaycastFromAgentToAgent = function(agent_from, agent_to)
 end
 
 --plays a .chore specifically on an agent
---RETURNS: Nothing
+--RETURNS: Controller
 KTBM_ChorePlayOnAgent = function(chore_object, string_agentName, number_priority, bool_wait)
     --if a priority value is not given (nil)
     if (number_priority ~= nil) then

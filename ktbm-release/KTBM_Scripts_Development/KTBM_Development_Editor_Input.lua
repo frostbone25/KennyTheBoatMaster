@@ -13,7 +13,7 @@ KTBM_Development_Editor_Input_LeftMouseEnd = function()
 end
 
 KTBM_Development_Editor_Input_Update = function()
-    KTBM_Development_Editor_Input_LeftMouseHold = Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftMouse);
+    KTBM_Development_Editor_Input_LeftMouseHold = Input_IsVKeyPressed(KTBM_Keycodes_LeftMouse);
 
     if (KTBM_Development_Editor_Input_LeftMouseHold == true) then
     

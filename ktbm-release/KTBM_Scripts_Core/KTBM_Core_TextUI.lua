@@ -19,6 +19,24 @@ KTBM_TextUI_CreateTextAgent = function(string_agentName, string_text, vector_pos
     return agent_text;
 end
 
+--extents min (bottom left corner)
+--extents max (top right corner)
+KTBM_TextUI_IsCursorOverBounds = function(vector_originPosition, vector_extentsMin, vector_extentsMax)
+    local vector_cursorPos = CursorGetPos();
+
+    local vector_offsetExtentsMin = VectorAdd(vector_originPosition, vector_extentsMin);
+    local vector_offsetExtentsMax = VectorAdd(vector_originPosition, vector_extentsMax);
+    
+    local case1 = vector_cursorPos.x >= vector_offsetExtentsMin.x;
+    local case2 = vector_cursorPos.y >= vector_offsetExtentsMin.y;
+    local case3 = vector_cursorPos.y <= vector_offsetExtentsMax.y;
+    local case4 = vector_cursorPos.x <= vector_offsetExtentsMax.x;
+    
+    local finalCase = case1 and case2 and case3 and case4;
+    
+    return finalCase;
+end
+
 KTBM_TextUI_TextAgentContains = function(textAgent, screenPos)
     local extentsMin, extentsMax = TextGetWorldExtents(textAgent);
     local viewPortPos = ScreenToViewport(screenPos);

@@ -1,22 +1,22 @@
-KTBM_Core_Project_Version = "1.0.0";
+KTBM_Project_Version = "1.0.0";
 
 --debugging options
-KTBM_Core_Project_DebugPrinting = false;
-KTBM_Core_Project_DebugEditorMode = true;
-KTBM_Core_Project_DebugFreecamMode = false;
-KTBM_Core_Project_DebugPeformanceMetrics = false;
-KTBM_Core_Project_DebugAllowBoundsDebug = true;
-KTBM_Core_Project_DebugRockCollisionsUI = false;
-KTBM_Core_Project_DebugDisableRocks = false;
-KTBM_Core_Project_DebugDisableRockCollisions = false;
-KTBM_Core_Project_DebugDisableZombies = false;
-KTBM_Core_Project_DebugDisableZombieCollisions = false;
+KTBM_Project_DebugPrinting = false;
+KTBM_Project_DebugEditorMode = false;
+KTBM_Project_DebugFreecamMode = false;
+KTBM_Project_DebugPeformanceMetrics = false;
+KTBM_Project_DebugAllowBoundsDebug = true;
+KTBM_Project_DebugRockCollisionsUI = false;
+KTBM_Project_DebugDisableRocks = false;
+KTBM_Project_DebugDisableRockCollisions = false;
+KTBM_Project_DebugDisableZombies = false;
+KTBM_Project_DebugDisableZombieCollisions = false;
 
-KTBM_Core_Project_GameResultsBinaryFormat = true;
-KTBM_Core_Project_ShowDevelopmentText = true;
+KTBM_Project_GameResultsBinaryFormat = true;
+KTBM_Project_ShowDevelopmentText = true;
 
 --sets some project settings when we load into the game
-KTBM_Core_Project_SetProjectSettings = function()
+KTBM_Project_SetProjectSettings = function()
     local prefs = GetPreferences();
 
     PropertySet(prefs, "Enable Graphic Black", false);
@@ -60,7 +60,7 @@ KTBM_Core_Project_SetProjectSettings = function()
 end
 
 --enables some archives that the cutscene uses assets from
-KTBM_Core_Project_EnableGameArchives = function()
+KTBM_Project_EnableGameArchives = function()
     --enable michonne because we will use assets from it
     --note to self: for optimization sake we need to figure out a way
     --to load assets from these archives without enabling the whole thing
@@ -98,7 +98,7 @@ KTBM_Core_Project_EnableGameArchives = function()
 
 end
 
-KTBM_Core_Project_DisableGameArchives = function()
+KTBM_Project_DisableGameArchives = function()
     --enable michonne because we will use assets from it
     --note to self: for optimization sake we need to figure out a way
     --to load assets from these archives without enabling the whole thing

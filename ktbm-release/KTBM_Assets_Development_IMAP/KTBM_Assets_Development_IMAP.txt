@@ -1,0 +1,25 @@
+This is an IMAP archive for the "Kenny The Boat Master" (KTBM) project.
+
+It is meant to store the custom telltale .imap (Input Mapping) files created for the project. These are responsible for most of the input and actions you have in the game (not all, as some will need to be hardcoded unfortunately).
+
+- (.imap) files are the native telltale input mapping file used in the game itself, and these are stored in binary format.
+- (.json) files are a custom human readable text file that can be edited. These are not used by the game, but are used during development and allows us to write our own entries. These text files are formatted exactly how the binary version is formatted. To make these work and usable in the game these get converted back to a binary .imap file using our IMAP conversion tool.
+
+These files store multiple entries, and each of these entries stores the following
+
+- (mInputCode) an integer value that represents a virtual key code.
+- (mEvent) an integer value that describes the event the key (0 on the frame that it is pressed, 1 on the frame that it is released)
+- (mScriptFunction) a string value that will invoke a lua script function when this key is pressed.
+- (mControllerIndexOverride) always -1
+
+A reference for virtual key code values can be found on microsoft's documentation.
+Link - https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+
+The microsoft documentation only lists the values in hexadecimal, not decimal, so these can be converted to a decimal value using this converter.
+Link - https://www.rapidtables.com/convert/number/hex-to-decimal.html
+
+Additionally also in the project, there is a handy script in the following location... 
+
+- ktbm-release/KTBM_Scripts_Core/KTBM_Core_Keycodes.lua
+
+This script stores all of the keybinds noted in the Microsoft Virtual Key Code docs. These already have the values converted into decimal and are also descriptively named. It might be easier to look into this file if you want to find the keys that you want to use, most of the work has been done for you in there.

@@ -58,83 +58,6 @@
 --else
 --v7 = v4->mBoundingBox.mMax.z;
 
---Corrects the bounding box on an agent to factor in the objects scale.
-KTBM_Bounds_AgentSetCorrectBounds = function(agent_object, number_scaleFactor)
-    --we need to access the agent properties to get what we need
-    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
-
-    --get the native extents values that are already defined on these objects
-    local vector_extentsMin = PropertyGet(props_agentProperties, "Extents Min");
-    local vector_extentsMax = PropertyGet(props_agentProperties, "Extents Max");
-
-    --now it's important to note that after some testing its apparent that these extents do not factor in scaling.
-    --so we have to modify them to factor in scaling to ensure that they will work correctly for objects even if their scale changes.
-
-    --store these in a new variable so we don't override the original value
-    local vector_adjustedExtentsMin = vector_extentsMin;
-    local vector_adjustedExtentsMax = vector_extentsMax;
-
-    ---------------------------------------------------------
-    --all that needs to be done is apply object scaling.
-    
-    --apply a user adjustale scale factor
-    vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_scaleFactor);
-    vector_adjustedExtentsMax = VectorScale(vector_adjustedExtentsMax, number_scaleFactor);
-
-    --get the render scaling values
-    local number_renderGlobalScale = PropertyGet(props_agentProperties, "Render Global Scale"); --single scalar value
-    local vector_renderAxisScale = PropertyGet(props_agentProperties, "Render Axis Scale"); --vector scale value
-
-    --apply the render scalar value
-    vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_renderGlobalScale);
-    vector_adjustedExtentsMax = VectorScale(vector_adjustedExtentsMax, number_renderGlobalScale);
-
-    --apply the render axis scale vector
-    vector_adjustedExtentsMin = KTBM_VectorMultiply(vector_adjustedExtentsMin, vector_renderAxisScale);
-    vector_adjustedExtentsMax = KTBM_VectorMultiply(vector_adjustedExtentsMax, vector_renderAxisScale);
-
-    --now apply the modified extents
-    PropertySet(props_agentProperties, "Extents Min", vector_adjustedExtentsMin);
-    PropertySet(props_agentProperties, "Extents Max", vector_adjustedExtentsMax);
-end
-
---Corrects the bounding box on an agent to factor in the objects scale.
-KTBM_Bounds_AgentSetBoundsWithScale = function(agent_object, number_scaleFactor)
-    --we need to access the agent properties to get what we need
-    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
-
-    --get the native extents values that are already defined on these objects
-    local vector_extentsMin = PropertyGet(props_agentProperties, "Extents Min");
-    local vector_extentsMax = PropertyGet(props_agentProperties, "Extents Max");
-
-    --now it's important to note that after some testing its apparent that these extents do not factor in scaling.
-    --so we have to modify them to factor in scaling to ensure that they will work correctly for objects even if their scale changes.
-
-    --store these in a new variable so we don't override the original value
-    local vector_adjustedExtentsMin = vector_extentsMin;
-    local vector_adjustedExtentsMax = vector_extentsMax;
-
-    ---------------------------------------------------------
-    --all that needs to be done is apply object scaling.
-    
-    --apply a user adjustale scale factor
-    vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_scaleFactor);
-    vector_adjustedExtentsMax = VectorScale(vector_adjustedExtentsMax, number_scaleFactor);
-
-    --now apply the modified extents
-    PropertySet(props_agentProperties, "Extents Min", vector_adjustedExtentsMin);
-    PropertySet(props_agentProperties, "Extents Max", vector_adjustedExtentsMax);
-end
-
-KTBM_Bounds_AgentSetCustomBounds = function(agent_object, vector_extentsMin, vector_extentsMax)
-    --we need to access the agent properties to get what we need
-    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
-
-    --now apply the modified extents
-    PropertySet(props_agentProperties, "Extents Min", vector_adjustedExtentsMin);
-    PropertySet(props_agentProperties, "Extents Max", vector_adjustedExtentsMax);
-end
-
 --|||||||||||||||||||||||||||||||||||||||||||||| AXIS-ALIGNED BOUNDING BOX (AABB) ||||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||||| AXIS-ALIGNED BOUNDING BOX (AABB) ||||||||||||||||||||||||||||||||||||||||||||||
 --|||||||||||||||||||||||||||||||||||||||||||||| AXIS-ALIGNED BOUNDING BOX (AABB) ||||||||||||||||||||||||||||||||||||||||||||||
@@ -157,11 +80,11 @@ local BoundsAABB_Object = {
 --This is a function for getting a box collider of a given object, which can be used to test against other colliders for collisions
 KTBM_Bounds_GetAgentWorldBounds_AABB = function(agent_object)
     --we need to access the agent properties to get what we need
-    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
+    local propertySet_agentProperties = AgentGetRuntimeProperties(agent_object);
 
     --get the native extents values that are already defined on these objects
-    local vector_extentsMin = PropertyGet(props_agentProperties, "Extents Min");
-    local vector_extentsMax = PropertyGet(props_agentProperties, "Extents Max");
+    local vector_extentsMin = PropertyGet(propertySet_agentProperties, "Extents Min");
+    local vector_extentsMax = PropertyGet(propertySet_agentProperties, "Extents Max");
 
     --now it's important to note that after some testing its apparent that these extents are only in "local" object space.
     --when any transformations are applied on the object (position, rotation, scale) these values are unaffected.
@@ -175,8 +98,8 @@ KTBM_Bounds_GetAgentWorldBounds_AABB = function(agent_object)
     --first step is to apply the object scaling, which is thankfully very simple to do
     
     --get the render scaling values
-    local number_renderGlobalScale = PropertyGet(props_agentProperties, "Render Global Scale"); --single scalar value
-    local vector_renderAxisScale = PropertyGet(props_agentProperties, "Render Axis Scale"); --vector scale value
+    local number_renderGlobalScale = PropertyGet(propertySet_agentProperties, "Render Global Scale"); --single scalar value
+    local vector_renderAxisScale = PropertyGet(propertySet_agentProperties, "Render Axis Scale"); --vector scale value
 
     --apply the render scalar value
     vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_renderGlobalScale);
@@ -220,11 +143,11 @@ end
 
 KTBM_Bounds_GetAgentLocalBounds_AABB = function(agent_object)
     --we need to access the agent properties to get what we need
-    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
+    local propertySet_agentProperties = AgentGetRuntimeProperties(agent_object);
 
     --get the native extents values that are already defined on these objects
-    local vector_extentsMin = PropertyGet(props_agentProperties, "Extents Min");
-    local vector_extentsMax = PropertyGet(props_agentProperties, "Extents Max");
+    local vector_extentsMin = PropertyGet(propertySet_agentProperties, "Extents Min");
+    local vector_extentsMax = PropertyGet(propertySet_agentProperties, "Extents Max");
 
     --now it's important to note that after some testing its apparent that these extents are only in "local" object space.
     --when any transformations are applied on the object (position, rotation, scale) these values are unaffected.
@@ -238,8 +161,8 @@ KTBM_Bounds_GetAgentLocalBounds_AABB = function(agent_object)
     --first step is to apply the object scaling, which is thankfully very simple to do
     
     --get the render scaling values
-    local number_renderGlobalScale = PropertyGet(props_agentProperties, "Render Global Scale"); --single scalar value
-    local vector_renderAxisScale = PropertyGet(props_agentProperties, "Render Axis Scale"); --vector scale value
+    local number_renderGlobalScale = PropertyGet(propertySet_agentProperties, "Render Global Scale"); --single scalar value
+    local vector_renderAxisScale = PropertyGet(propertySet_agentProperties, "Render Axis Scale"); --vector scale value
 
     --apply the render scalar value
     vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_renderGlobalScale);
@@ -346,129 +269,4 @@ KTBM_Bounds_IntersectAABB = function(boundsAABB_1, boundsAABB_2)
     local bool_case6 = boundsAABB_1["max"].z >= boundsAABB_2["min"].z;
     
     return bool_case1 and bool_case2 and bool_case3 and bool_case4 and bool_case5 and bool_case6;
-end
-
---|||||||||||||||||||||||||||||||||||||||||||||| ORIENTED BOUNDING BOX (OBB) ||||||||||||||||||||||||||||||||||||||||||||||
---|||||||||||||||||||||||||||||||||||||||||||||| ORIENTED BOUNDING BOX (OBB) ||||||||||||||||||||||||||||||||||||||||||||||
---|||||||||||||||||||||||||||||||||||||||||||||| ORIENTED BOUNDING BOX (OBB) ||||||||||||||||||||||||||||||||||||||||||||||
---this comes from - https://stackoverflow.com/questions/47866571/simple-oriented-bounding-box-obb-collision-detection-explaining
---NOTE: This is incomplete and doesn't work
-
---potential new refernece? - https://github.com/mrdoob/three.js/blob/master/examples/jsm/math/OBB.js
-
---[[
-local BoundsOBB_Object = {
-    center = Vector,
-    size = Vector,
-    extents = Vector,
-    axisX = Vector,
-    axisY = Vector,
-    axisZ = Vector
-};
---]]
-
-KTBM_Bounds_GetAgentWorldBounds_OBB = function(agent_object)
-    --we need to access the agent properties to get what we need
-    local props_agentProperties = AgentGetRuntimeProperties(agent_object);
-
-    --get the native extents values that are already defined on these objects
-    local vector_extentsMin = PropertyGet(props_agentProperties, "Extents Min");
-    local vector_extentsMax = PropertyGet(props_agentProperties, "Extents Max");
-
-    --now it's important to note that after some testing its apparent that these extents are only in "local" object space.
-    --when any transformations are applied on the object (position, rotation, scale) these values are unaffected.
-    --so in order to use them we need to adjust these values to work for world space.
-
-    --store these in a new variable so we don't override the original value
-    local vector_adjustedExtentsMin = vector_extentsMin;
-    local vector_adjustedExtentsMax = vector_extentsMax;
-
-    ---------------------------------------------------------
-    --first step is to apply the object scaling, which is thankfully very simple to do
-    
-    --get the render scaling values
-    local number_renderGlobalScale = PropertyGet(props_agentProperties, "Render Global Scale"); --single scalar value
-    local vector_renderAxisScale = PropertyGet(props_agentProperties, "Render Axis Scale"); --vector scale value
-
-    --apply the render scalar value
-    vector_adjustedExtentsMin = VectorScale(vector_adjustedExtentsMin, number_renderGlobalScale);
-    vector_adjustedExtentsMax = VectorScale(vector_adjustedExtentsMax, number_renderGlobalScale);
-
-    --apply the render axis scale vector
-    vector_adjustedExtentsMin = KTBM_VectorMultiply(vector_adjustedExtentsMin, vector_renderAxisScale);
-    vector_adjustedExtentsMax = KTBM_VectorMultiply(vector_adjustedExtentsMax, vector_renderAxisScale);
-
-    ---------------------------------------------------------
-    --second step, apply object position and rotation
-
-    --transform these local space vectors into world space (this will natrually apply position and rotation transformations)
-    vector_adjustedExtentsMin = AgentLocalToWorld(agent_object, vector_adjustedExtentsMin);
-    vector_adjustedExtentsMax = AgentLocalToWorld(agent_object, vector_adjustedExtentsMax);
-
-    ---------------------------------------------------------
-    --third step, get object axis
-
-    --transform these local space vectors into world space (this will natrually apply position and rotation transformations)
-    local vector_objectX = AgentLocalToWorld(agent_object, Vector(1, 0, 0));
-    local vector_objectY = AgentLocalToWorld(agent_object, Vector(0, 1, 0));
-    local vector_objectZ = AgentLocalToWorld(agent_object, Vector(0, 0, 1));
-
-    ---------------------------------------------------------
-    --calculate the following values that we can store in our new "Bounds" object.
-
-    --calculate extents from min and max
-    local vector_extents = VectorSubtract(vector_adjustedExtentsMax, vector_adjustedExtentsMin);
-    vector_extents = VectorScale(vector_extents, 0.5);
-
-    --calculate scale, which is just extents * 2
-    local vector_scale = VectorScale(vector_extents, 2.0);
-
-    --calculate the origin point of this bounds object
-    local vector_center = VectorAdd(vector_adjustedExtentsMin, vector_extents);
-
-    --build our bounds object and store the computed values
-    local boundsOBB_newBoundsObject = {
-        center = vector_center,
-        size = vector_scale,
-        extents = vector_extents,
-        axisX = vector_objectX,
-        axisY = vector_objectY,
-        axisZ = vector_objectZ,
-    };
-
-    return boundsOBB_newBoundsObject;
-end
-
--- check if there's a separating plane in between the selected axes
-KTBM_Bounds_OBB_GetSeparatingPlane = function(vector_rpos, vector_plane, boundsOBB_1, boundsOBB_2)
-    local term1 = math.abs(VectorDot(vector_rpos, vector_plane));
-    local term2 = math.abs(VectorDot(boundsOBB_1["axisX"] * boundsOBB_1["extents"].x, vector_plane));
-    local term3 = math.abs(VectorDot(boundsOBB_1["axisY"] * boundsOBB_1["extents"].y, vector_plane));
-    local term4 = math.abs(VectorDot(boundsOBB_1["axisZ"] * boundsOBB_1["extents"].z, vector_plane));
-    local term5 = math.abs(VectorDot(boundsOBB_2["axisX"] * boundsOBB_2["extents"].x, vector_plane));
-    local term6 = math.abs(VectorDot(boundsOBB_2["axisY"] * boundsOBB_2["extents"].y, vector_plane));
-    local term7 = math.abs(VectorDot(boundsOBB_2["axisZ"] * boundsOBB_2["extents"].z, vector_plane));
-
-    return (term1 > (term2 + term3 + term4 + term5 + term6 + term7));
-end
-
--- test for separating planes in all 15 axes
-KTBM_Bounds_OBB_IntersectTest = function(boundsOBB_1, boundsOBB_2)
-    local vector_rpos = VectorSubtract(boundsOBB_2["center"], boundsOBB_1["center"]);
-
-    return (KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, boundsOBB_1["axisX"], boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, boundsOBB_1["axisY"], boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, boundsOBB_1["axisZ"], boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, boundsOBB_2["axisX"], boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, boundsOBB_2["axisY"], boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, boundsOBB_2["axisZ"], boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisX"], boundsOBB_2["axisX"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisX"], boundsOBB_2["axisY"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisX"], boundsOBB_2["axisZ"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisY"], boundsOBB_2["axisX"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisY"], boundsOBB_2["axisY"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisY"], boundsOBB_2["axisZ"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisZ"], boundsOBB_2["axisX"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisZ"], boundsOBB_2["axisY"]), boundsOBB_1, boundsOBB_2) or
-        KTBM_Bounds_OBB_GetSeparatingPlane(vector_rpos, VectorCross(boundsOBB_1["axisZ"], boundsOBB_2["axisZ"]), boundsOBB_1, boundsOBB_2));
 end

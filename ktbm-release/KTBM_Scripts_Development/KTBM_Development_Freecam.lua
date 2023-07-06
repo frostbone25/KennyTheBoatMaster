@@ -78,14 +78,14 @@ KTBM_Development_UpdateFreeCamera = function()
     local number_frameTime = GetFrameTime();
 
     --freecamera freezing
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_R)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_R)) then
         KTBM_Development_Freecam_Frozen = false;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_F)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_F)) then
         KTBM_Development_Freecam_Frozen = true;
     end
 
     --freecamera freezing
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_RightMouse)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_RightMouse)) then
         KTBM_Development_Freecam_Frozen = false;
     else
         KTBM_Development_Freecam_Frozen = true;
@@ -108,29 +108,29 @@ KTBM_Development_UpdateFreeCamera = function()
     ------------------------------MOVEMENT------------------------------
     local number_positionIncrement = KTBM_Development_Freecam_PositionIncrementDefault;
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_LeftShift)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_LeftShift)) then
         number_positionIncrement = KTBM_Development_Freecam_PositionIncrementShift;
     end
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_Q)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_Q)) then
         KTBM_Development_Freecam_InputHeightValue = -number_positionIncrement;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_E)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_E)) then
         KTBM_Development_Freecam_InputHeightValue = number_positionIncrement;
     else
         KTBM_Development_Freecam_InputHeightValue = 0;
     end
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_W)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_W)) then
         KTBM_Development_Freecam_InputVerticalValue = number_positionIncrement;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_S)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_S)) then
         KTBM_Development_Freecam_InputVerticalValue = -number_positionIncrement;
     else
         KTBM_Development_Freecam_InputVerticalValue = 0;
     end
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_A)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_A)) then
         KTBM_Development_Freecam_InputHorizontalValue = number_positionIncrement;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_D)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_D)) then
         KTBM_Development_Freecam_InputHorizontalValue = -number_positionIncrement;
     else
         KTBM_Development_Freecam_InputHorizontalValue = 0;
@@ -139,9 +139,9 @@ KTBM_Development_UpdateFreeCamera = function()
     ------------------------------ZOOMING------------------------------
     local number_fovIncrement = KTBM_Development_Freecam_FovIncrement;
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_LeftMouse)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_LeftMouse)) then
         KTBM_Development_Freecam_InputFieldOfViewAmount = KTBM_Development_Freecam_InputFieldOfViewAmount - number_fovIncrement;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_RightMouse)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_RightMouse)) then
         KTBM_Development_Freecam_InputFieldOfViewAmount = KTBM_Development_Freecam_InputFieldOfViewAmount + number_fovIncrement;
     end
     

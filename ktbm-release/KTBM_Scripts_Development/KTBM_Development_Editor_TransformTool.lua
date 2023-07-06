@@ -75,6 +75,8 @@ KTBM_Development_TransformTool_GizmoAgentNames = {
 }
 
 local prevCursorPos = Vector(0, 0, 0);
+local vector_cursorPositionBeforeTransforming = Vector(0, 0, 0);
+local vector_previousSelectedObjectPosition = Vector(0, 0, 0);
 
 KTBM_Development_TransformTool_UpdateGizmo = function()
     local agent_sceneCamera = SceneGetCamera(KTBM_Development_SceneObject);
@@ -89,8 +91,12 @@ KTBM_Development_TransformTool_UpdateGizmo = function()
     local bool_hoveringAgent = agent_currentHoverAgent ~= nil;
     local bool_selectVisibility = false;
     local bool_hoverVisibility = false;
+    local vector_selectObjectWorldPosition = Vector(0, 0, 0);
+    local vector_selectObjectLocalPosition = Vector(0, 0, 0);
+
     local vector_selectObjectPosition = Vector(0, 0, 0);
     local vector_selectObjectRotation = Vector(0, 0, 0);
+
     local vector_hoverObjectPosition = Vector(0, 0, 0);
     local vector_hoverObjectRotation = Vector(0, 0, 0);
     local number_globalScale = 0.25;
@@ -102,6 +108,9 @@ KTBM_Development_TransformTool_UpdateGizmo = function()
 
         vector_selectObjectPosition = boundsAABB_currentSelectedAgentWorldBounds["center"];
         vector_selectObjectRotation = AgentGetWorldRot(agent_currentSelectedAgent);
+
+        vector_selectObjectWorldPosition = AgentGetWorldPos(agent_currentSelectedAgent);
+        vector_selectObjectLocalPosition = AgentGetPos(agent_currentSelectedAgent);
 
         number_globalScale = number_distanceToSelection * 0.05;
         bool_selectVisibility = true;
@@ -125,11 +134,16 @@ KTBM_Development_TransformTool_UpdateGizmo = function()
         boundsAABB_currentHoverAgentLocalBounds = nil;
     end
 
-    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO |||||||||||||||||||||||||||||||||||||
-    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO |||||||||||||||||||||||||||||||||||||
-    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO START |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO START |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO START |||||||||||||||||||||||||||||||||||||
+    --Move/Rotate the transform gizmo to the appropriate spot
 
-    AgentSetWorldPos(KTBM_Development_TransformTool_GizmoGroup, vector_selectObjectPosition);
+    if(KTBM_Development_TransformTool_GizmoSpace == "local") then
+        AgentSetWorldPos(KTBM_Development_TransformTool_GizmoGroup, vector_selectObjectLocalPosition);
+    else
+        AgentSetWorldPos(KTBM_Development_TransformTool_GizmoGroup, vector_selectObjectWorldPosition);
+    end
 
     if(KTBM_Development_TransformTool_GizmoSpace == "local") then
         AgentSetWorldRot(KTBM_Development_TransformTool_GizmoGroup, vector_selectObjectRotation);
@@ -137,121 +151,286 @@ KTBM_Development_TransformTool_UpdateGizmo = function()
         AgentSetWorldRot(KTBM_Development_TransformTool_GizmoGroup, Vector(0, 0, 0));
     end
 
+    --Change the appearance of the transform gizmo to match the chosen transformation mode
     if(KTBM_Development_TransformTool_GizmoMode == "position") then
-        KTBM_Development_TransformTool_GizmoAgentSelect_Texture = "TransformPositionGizmo_White.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentX_Texture = "TransformPositionGizmo_Red.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentY_Texture = "TransformPositionGizmo_Green.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentZ_Texture = "TransformPositionGizmo_Blue.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentSelect_Texture = "KTBM_Development_TransformPositionGizmoWhite.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentX_Texture = "KTBM_Development_TransformPositionGizmoRed.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentY_Texture = "KTBM_Development_TransformPositionGizmoGreen.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentZ_Texture = "KTBM_Development_TransformPositionGizmoBlue.d3dtx";
+
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentX, Vector(0, 0, 0));
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentY, Vector(90, 0, 90));
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentZ, Vector(0, -90, 0));
     elseif(KTBM_Development_TransformTool_GizmoMode == "rotation") then
-        KTBM_Development_TransformTool_GizmoAgentSelect_Texture = "TransformRotateGizmo_White.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentX_Texture = "TransformRotateGizmo_Red.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentY_Texture = "TransformRotateGizmo_Green.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentZ_Texture = "TransformRotateGizmo_Blue.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentSelect_Texture = "KTBM_Development_TransformRotateGizmoWhite.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentX_Texture = "KTBM_Development_TransformRotateGizmoRed.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentY_Texture = "KTBM_Development_TransformRotateGizmoGreen.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentZ_Texture = "KTBM_Development_TransformRotateGizmoBlue.d3dtx";
+
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentX, Vector(0, 0, 0));
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentY, Vector(90, 0, 0));
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentZ, Vector(0, 90, 0));
     elseif(KTBM_Development_TransformTool_GizmoMode == "scale") then
-        KTBM_Development_TransformTool_GizmoAgentSelect_Texture = "TransformScaleGizmo_White.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentX_Texture = "TransformScaleGizmo_Red.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentY_Texture = "TransformScaleGizmo_Green.d3dtx";
-        KTBM_Development_TransformTool_GizmoAgentZ_Texture = "TransformScaleGizmo_Blue.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentSelect_Texture = "KTBM_Development_TransformScaleGizmoWhite.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentX_Texture = "KTBM_Development_TransformScaleGizmoRed.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentY_Texture = "KTBM_Development_TransformScaleGizmoGreen.d3dtx";
+        KTBM_Development_TransformTool_GizmoAgentZ_Texture = "KTBM_Development_TransformScaleGizmoBlue.d3dtx";
+
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentX, Vector(0, 0, 0));
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentY, Vector(90, 0, 90));
+        AgentSetRot(KTBM_Development_TransformTool_GizmoAgentZ, Vector(0, -90, 0));
     end
 
+    --Scale the gizmo according to distance (so that it stays mostly consistent)
     KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Render Global Scale", number_globalScale);
     KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Render Global Scale", number_globalScale);
     KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Render Global Scale", number_globalScale);
     KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Render Global Scale", number_globalScale);
 
-    if(bool_selectedAgent == true) then
-        local vector_worldX = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(number_globalScale, 0, 0));
-        local vector_worldY = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, number_globalScale, 0));
-        local vector_worldZ = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, 0, number_globalScale));
-        local vector_transformedX = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldX);
-        local vector_transformedY = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldY);
-        local vector_transformedZ = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldZ);
+    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO ACTIVE |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO ACTIVE |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO ACTIVE |||||||||||||||||||||||||||||||||||||
+    --When the gizmo is active and in a non hand mode (and when there is an object selected)
+    if(bool_selectedAgent == true) and not (KTBM_Development_TransformTool_GizmoMode == "hand") then
 
-        vector_transformedX = KTBM_VectorMultiply(vector_transformedX, Vector(1, 1, 0));
-        vector_transformedY = KTBM_VectorMultiply(vector_transformedY, Vector(1, 1, 0));
-        vector_transformedZ = KTBM_VectorMultiply(vector_transformedZ, Vector(1, 1, 0));
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - POSITION |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - POSITION |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - POSITION |||||||||||||||||||||||||||||||||||||
 
-        local vector_transformedCursor = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_cursorPosition);
-        --local vector_transformedCursor = CameraGetScreenPosFromWorldPos(agent_sceneCamera, Vector(0.5, 0.5, 0));
+        if(KTBM_Development_TransformTool_GizmoMode == "position") then
+            
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM POSITION HANDLES |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM POSITION HANDLES |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM POSITION HANDLES |||||||||||||||||||||||||||||||||||||
+            --Since we can't really modify the bounding boxes of the gizmo handles, we just have to make some manually.
 
-        local bool_is_X_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedX) < 0.1;
-        local bool_is_Y_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedY) < 0.1;
-        local bool_is_Z_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedZ) < 0.1;
+            local vector_worldX = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(number_globalScale, 0, 0));
+            local vector_worldY = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, number_globalScale, 0));
+            local vector_worldZ = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, 0, number_globalScale));
+            local vector_transformedX = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldX);
+            local vector_transformedY = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldY);
+            local vector_transformedZ = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldZ);
 
-        KTBM_Development_TransformTool_GizmoHoveringOverAxis = bool_is_X_UnderCursor or bool_is_Y_UnderCursor or bool_is_Z_UnderCursor;
+            --This is REQUIRED, otherwise distance calculations are skewed.
+            vector_transformedX = KTBM_VectorMultiply(vector_transformedX, Vector(1, 1, 0));
+            vector_transformedY = KTBM_VectorMultiply(vector_transformedY, Vector(1, 1, 0));
+            vector_transformedZ = KTBM_VectorMultiply(vector_transformedZ, Vector(1, 1, 0));
 
-        if(bool_is_X_UnderCursor == true) then
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+            local vector_transformedCursor = CameraGetWorldPosFromLogicalScreenPos(agent_sceneCamera, vector_cursorPosition);
 
-            if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
-                KTBM_Development_TransformTool_GizmoSelectedAxis = "x";
-            end
-        elseif(bool_is_Y_UnderCursor == true) then
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+            local bool_is_X_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedX) < 0.1;
+            local bool_is_Y_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedY) < 0.1;
+            local bool_is_Z_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedZ) < 0.1;
 
-            if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
-                KTBM_Development_TransformTool_GizmoSelectedAxis = "y";
-            end
-        elseif(bool_is_Z_UnderCursor == true) then
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+            KTBM_Development_TransformTool_GizmoHoveringOverAxis = bool_is_X_UnderCursor or bool_is_Y_UnderCursor or bool_is_Z_UnderCursor;
 
-            if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
-                KTBM_Development_TransformTool_GizmoSelectedAxis = "z";
-            end
-        else
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
-            ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
-        end
-
-        if(KTBM_Development_Editor_Input_LeftMouseHold == true) then
-            local vector_newPosition = Vector(0, 0, 0);
-            local xDifference = vector_cursorPosition.x - prevCursorPos.x;
-            local yDifference = vector_cursorPosition.y - prevCursorPos.y;
-
-            if(KTBM_Development_TransformTool_GizmoSelectedAxis == "x") then
+            if(bool_is_X_UnderCursor == true) then
                 ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", true);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", false);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", false);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", false);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
 
-                vector_newPosition = VectorAdd(AgentGetWorldPos(agent_currentSelectedAgent), Vector((xDifference - yDifference) * number_distanceToSelection, 0, 0));
-                AgentSetWorldPos(agent_currentSelectedAgent, vector_newPosition);
-            elseif(KTBM_Development_TransformTool_GizmoSelectedAxis == "y") then
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "x";
+                end
+            elseif(bool_is_Y_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
                 ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", false);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", true);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", false);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", false);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
 
-                vector_newPosition = VectorAdd(AgentGetWorldPos(agent_currentSelectedAgent), Vector(0, (xDifference - yDifference) * number_distanceToSelection, 0));
-                AgentSetWorldPos(agent_currentSelectedAgent, vector_newPosition);
-            elseif(KTBM_Development_TransformTool_GizmoSelectedAxis == "z") then
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "y";
+                end
+            elseif(bool_is_Z_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
                 ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", false);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", false);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", true);
-                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", false);
 
-                vector_newPosition = VectorAdd(AgentGetWorldPos(agent_currentSelectedAgent), Vector(0, 0, (xDifference - yDifference) * number_distanceToSelection));
-                AgentSetWorldPos(agent_currentSelectedAgent, vector_newPosition);
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "z";
+                end
+            else
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
             end
 
-        else
-            KTBM_Development_TransformTool_GizmoSelectedAxis = "";
-            KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", true);
-            KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", true);
-            KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", true);
-            KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", true);
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM POSITION HANDLE BEHAVIOR |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM POSITION HANDLE BEHAVIOR |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM POSITION HANDLE BEHAVIOR |||||||||||||||||||||||||||||||||||||
+            --
+            
+            if(KTBM_Development_Editor_Input_LeftMouseHold == true) then
+                local vector_newPosition = Vector(0, 0, 0);
+                local xDifference = vector_cursorPosition.x - prevCursorPos.x;
+                local yDifference = vector_cursorPosition.y - prevCursorPos.y;
+                local vector_transformedCursorPosition = AgentGetWorldPosFromCursorPos(agent_currentSelectedAgent);
+
+                if(KTBM_Development_TransformTool_GizmoSelectedAxis == "x") then
+                    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", true);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", false);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", false);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", false);
+
+                    vector_newPosition = Vector(vector_transformedCursorPosition.x, vector_selectObjectWorldPosition.y, vector_selectObjectWorldPosition.z);
+                    AgentSetWorldPos(agent_currentSelectedAgent, vector_newPosition);
+                elseif(KTBM_Development_TransformTool_GizmoSelectedAxis == "y") then
+                    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", false);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", true);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", false);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", false);
+
+                    vector_newPosition = Vector(vector_selectObjectWorldPosition.x, vector_transformedCursorPosition.y, vector_selectObjectWorldPosition.z);
+                    AgentSetWorldPos(agent_currentSelectedAgent, vector_newPosition);
+                elseif(KTBM_Development_TransformTool_GizmoSelectedAxis == "z") then
+                    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", false);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", false);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", true);
+                    KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", false);
+
+                    vector_newPosition = Vector(vector_selectObjectWorldPosition.x, vector_selectObjectWorldPosition.y, vector_transformedCursorPosition.z);
+                    AgentSetWorldPos(agent_currentSelectedAgent, vector_newPosition);
+                end
+
+            else
+                --Not moving/messing with the transform gizmo
+                KTBM_Development_TransformTool_GizmoSelectedAxis = "";
+                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoCenter, "Runtime: Visible", true);
+                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", true);
+                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", true);
+                KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", true);
+            end
+
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - ROTATION |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - ROTATION |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - ROTATION |||||||||||||||||||||||||||||||||||||
+
+        elseif(KTBM_Development_TransformTool_GizmoMode == "rotation") then
+
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM ROTATION HANDLES |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM ROTATION HANDLES |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM ROTATION HANDLES |||||||||||||||||||||||||||||||||||||
+            --Since we can't really modify the bounding boxes of the gizmo handles, we just have to make some manually.
+
+            local vector_worldX = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(number_globalScale, 0, 0));
+            local vector_worldY = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, number_globalScale, 0));
+            local vector_worldZ = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, 0, number_globalScale));
+            local vector_transformedX = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldX);
+            local vector_transformedY = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldY);
+            local vector_transformedZ = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldZ);
+
+            --This is REQUIRED, otherwise distance calculations are skewed.
+            vector_transformedX = KTBM_VectorMultiply(vector_transformedX, Vector(1, 1, 0));
+            vector_transformedY = KTBM_VectorMultiply(vector_transformedY, Vector(1, 1, 0));
+            vector_transformedZ = KTBM_VectorMultiply(vector_transformedZ, Vector(1, 1, 0));
+
+            local vector_transformedCursor = CameraGetWorldPosFromLogicalScreenPos(agent_sceneCamera, vector_cursorPosition);
+
+            local bool_is_X_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedX) < 0.1;
+            local bool_is_Y_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedY) < 0.1;
+            local bool_is_Z_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedZ) < 0.1;
+
+            KTBM_Development_TransformTool_GizmoHoveringOverAxis = bool_is_X_UnderCursor or bool_is_Y_UnderCursor or bool_is_Z_UnderCursor;
+
+            if(bool_is_X_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "x";
+                end
+            elseif(bool_is_Y_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "y";
+                end
+            elseif(bool_is_Z_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "z";
+                end
+            else
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+            end
+
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - SCALE |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - SCALE |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM - SCALE |||||||||||||||||||||||||||||||||||||
+
+        elseif(KTBM_Development_TransformTool_GizmoMode == "scale") then
+            
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM SCALE HANDLES |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM SCALE HANDLES |||||||||||||||||||||||||||||||||||||
+            --||||||||||||||||||||||||||||||||||||| TRANSFORM SCALE HANDLES |||||||||||||||||||||||||||||||||||||
+            --Since we can't really modify the bounding boxes of the gizmo handles, we just have to make some manually.
+
+            local vector_worldX = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(number_globalScale, 0, 0));
+            local vector_worldY = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, number_globalScale, 0));
+            local vector_worldZ = AgentLocalToWorld(KTBM_Development_TransformTool_GizmoGroup, Vector(0, 0, number_globalScale));
+            local vector_transformedX = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldX);
+            local vector_transformedY = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldY);
+            local vector_transformedZ = CameraGetScreenPosFromWorldPos(agent_sceneCamera, vector_worldZ);
+
+            --This is REQUIRED, otherwise distance calculations are skewed.
+            vector_transformedX = KTBM_VectorMultiply(vector_transformedX, Vector(1, 1, 0));
+            vector_transformedY = KTBM_VectorMultiply(vector_transformedY, Vector(1, 1, 0));
+            vector_transformedZ = KTBM_VectorMultiply(vector_transformedZ, Vector(1, 1, 0));
+
+            local vector_transformedCursor = CameraGetWorldPosFromLogicalScreenPos(agent_sceneCamera, vector_cursorPosition);
+
+            local bool_is_X_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedX) < 0.1;
+            local bool_is_Y_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedY) < 0.1;
+            local bool_is_Z_UnderCursor = VectorDistance(vector_cursorPosition, vector_transformedZ) < 0.1;
+
+            KTBM_Development_TransformTool_GizmoHoveringOverAxis = bool_is_X_UnderCursor or bool_is_Y_UnderCursor or bool_is_Z_UnderCursor;
+
+            if(bool_is_X_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "x";
+                end
+            elseif(bool_is_Y_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "y";
+                end
+            elseif(bool_is_Z_UnderCursor == true) then
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentSelect_Texture);
+
+                if(KTBM_Development_Editor_Input_LeftMouseHold and (KTBM_Development_TransformTool_GizmoSelectedAxis == "")) then
+                    KTBM_Development_TransformTool_GizmoSelectedAxis = "z";
+                end
+            else
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentX_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentY_Texture);
+                ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", KTBM_Development_TransformTool_GizmoAgentZ_Texture);
+            end
+
         end
     else
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO HAND MODE |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO HAND MODE |||||||||||||||||||||||||||||||||||||
+        --||||||||||||||||||||||||||||||||||||| TRANSFORM GIZMO HAND MODE |||||||||||||||||||||||||||||||||||||
+
         KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentX, "Runtime: Visible", false);
         KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentY, "Runtime: Visible", false);
         KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Runtime: Visible", false);
@@ -261,6 +440,7 @@ KTBM_Development_TransformTool_UpdateGizmo = function()
     --||||||||||||||||||||||||||||||||||||| BOUNDS SELECT HIGHLIGHT |||||||||||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||||||||||| BOUNDS SELECT HIGHLIGHT |||||||||||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||||||||||| BOUNDS SELECT HIGHLIGHT |||||||||||||||||||||||||||||||||||||
+    --A transparent yellow bounding box that is used when an agent is selected.
 
     if(boundsAABB_currentSelectedAgentLocalBounds ~= nil) then
         local vector_extents = boundsAABB_currentSelectedAgentLocalBounds["extents"];
@@ -303,6 +483,7 @@ KTBM_Development_TransformTool_UpdateGizmo = function()
     --||||||||||||||||||||||||||||||||||||| BOUNDS HOVER HIGHLIGHT |||||||||||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||||||||||| BOUNDS HOVER HIGHLIGHT |||||||||||||||||||||||||||||||||||||
     --||||||||||||||||||||||||||||||||||||| BOUNDS HOVER HIGHLIGHT |||||||||||||||||||||||||||||||||||||
+    --A transparent white bounding box that is used when your cursor is hovering over agents with a bounding box.
 
     if(boundsAABB_currentHoverAgentLocalBounds ~= nil) then
         local vector_extents = boundsAABB_currentHoverAgentLocalBounds["extents"];
@@ -351,9 +532,10 @@ KTBM_Development_TransformTool_Initalize = function()
 
     --create our menu text
     KTBM_Development_TransformTool_Text = KTBM_TextUI_CreateTextAgent("KTBM_Development_TransformTool_Text", "Text Initalized", Vector(0, 0, 0), 0, 0);
+    KTBM_PropertySet(KTBM_Development_TransformTool_Text, "Text Render Layer", 90);
 
     --set the text color
-    TextSetColor(KTBM_Development_TransformTool_Text, Color(1.0, 0.5, 0.5, 1.0));
+    TextSetColor(KTBM_Development_TransformTool_Text, Color(1.0, 1.0, 1.0, 1.0));
 
     --scale note
     --1.0 = default
@@ -403,13 +585,13 @@ KTBM_Development_TransformTool_Initalize = function()
     KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Render Depth Write Alpha", false);
     KTBM_PropertySet(KTBM_Development_TransformTool_GizmoAgentZ, "Render Layer", 50);
 
-    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoCenter, "ui_boot_title.d3dtx", "SelectionDot_White.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", "TransformPositionGizmo_Red.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", "TransformPositionGizmo_Green.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", "TransformPositionGizmo_Blue.d3dtx");
-    --ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", "TransformRotateGizmo_Red.d3dtx");
-    --ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", "TransformRotateGizmo_Green.d3dtx");
-    --ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", "TransformRotateGizmo_Blue.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoCenter, "ui_boot_title.d3dtx", "KTBM_Development_SelectionDotWhite.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", "KTBM_Development_TransformPositionGizmoRed.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", "KTBM_Development_TransformPositionGizmoGreen.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", "KTBM_Development_TransformPositionGizmoBlue.d3dtx");
+    --ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentX, "ui_boot_title.d3dtx", "KTBM_Development_TransformRotateGizmoRed.d3dtx");
+    --ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentY, "ui_boot_title.d3dtx", "KTBM_Development_TransformRotateGizmoGreen.d3dtx");
+    --ShaderSwapTexture(KTBM_Development_TransformTool_GizmoAgentZ, "ui_boot_title.d3dtx", "KTBM_Development_TransformRotateGizmoBlue.d3dtx");
 
     AgentAttach(KTBM_Development_TransformTool_GizmoCenter, KTBM_Development_TransformTool_GizmoGroup);
     AgentAttach(KTBM_Development_TransformTool_GizmoAgentX, KTBM_Development_TransformTool_GizmoGroup);
@@ -482,12 +664,12 @@ KTBM_Development_TransformTool_Initalize = function()
     KTBM_PropertySet(KTBM_Development_TransformTool_SelectBoundingBoxSide6, "Render Cull", false);
     KTBM_PropertySet(KTBM_Development_TransformTool_SelectBoundingBoxSide6, "Render Layer", number_renderLayer);
 
-    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide1, "ui_boot_title.d3dtx", "BoundsSelectColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide2, "ui_boot_title.d3dtx", "BoundsSelectColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide3, "ui_boot_title.d3dtx", "BoundsSelectColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide4, "ui_boot_title.d3dtx", "BoundsSelectColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide5, "ui_boot_title.d3dtx", "BoundsSelectColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide6, "ui_boot_title.d3dtx", "BoundsSelectColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide1, "ui_boot_title.d3dtx", "KTBM_Development_BoundsSelectColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide2, "ui_boot_title.d3dtx", "KTBM_Development_BoundsSelectColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide3, "ui_boot_title.d3dtx", "KTBM_Development_BoundsSelectColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide4, "ui_boot_title.d3dtx", "KTBM_Development_BoundsSelectColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide5, "ui_boot_title.d3dtx", "KTBM_Development_BoundsSelectColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_SelectBoundingBoxSide6, "ui_boot_title.d3dtx", "KTBM_Development_BoundsSelectColor.d3dtx");
 
     AgentAttach(KTBM_Development_TransformTool_SelectBoundingBoxSide1, KTBM_Development_TransformTool_SelectBoundingBoxGroup);
     AgentAttach(KTBM_Development_TransformTool_SelectBoundingBoxSide2, KTBM_Development_TransformTool_SelectBoundingBoxGroup);
@@ -555,12 +737,12 @@ KTBM_Development_TransformTool_Initalize = function()
     KTBM_PropertySet(KTBM_Development_TransformTool_HoverBoundingBoxSide6, "Render Cull", false);
     KTBM_PropertySet(KTBM_Development_TransformTool_HoverBoundingBoxSide6, "Render Layer", number_renderLayer);
 
-    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide1, "ui_boot_title.d3dtx", "BoundsHoverColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide2, "ui_boot_title.d3dtx", "BoundsHoverColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide3, "ui_boot_title.d3dtx", "BoundsHoverColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide4, "ui_boot_title.d3dtx", "BoundsHoverColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide5, "ui_boot_title.d3dtx", "BoundsHoverColor.d3dtx");
-    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide6, "ui_boot_title.d3dtx", "BoundsHoverColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide1, "ui_boot_title.d3dtx", "KTBM_Development_BoundsHoverColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide2, "ui_boot_title.d3dtx", "KTBM_Development_BoundsHoverColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide3, "ui_boot_title.d3dtx", "KTBM_Development_BoundsHoverColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide4, "ui_boot_title.d3dtx", "KTBM_Development_BoundsHoverColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide5, "ui_boot_title.d3dtx", "KTBM_Development_BoundsHoverColor.d3dtx");
+    ShaderSwapTexture(KTBM_Development_TransformTool_HoverBoundingBoxSide6, "ui_boot_title.d3dtx", "KTBM_Development_BoundsHoverColor.d3dtx");
 
     AgentAttach(KTBM_Development_TransformTool_HoverBoundingBoxSide1, KTBM_Development_TransformTool_HoverBoundingBoxGroup);
     AgentAttach(KTBM_Development_TransformTool_HoverBoundingBoxSide2, KTBM_Development_TransformTool_HoverBoundingBoxGroup);
@@ -589,6 +771,18 @@ local SelectSceneAgent = function()
 
         for index2, string_dontSelectAgentName in ipairs(KTBM_Development_TransformTool_DontSelect) do
             if(string_newAgentName == string_dontSelectAgentName) then
+                bool_isSelectable = false;
+            end
+        end
+
+        for index3, agent_iconAgent in ipairs(KTBM_Development_ObjectIcons_Icons) do
+            if(string_newAgentName == AgentGetName(agent_iconAgent)) then
+                bool_isSelectable = false;
+            end
+        end
+
+        for index4, agent_guiAgent in ipairs(KTBM_Development_MainGUI_AgentsTable) do
+            if(string_newAgentName == AgentGetName(agent_guiAgent)) then
                 bool_isSelectable = false;
             end
         end
@@ -663,6 +857,18 @@ local HoverSceneAgent = function()
             end
         end
 
+        for index3, agent_iconAgent in ipairs(KTBM_Development_ObjectIcons_Icons) do
+            if(string_newAgentName == AgentGetName(agent_iconAgent)) then
+                bool_isSelectable = false;
+            end
+        end
+
+        for index4, agent_guiAgent in ipairs(KTBM_Development_MainGUI_AgentsTable) do
+            if(string_newAgentName == AgentGetName(agent_guiAgent)) then
+                bool_isSelectable = false;
+            end
+        end
+
         --check if the agent is actually under our main cursor
         if(bool_isNewAgentUnderCursor == true) and (bool_isSelectable == true) then
 
@@ -706,14 +912,14 @@ local HoverSceneAgent = function()
 end
 
 KTBM_Development_TransformTool_Update = function()  
-    --||||||||||||||||||||||||||||||||||||| AGENT SELECTION |||||||||||||||||||||||||||||||||||||
-    --||||||||||||||||||||||||||||||||||||| AGENT SELECTION |||||||||||||||||||||||||||||||||||||
-    --||||||||||||||||||||||||||||||||||||| AGENT SELECTION |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| AGENT HOVER/SELECTION |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| AGENT HOVER/SELECTION |||||||||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||||||||| AGENT HOVER/SELECTION |||||||||||||||||||||||||||||||||||||
     --In here is the main logic for finding the agent to be selected in the scene.
     --The telltale lua API does have functions for this, however the most obvious ones don't seem to work.
     --So we have to make our own here.
 
-    if(KTBM_Development_SceneCamera_Frozen == true) and (KTBM_Development_TransformTool_GizmoHoveringOverAxis == false) then
+    if(KTBM_Development_SceneCamera_Frozen == true) and (KTBM_Development_TransformTool_GizmoHoveringOverAxis == false) and (KTBM_Development_MainGUI_CursorOverGUI == false) then
         HoverSceneAgent();
 
         if(KTBM_Development_Editor_Input_LeftMouseClicked == true) then
@@ -752,7 +958,7 @@ KTBM_Development_TransformTool_Update = function()
 
         AgentSetWorldPos(KTBM_Development_TransformTool_Text, boundsAABB_currentSelectedAgentWorldBounds["center"]);
     else
-        string_finalText = "O";
+        string_finalText = "";
 
         --screen pos notes
         --0.0 0.0 0.0 = top left

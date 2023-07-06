@@ -50,7 +50,7 @@ KTBM_Development_UpdateSceneCamera = function()
     local number_frameTime = GetFrameTime();
 
     --freecamera freezing
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_RightMouse)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_RightMouse)) then
         KTBM_Development_SceneCamera_Frozen = false;
     else
         KTBM_Development_SceneCamera_Frozen = true;
@@ -73,29 +73,29 @@ KTBM_Development_UpdateSceneCamera = function()
     ------------------------------MOVEMENT------------------------------
     local number_positionIncrement = KTBM_Development_SceneCamera_PositionIncrementDefault;
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_LeftShift)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_LeftShift)) then
         number_positionIncrement = KTBM_Development_SceneCamera_PositionIncrementShift;
     end
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_Q)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_Q)) then
         KTBM_Development_SceneCamera_InputHeightValue = -number_positionIncrement;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_E)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_E)) then
         KTBM_Development_SceneCamera_InputHeightValue = number_positionIncrement;
     else
         KTBM_Development_SceneCamera_InputHeightValue = 0;
     end
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_W)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_W)) then
         KTBM_Development_SceneCamera_InputVerticalValue = number_positionIncrement;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_S)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_S)) then
         KTBM_Development_SceneCamera_InputVerticalValue = -number_positionIncrement;
     else
         KTBM_Development_SceneCamera_InputVerticalValue = 0;
     end
     
-    if(KTBM_InputKeyPress(KTBM_Core_Keycodes_A)) then
+    if(KTBM_InputKeyPress(KTBM_Keycodes_A)) then
         KTBM_Development_SceneCamera_InputHorizontalValue = number_positionIncrement;
-    elseif(KTBM_InputKeyPress(KTBM_Core_Keycodes_D)) then
+    elseif(KTBM_InputKeyPress(KTBM_Keycodes_D)) then
         KTBM_Development_SceneCamera_InputHorizontalValue = -number_positionIncrement;
     else
         KTBM_Development_SceneCamera_InputHorizontalValue = 0;

@@ -46,7 +46,7 @@ KTBM_Binary_UnpackInt32 = function(string_binaryEncodedString)
     local number_result = number_byte1 + number_byte2 * 256 + number_byte3 * 65536 + number_byte4 * 16777216;
 
     -- Check if the most significant bit is set (sign bit)
-    if number_result >= 2147483648 then
+    if (number_result >= 2147483648) then
         number_result = number_result - 4294967296; -- Convert to signed value
     end
 
@@ -195,46 +195,52 @@ end
 --RETURNS: String
 KTBM_Binary_PackFloat = function(number_value)
     -- Bitmask used for handling infinity and NaN values
-    local number_infinityBitmask = 2^32 - 2^22
-    local string_binaryString = "" -- Resulting binary string
-    local number_significand, number_exponent, number_increment = 1, 1, 1 -- Variables for intermediate calculations
+    local number_infinityBitmask = 2^32 - 2^22;
+    local string_binaryString = ""; -- Resulting binary string
+    local number_significand, number_exponent, number_increment = 1, 1, 1; -- Variables for intermediate calculations
     
     if (number_value == number_value) then -- Checking if value is not NaN
-        number_infinityBitmask = 2^31 - 2^23 -- Bitmask for positive infinity
+        number_infinityBitmask = 2^31 - 2^23; -- Bitmask for positive infinity
         
         if (number_value < 0 or (number_value == 0 and 1/number_value < 0)) then
-            number_value, number_infinityBitmask = -number_value, 2^32 - 2^23 -- Bitmask for negative infinity
+            number_value, number_infinityBitmask = -number_value, 2^32 - 2^23; -- Bitmask for negative infinity
         end
         
         if (number_value > 0.5 * 2^-149 and number_value < 2^128) then
             -- Rounding 64-bit double to 32-bit float
-            number_exponent = math.floor(math.log(number_value) / math.log(2) + 0.5)
-            number_exponent = (number_value < 2^number_exponent) and (number_exponent - 1) or number_exponent
-            local number_epsilon = 2^((number_exponent < -126) and -149 or (number_exponent - 23)) -- Smallest positive number
-            number_value = number_value + 0.5 * number_epsilon
-            local number_remainder = number_value % number_epsilon
-            number_value = number_value - ((number_remainder == 0) and (number_value % (number_epsilon + number_epsilon)) or number_remainder)
+            number_exponent = math.floor(math.log(number_value) / math.log(2) + 0.5);
+            number_exponent = (number_value < 2^number_exponent) and (number_exponent - 1) or number_exponent;
+
+            local number_epsilon = 2^((number_exponent < -126) and -149 or (number_exponent - 23)); -- Smallest positive number
+
+            number_value = number_value + 0.5 * number_epsilon;
+
+            local number_remainder = number_value % number_epsilon;
+
+            number_value = number_value - ((number_remainder == 0) and (number_value % (number_epsilon + number_epsilon)) or number_remainder);
         end
         
         -- Dumping 32-bit image of float
         if (number_value < 2^-149) then
-            number_infinityBitmask = number_infinityBitmask - (2^31 - 2^23) -- Bitmask for denormalized numbers
+            number_infinityBitmask = number_infinityBitmask - (2^31 - 2^23); -- Bitmask for denormalized numbers
         elseif (number_value <= 2^128 - 2^104) then
+
             if (number_exponent < -126) then
-                number_exponent, number_increment = -126, 0 -- Exponent and increment for denormalized numbers
+                number_exponent, number_increment = -126, 0; -- Exponent and increment for denormalized numbers
             end
-            number_infinityBitmask = number_infinityBitmask + ((number_value / 2^number_exponent) + ((number_exponent - (-126)) * number_increment) - 255) * 2^23
+
+            number_infinityBitmask = number_infinityBitmask + ((number_value / 2^number_exponent) + ((number_exponent - (-126)) * number_increment) - 255) * 2^23;
         end
     end
     
     -- Convert 32-bit image to little-endian binary string
     while (#string_binaryString < 4) do
-        local byte = number_infinityBitmask % 256
-        string_binaryString = string_binaryString .. string.char(byte)
-        number_infinityBitmask = (number_infinityBitmask - byte) / 256
+        local byte = number_infinityBitmask % 256;
+        string_binaryString = string_binaryString .. string.char(byte);
+        number_infinityBitmask = (number_infinityBitmask - byte) / 256;
     end
     
-    return string_binaryString
+    return string_binaryString;
 end
 
 --Unpacks a (4 bytes) 32-bit single precision number string into a lua number.

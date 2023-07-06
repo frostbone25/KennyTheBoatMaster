@@ -23,8 +23,8 @@ local kScene = "adv_flagshipExteriorDeck";
 local kSceneAgentName = kScene .. ".scene";
 
 --setup KTBM
-KTBM_Core_Project_SetProjectSettings();
-KTBM_Core_Project_EnableGameArchives();
+KTBM_Project_SetProjectSettings();
+KTBM_Project_EnableGameArchives();
 
 KTBM_Cutscene_Menu_kScene = kScene;
 KTBM_LevelRelight_kScene = kScene;
@@ -100,10 +100,7 @@ KTBM_Level_Menu = function()
     Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_Animation_UpdateBoatBuoyancy);
     Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_Animation_UpdateHandheldCamera);
 
-    --Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_KennyVoiceLineTest);
-    --Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_UpdateKennyIdleAnimation);
-
-    if (KTBM_Core_Project_DebugEditorMode) then
+    if (KTBM_Project_DebugEditorMode) then
         --development helpers
         --KTBM_PrintSceneListToTXT(kScene, "sceneobject_ktbm-menu1.txt")
         --KTBM_LuaHelper_WriteSceneCleanupScript(kScene, "KTBM_LevelCleanup", "KTBM_Level.lua");
@@ -113,18 +110,24 @@ KTBM_Level_Menu = function()
         --Callback_OnPostUpdate:Add(KennyVoiceLineTest);
         --Callback_OnPostUpdate:Add(UpdateKennyIdleAnimation);
 
-        if(KTBM_Core_Project_DebugFreecamMode == false) then
+        if(KTBM_Project_DebugFreecamMode == false) then
             Callback_OnPostUpdate:Add(KTBM_Development_Editor_Input_Update);
 
             KTBM_Development_CreateSceneCamera();
             Callback_OnPostUpdate:Add(KTBM_Development_UpdateSceneCamera);
 
+            KTBM_Development_ObjectIcons_Initalize(kScene);
+            Callback_OnPostUpdate:Add(KTBM_Development_ObjectIcons_Update);
+
             KTBM_Development_TransformTool_Initalize();
             Callback_OnPostUpdate:Add(KTBM_Development_TransformTool_Update);
 
-            KTBM_Development_InitalizeRelightTools();
-            Callback_OnPostUpdate:Add(KTBM_Development_UpdateRelightTools_Input);
-            Callback_OnPostUpdate:Add(KTBM_Development_UpdateRelightTools_Main);
+            --KTBM_Development_InitalizeRelightTools();
+            --Callback_OnPostUpdate:Add(KTBM_Development_UpdateRelightTools_Input);
+            --Callback_OnPostUpdate:Add(KTBM_Development_UpdateRelightTools_Main);
+
+            KTBM_Development_MainGUI_Initalize();
+            Callback_OnPostUpdate:Add(KTBM_Development_MainGUI_Update);
         else
             KTBM_Development_CreateFreeCamera();
             Callback_OnPostUpdate:Add(KTBM_Development_UpdateFreeCamera);
@@ -144,17 +147,17 @@ KTBM_Level_Menu = function()
     --Callback_OnPostUpdate:Add(KTBM_DepthOfFieldAutofocus_PerformAutofocus);
     Callback_OnPostUpdate:Add(KTBM_LevelRelight_M101_FlagshipExteriorDeck_UpdateLighting);
 
-    if (KTBM_Core_Project_DebugAllowBoundsDebug) then
+    if (KTBM_Project_DebugAllowBoundsDebug) then
         KTBM_Development_BoundsDebug_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_BoundsDebug_Update);
     end
 
-    if (KTBM_Core_Project_DebugPeformanceMetrics) then
+    if (KTBM_Project_DebugPeformanceMetrics) then
         KTBM_Development_PerformanceMetrics_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_PerformanceMetrics_Update);
     end
 
-    if (KTBM_Core_Project_ShowDevelopmentText) then
+    if (KTBM_Project_ShowDevelopmentText) then
         KTBM_Development_DevelopmentBuildText_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_DevelopmentBuildText_Update);
     end
