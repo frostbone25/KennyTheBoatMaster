@@ -5,7 +5,8 @@ Kenny The Boat Master (KTBM) is a game mod for The Walking Dead Telltale Definit
 
 # Screenshots
 
-![main-menui-wip1](screenshots/main-menu-wip1.jpg)
+![main-menui-wip2](screenshots/main-menu-wip2.jpg)
+![ingame-wip1](screenshots/ingame-wip1.jpg)
 
 # About
 
