@@ -16,8 +16,8 @@ local kScene = "adv_flagshipExteriorDeck";
 local kSceneAgentName = kScene .. ".scene";
 
 --setup KTBM
-KTBM_Core_Project_SetProjectSettings();
-KTBM_Core_Project_EnableGameArchives();
+KTBM_Project_SetProjectSettings();
+KTBM_Project_EnableGameArchives();
 
 KTBM_Cutscene_DeathResults_kScene = kScene;
 KTBM_LevelRelight_kScene = kScene;
@@ -52,7 +52,7 @@ KTBM_Level_DeathResults = function()
     KTBM_Costumes_Kenny_ApplySelectedOutfit(kScene);
     KTBM_Costumes_Boat_ApplySelectedOutfit(kScene);
 
-    --if (KTBM_Core_Project_DebugFreecamMode) then
+    --if (KTBM_Project_DebugEditorMode) then
         --development helpers
         --KTBM_PrintSceneListToTXT(kScene, "sceneobject_ktbm-menu1.txt")
         --KTBM_LuaHelper_WriteSceneCleanupScript(kScene, "KTBM_LevelCleanup", "KTBM_Level.lua");
@@ -85,7 +85,7 @@ KTBM_Level_DeathResults = function()
         Callback_OnPostUpdate:Add(KTBM_Development_PerformanceMetrics_Update);
     end
 
-    if (KTBM_Core_Project_ShowDevelopmentText) then
+    if (KTBM_Project_ShowDevelopmentText) and (KTBM_Project_DebugEditorMode == false) then
         KTBM_Development_DevelopmentBuildText_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_DevelopmentBuildText_Update);
     end

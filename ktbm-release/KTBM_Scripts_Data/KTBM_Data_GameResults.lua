@@ -283,7 +283,7 @@ KTBM_Data_SaveGameResults = function(gameResults_object)
     print("[KTBM_Data_SaveGameResults] ");
     print("[KTBM_Data_SaveGameResults] ---SAVING GAME RESULTS---");
 
-    if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+    if(KTBM_Project_GameResultsBinaryFormat == true) then
         print("[KTBM_Data_SaveGameResults] Saving Results in Binary Format...");
         print("[KTBM_Data_SaveGameResults] " .. string_resultsFilePath .. ".bin");
 
@@ -300,11 +300,12 @@ KTBM_Data_SaveGameResults = function(gameResults_object)
 end
 
 KTBM_Data_GetAllGameResultFilePaths = function()
+    print("[KTBM_Data_GetAllGameResultFilePaths] ---GETTING ALL GAME RESULTS---");
     strings_gameResultFilePaths = {};
 
     local string_fileExtension = ".txt";
 
-    if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+    if(KTBM_Project_GameResultsBinaryFormat == true) then
         string_fileExtension = ".bin";
     end
 
@@ -323,10 +324,11 @@ KTBM_Data_GetAllGameResultFilePaths = function()
             table.insert(strings_gameResultFilePaths, string_filePath);
         end
     end
+
+    print("[KTBM_Data_GetAllGameResultFilePaths] Count: " .. tostring(#strings_gameResultFilePaths));
 end
 
 KTBM_Data_GetPreviousGameResults = function()
-    print("[KTBM_Data_GetPreviousGameResults] ");
     print("[KTBM_Data_GetPreviousGameResults] ---GETTING MOST RECENT GAME RESULTS---");
 
     if(strings_gameResultFilePaths == nil) then
@@ -351,7 +353,7 @@ KTBM_Data_GetPreviousGameResults = function()
 
     local gameResults_parsedObject = nil;
 
-    if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+    if(KTBM_Project_GameResultsBinaryFormat == true) then
         print("[KTBM_Data_GetPreviousGameResults] Getting most recent 'Game Results' in binary from the following file path...");
         print("[KTBM_Data_GetPreviousGameResults] " .. string_mostRecentFilePath);
 
@@ -370,7 +372,6 @@ KTBM_Data_GetPreviousGameResults = function()
 end
 
 KTBM_Data_GetAllGameResults = function()
-    print("[KTBM_Data_GetAllGameResults] ");
     print("[KTBM_Data_GetAllGameResults] ---GETTING ALL GAME RESULTS---");
 
     if(strings_gameResultFilePaths == nil) then
@@ -391,7 +392,7 @@ KTBM_Data_GetAllGameResults = function()
     for index, string_filePath in ipairs(strings_gameResultFilePaths) do
         local gameResults_parsedObject = nil;
 
-        if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+        if(KTBM_Project_GameResultsBinaryFormat == true) then
             gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(string_filePath);
         else
             gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Text(string_filePath);
@@ -401,7 +402,6 @@ KTBM_Data_GetAllGameResults = function()
     end
 
     print("[KTBM_Data_GetAllGameResults] ---FINISHED GETTING ALL GAME RESULTS---");
-    print("[KTBM_Data_GetAllGameResults] ");
 
     return gameResults_array;
 end
@@ -431,7 +431,7 @@ KTBM_Data_GetBestGameResultByStatistic = function(string_variableName)
     for index, string_filePath in ipairs(strings_gameResultFilePaths) do
         local gameResults_parsedObject = {};
 
-        if(KTBM_Core_Project_GameResultsBinaryFormat == true) then
+        if(KTBM_Project_GameResultsBinaryFormat == true) then
             gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Binary(string_filePath);
         else
             gameResults_parsedObject = KTBM_Data_DeserializeGameResultsObject_Text(string_filePath);

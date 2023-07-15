@@ -100,8 +100,9 @@ KTBM_Gameplay_PlayerInputUpdate = function()
     --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
     --|||||||||||||||||||||||||||| HARDCODED INPUT ||||||||||||||||||||||||||||
 
-    local bool_moveLeft = Input_IsVKeyPressed(KTBM_Core_Keycodes_A) or Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftArrow);
-    local bool_moveRight = Input_IsVKeyPressed(KTBM_Core_Keycodes_D) or Input_IsVKeyPressed(KTBM_Core_Keycodes_RightArrow);
+    local bool_moveLeft = Input_IsVKeyPressed(KTBM_Keycodes_A) or Input_IsVKeyPressed(KTBM_Keycodes_LeftArrow);
+    local bool_moveRight = Input_IsVKeyPressed(KTBM_Keycodes_D) or Input_IsVKeyPressed(KTBM_Keycodes_RightArrow);
+    KTBM_Gameplay_State_IsSpeeding = Input_IsVKeyPressed(KTBM_Keycodes_LeftShift) or Input_IsVKeyPressed(KTBM_Keycodes_RightShift);
 
     if bool_moveLeft then
         KTBM_Gameplay_Input_CurrentHorizontalPositionValue = KTBM_Gameplay_BoatCurrentMovementSpeed * number_deltaTime;
@@ -113,8 +114,6 @@ KTBM_Gameplay_PlayerInputUpdate = function()
         KTBM_Gameplay_Input_CurrentHorizontalPositionValue = 0;
         KTBM_Gameplay_Input_CurrentHorizontalRotationValue = 0;
     end
-
-    KTBM_Gameplay_State_IsSpeeding = Input_IsVKeyPressed(160) or Input_IsVKeyPressed(161);
 
     if(KTBM_Gameplay_State_IsSpeeding == true) then
         --KTBM_Gameplay_BoatCurrentMovementSpeed = KTBM_Gameplay_SpeedBoostBoatMovementSpeed;

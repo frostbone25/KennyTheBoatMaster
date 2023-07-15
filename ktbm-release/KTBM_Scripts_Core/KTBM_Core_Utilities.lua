@@ -1,5 +1,5 @@
 print = function(message)
-    if (KTBM_Core_Project_DebugPrinting == true) then
+    if (KTBM_Project_DebugPrinting == true) then
         os.execute("echo " .. message);
     end
 end

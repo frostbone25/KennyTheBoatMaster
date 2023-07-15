@@ -14,7 +14,7 @@ end
 KTBM_UI_Input_IMAP_Update = function()
 
 
-    if (Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftMouse)) then
+    if (Input_IsVKeyPressed(KTBM_Keycodes_LeftMouse)) then
     
         if(bool_inputClickedOnce == false) then
             KTBM_UI_Input_Clicked = true;

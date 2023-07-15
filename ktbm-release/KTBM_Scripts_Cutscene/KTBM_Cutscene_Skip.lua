@@ -28,11 +28,11 @@ KTBM_Cutscene_Skip_Update = function()
     KTBM_PropertySet(KTBM_Cutscene_Skip_TextAgent, "Runtime: Visible", KTBM_Cutscene_Skip_CanSkip);
 
     if(KTBM_Cutscene_Skip_CanSkip == true) then
-        if (Input_IsVKeyPressed(KTBM_Core_Keycodes_LeftMouse)) then
+        if (Input_IsVKeyPressed(KTBM_Keycodes_LeftMouse)) then
             KTBM_Cutscene_Skip_Skipped = true;
         end
 
-        if (Input_IsVKeyPressed(KTBM_Core_Keycodes_Space)) then
+        if (Input_IsVKeyPressed(KTBM_Keycodes_Space)) then
             KTBM_Cutscene_Skip_Skipped = true;
         end
     end
