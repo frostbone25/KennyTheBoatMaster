@@ -110,7 +110,10 @@ KTBM_Level_Menu = function()
         --Callback_OnPostUpdate:Add(KennyVoiceLineTest);
         --Callback_OnPostUpdate:Add(UpdateKennyIdleAnimation);
 
-        if(KTBM_Project_DebugFreecamMode == false) then
+        if(KTBM_Project_DebugFreecamMode == true) then
+            KTBM_Development_CreateFreeCamera();
+            Callback_OnPostUpdate:Add(KTBM_Development_UpdateFreeCamera);
+        else
             Callback_OnPostUpdate:Add(KTBM_Development_Editor_Input_Update);
 
             KTBM_Development_CreateSceneCamera();
@@ -128,9 +131,6 @@ KTBM_Level_Menu = function()
 
             KTBM_Development_MainGUI_Initalize();
             Callback_OnPostUpdate:Add(KTBM_Development_MainGUI_Update);
-        else
-            KTBM_Development_CreateFreeCamera();
-            Callback_OnPostUpdate:Add(KTBM_Development_UpdateFreeCamera);
         end
     else
         KTBM_UI_MainMenu_Start();
@@ -138,13 +138,14 @@ KTBM_Level_Menu = function()
         Callback_OnPostUpdate:Add(KTBM_UI_Update);
 
         Callback_OnPostUpdate:Add(KTBM_Cutscene_Menu_Update);
+
+        KTBM_DepthOfFieldAutofocus_SetupDOF();
+        Callback_OnPostUpdate:Add(KTBM_DepthOfFieldAutofocus_PerformAutofocus);
     end
 
     --LensFlareEffect_Initalize();
     --Callback_OnPostUpdate:Add(LensFlareEffect_Update);
 
-    --KTBM_DepthOfFieldAutofocus_SetupDOF();
-    --Callback_OnPostUpdate:Add(KTBM_DepthOfFieldAutofocus_PerformAutofocus);
     Callback_OnPostUpdate:Add(KTBM_LevelRelight_M101_FlagshipExteriorDeck_UpdateLighting);
 
     if (KTBM_Project_DebugAllowBoundsDebug) then
@@ -157,7 +158,7 @@ KTBM_Level_Menu = function()
         Callback_OnPostUpdate:Add(KTBM_Development_PerformanceMetrics_Update);
     end
 
-    if (KTBM_Project_ShowDevelopmentText) then
+    if (KTBM_Project_ShowDevelopmentText) and (KTBM_Project_DebugEditorMode == false) then
         KTBM_Development_DevelopmentBuildText_Initalize();
         Callback_OnPostUpdate:Add(KTBM_Development_DevelopmentBuildText_Update);
     end

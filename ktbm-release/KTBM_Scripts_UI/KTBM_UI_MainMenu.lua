@@ -200,7 +200,7 @@ KTBM_UI_MainMenu_Start = function()
     KTBM_UI_PrepareCreditsMenuText();
     KTBM_UI_PrepareScoreboardMenuText();
 
-    KTBM_UI_YesNoDialogBox_Start(0.075);
+    --KTBM_UI_YesNoDialogBox_Start(0.075);
 
     CursorHide(false);
     CursorEnable(true);
@@ -620,7 +620,7 @@ end
 
 KTBM_UI_Update = function()  
     KTBM_UI_Input_IMAP_Update();
-    KTBM_UI_YesNoDialogBox_Update();
+    --KTBM_UI_YesNoDialogBox_Update();
 
     PlayRolloverSound();
 
