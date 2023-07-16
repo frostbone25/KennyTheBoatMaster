@@ -37,6 +37,9 @@ local agent_pageCostumesBoat_skin3 = nil;
 local agent_pageCostumesBoat_skin4 = nil;
 local agent_pageCostumesBoat_skin5 = nil;
 
+local agent_pageOptions_goBack = nil;
+local agent_pageOptions_temp = nil;
+
 local agent_pageHelp_goBack = nil;
 local agent_pageHelp_help = nil;
 local agent_pageHelpInputGraphic = nil;
@@ -196,6 +199,7 @@ KTBM_UI_MainMenu_Start = function()
     KTBM_UI_PrepareKennyCostumeMenuText();
     KTBM_UI_PrepareBoatCostumeMenuText();
 
+    KTBM_UI_PrepareOptionsMenuText();
     KTBM_UI_PrepareHelpMenuText();
     KTBM_UI_PrepareCreditsMenuText();
     KTBM_UI_PrepareScoreboardMenuText();
@@ -552,6 +556,40 @@ KTBM_UI_PrepareHelpMenuText = function()
     AgentSetWorldPosFromLogicalScreenPos(agent_pageHelpInputGraphic, Vector(0.235 + menuOffsetX, 0.675 + menuOffsetY, 0.0));
 end
 
+KTBM_UI_PrepareOptionsMenuText = function()
+    --costumes options
+    agent_pageOptions_goBack = KTBM_TextUI_CreateTextAgent("agent_pageOptions_goBack", "Go Back", Vector(0, 0, 0), 0, 0);
+    agent_pageOptions_temp = KTBM_TextUI_CreateTextAgent("agent_pageOptions_temp", "Not Implemented Yet", Vector(0, 0, 0), 0, 0);
+
+    AgentAttach(agent_pageOptions_goBack, agent_mainMenuGroup);
+    AgentAttach(agent_pageOptions_temp, agent_mainMenuGroup);
+
+    --scale note
+    --1.0 = default
+    --0.5 = half
+    --2.0 = double
+    TextSetScale(agent_pageOptions_goBack, 1.0);
+    TextSetScale(agent_pageOptions_temp, 0.75);
+
+    --color note
+    --text colors are additive on the scene
+    TextSetColor(agent_pageOptions_goBack, Color(1.0, 1.0, 1.0, 1.0));
+    TextSetColor(agent_pageOptions_temp, Color(1.0, 1.0, 1.0, 1.0));
+    
+    --set properties on menu texts
+    SetMenuOptionProperties("agent_pageOptions_goBack");
+    SetMenuOptionProperties("agent_pageOptions_temp");
+
+    --screen pos notes
+    --0.0 0.0 0.0 = top left
+    --0.5 0.5 0.0 = center
+    --0.0 1.0 0.0 = bottom left
+    local menuOffsetX = 0.0;
+    local menuOffsetY = 0.1;
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageOptions_goBack, Vector(0.105 + menuOffsetX, 0.3 + menuOffsetY, 0.0));
+    AgentSetWorldPosFromLogicalScreenPos(agent_pageOptions_temp, Vector(0.105 + menuOffsetX, 0.35 + menuOffsetY, 0.0));
+end
+
 KTBM_UI_PrepareScoreboardMenuText = function()
     --costumes options
     agent_pageScoreboard_goBack = KTBM_TextUI_CreateTextAgent("PageScoreboard_GoBack", "Go Back", Vector(0, 0, 0), 0, 0);
@@ -640,6 +678,7 @@ KTBM_UI_Update = function()
     local bool_onCostumePage = string_currentPage == "costumes" and (not KTBM_UI_YesNoDialogBox_IsOpen);
     local bool_onCostumeKennyPage = string_currentPage == "costumesKenny" and (not KTBM_UI_YesNoDialogBox_IsOpen);
     local bool_onCostumeBoatPage = string_currentPage == "costumesBoat" and (not KTBM_UI_YesNoDialogBox_IsOpen);
+    local bool_onOptionsPage = string_currentPage == "options" and (not KTBM_UI_YesNoDialogBox_IsOpen);
     local bool_onHelpPage = string_currentPage == "help" and (not KTBM_UI_YesNoDialogBox_IsOpen);
     local bool_onCreditsPage = string_currentPage == "credits" and (not KTBM_UI_YesNoDialogBox_IsOpen);
     local bool_onScoreboardPage = string_currentPage == "scoreboard" and (not KTBM_UI_YesNoDialogBox_IsOpen);
@@ -670,6 +709,9 @@ KTBM_UI_Update = function()
     KTBM_PropertySet(agent_pageCostumesBoat_skin3, "Runtime: Visible", bool_onCostumeBoatPage);
     KTBM_PropertySet(agent_pageCostumesBoat_skin4, "Runtime: Visible", bool_onCostumeBoatPage);
     KTBM_PropertySet(agent_pageCostumesBoat_skin5, "Runtime: Visible", bool_onCostumeBoatPage);
+
+    KTBM_PropertySet(agent_pageOptions_goBack, "Runtime: Visible", bool_onOptionsPage);
+    KTBM_PropertySet(agent_pageOptions_temp, "Runtime: Visible", bool_onOptionsPage);
 
     KTBM_PropertySet(agent_pageHelp_goBack, "Runtime: Visible", bool_onHelpPage);
     KTBM_PropertySet(agent_pageHelp_help, "Runtime: Visible", bool_onHelpPage);
@@ -795,6 +837,8 @@ KTBM_UI_Update = function()
             if (KTBM_UI_Input_Clicked == true) then
                 TextSetColor(agent_page0_options, pressedColor);
                 PlayClickSound();
+
+                string_currentPage = "options";
 
                 KTBM_UI_Input_Clicked = false;
             else
@@ -1152,6 +1196,31 @@ KTBM_UI_Update = function()
             end
         else
             TextSetColor(agent_pageCostumesBoat_skin5, defaultColor);
+        end
+
+    end
+
+    --||||||||||||||||||||||||||||| OPTIONS MENU |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| OPTIONS MENU |||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||| OPTIONS MENU |||||||||||||||||||||||||||||
+
+    if(bool_onOptionsPage) then
+
+        --option 1 (go back)
+        if (KTBM_TextUI_IsCursorOverTextAgent(agent_pageOptions_goBack)) then
+            if (KTBM_UI_Input_Clicked == true) then
+                TextSetColor(agent_pageOptions_goBack, pressedColor);
+                PlayClickSound();
+            
+                string_currentPage = "main";
+
+                KTBM_UI_Input_Clicked = false;
+            else
+                TextSetColor(agent_pageOptions_goBack, rolloverColor);
+                string_currentRolloverItem = "pageOptions_goBack";
+            end
+        else
+            TextSetColor(agent_pageOptions_goBack, defaultColor);
         end
 
     end

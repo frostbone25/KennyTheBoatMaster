@@ -28,12 +28,18 @@ local number_sceneStartTime = 0;
 local bool_trigger_loadGame = false;
 local bool_trigger_cutsceneStart = false;
 
+local agent_tempText = nil;
+
 KTBM_Cutscene_OpeningCutscene_Start = function()
     -----------------------------------------------
     CursorHide(false);
     CursorEnable(true);
 
     KTBM_Cutscene_Skip_Build();
+
+    agent_tempText = KTBM_TextUI_CreateTextAgent("agent_tempText", "Opening Cutscene Not Implemented Yet", Vector(0, 0, 0), 2, 0);
+    TextSetScale(agent_tempText, 1.0);
+    TextSetColor(agent_tempText, Color(1.0, 1.0, 1.0, 1.0));
 
     number_sceneStartTime = GetTotalTime();
 end
@@ -99,6 +105,12 @@ KTBM_Cutscene_OpeningCutscene_Update = function()
             bool_trigger_loadGame = true;
         end
     end
+
+    --screen pos notes
+    --0.0 0.0 0.0 = top left
+    --0.5 0.5 0.0 = center
+    --0.0 1.0 0.0 = bottom left
+    AgentSetWorldPosFromLogicalScreenPos(agent_tempText, Vector(0.5, 0.5, 0.0));
 end
 
 local animclips_kenny_eyeDarts = 

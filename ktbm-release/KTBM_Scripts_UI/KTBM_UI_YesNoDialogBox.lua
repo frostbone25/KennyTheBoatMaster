@@ -126,9 +126,17 @@ KTBM_UI_YesNoDialogBox_Update = function()
 
 
 
+    --local bool_isOverTransformScale = KTBM_TextUI_IsCursorOverBounds(AgentGetScreenPos(agent_icon_transformScale), vector_buttonExtentsMin, vector_buttonExtentsMax);
+    --local bool_isOverRightSideGUI = KTBM_TextUI_IsCursorOverBounds(Vector(1, 0, 0), Vector(-0.6 / RenderGetAspectRatio(), -2, 0), Vector(0.6 / RenderGetAspectRatio(), 2, 0));
+    
+    --local bool_isOverYes = KTBM_TextUI_IsCursorOverTextAgent(agent_yesText);
+    --local bool_isOverNo = KTBM_TextUI_IsCursorOverTextAgent(agent_noText);
+    --local bool_isOverYes = KTBM_TextUI_IsCursorOverTextAgentFix(agent_yesText);
+    --local bool_isOverNo = KTBM_TextUI_IsCursorOverTextAgentFix(agent_noText);
+    local bool_isOverYes = KTBM_TextUI_IsCursorOverBounds(Vector(0.405, 0.675, 0), Vector(-0.15 / RenderGetAspectRatio(), -0.05, 0), Vector(0.15 / RenderGetAspectRatio(), 0.05, 0));
+    local bool_isOverNo = KTBM_TextUI_IsCursorOverBounds(Vector(0.595, 0.675, 0), Vector(-0.15 / RenderGetAspectRatio(), -0.05, 0), Vector(0.15 / RenderGetAspectRatio(), 0.05, 0));
 
-    if (KTBM_TextUI_IsCursorOverTextAgent(agent_yesText)) then
-    --if (KTBM_TextUI_IsCursorOverTextAgentFix(agent_yesText)) then
+    if (bool_isOverYes) then
         if (KTBM_UI_Input_Clicked == true) then
             TextSetColor(agent_yesText, pressedColor);
             PlayClickSound();
@@ -143,8 +151,7 @@ KTBM_UI_YesNoDialogBox_Update = function()
 
             ShaderSwapTexture(agent_fullscreenGraphic, "ui_boot_title.d3dtx", "KTBM_Texture_YesNoLeftRollover.d3dtx");
         end
-    elseif (KTBM_TextUI_IsCursorOverTextAgent(agent_noText)) then
-    --elseif (KTBM_TextUI_IsCursorOverTextAgentFix(agent_noText)) then
+    elseif (bool_isOverNo) then
         if (KTBM_UI_Input_Clicked == true) then
             TextSetColor(agent_noText, pressedColor);
             PlayClickSound();

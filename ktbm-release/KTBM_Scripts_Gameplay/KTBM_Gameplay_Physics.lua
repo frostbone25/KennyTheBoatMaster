@@ -19,7 +19,9 @@ KTBM_Gameplay_PhysicsUpdate = function()
     --get the player boat bounds so we can test against other objects in the scene
     local agent_playerBoat = AgentFindInScene("obj_boatMotorChesapeake", KTBM_Gameplay_kScene);
 
-    --------------------------------------------------------------------
+    --||||||||||||||||||||||||||||||| PLAYER/ROCK COLLISION TESTING |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| PLAYER/ROCK COLLISION TESTING |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| PLAYER/ROCK COLLISION TESTING |||||||||||||||||||||||||||||||
     --Collision testing against the spawned rocks in the scene
 
     for index1 = 1, #KTBM_Gameplay_Rocks_AgentArray do
@@ -28,17 +30,17 @@ KTBM_Gameplay_PhysicsUpdate = function()
         --use native telltale api for doing an intersection test
         local bool_intersectionTest = AgentCollide(agent_playerBoat, agent_rock);
 
-        if(bool_intersectionTest == true) and (KTBM_Core_Project_DebugDisableRockCollisions == false) then
+        if(bool_intersectionTest == true) and (KTBM_Project_DebugDisableRockCollisions == false) then
             KTBM_Gameplay_State_HasCrashed = true;
-            --KTBM_Gameplay_EnvironmentMovementSpeed = 0;
             break;
         else
-            --KTBM_Gameplay_EnvironmentMovementSpeed = 25;
             KTBM_Gameplay_State_HasCrashed = false;
         end
     end
 
-    --------------------------------------------------------------------
+    --||||||||||||||||||||||||||||||| PLAYER/ZOMBIE COLLISION TESTING |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| PLAYER/ZOMBIE COLLISION TESTING |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| PLAYER/ZOMBIE COLLISION TESTING |||||||||||||||||||||||||||||||
     --Collision testing against the spawned zombies in the scene
     local agentArray_zombiesToDestroy = {};
 
@@ -52,29 +54,61 @@ KTBM_Gameplay_PhysicsUpdate = function()
 
         local bool_intersectionTest = AgentCollide(agent_playerBoat, agent_zombieChild);
 
-        if(bool_intersectionTest == true) and (KTBM_Core_Project_DebugDisableZombieCollisions == false) then
-            --KTBM_Cutscene_Game_PlayZombieKill(agent_zombieChild);
+        if(bool_intersectionTest == true) and (KTBM_Project_DebugDisableZombieCollisions == false) then
             local status_KTBM_Cutscene_Game_PlayZombieKill = pcall(KTBM_Cutscene_Game_PlayZombieKill, agent_zombieChild);
             local status_KTBM_Cutscene_Game_PlayVoiceLineAfterZombieKill = pcall(KTBM_Cutscene_Game_PlayVoiceLineAfterZombieKill);
+
+            KTBM_Gameplay_Stats_ZombiesKilled = KTBM_Gameplay_Stats_ZombiesKilled + 1;
 
             table.insert(agentArray_zombiesToDestroy, agent_zombieGroup);
             break;
         end
     end
 
-    for index3 = 1, #agentArray_zombiesToDestroy do
-        local agent_zombieToDelete = agentArray_zombiesToDestroy[index3];
+    --||||||||||||||||||||||||||||||| ROCK/ZOMBIE COLLISION TESTING |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| ROCK/ZOMBIE COLLISION TESTING |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| ROCK/ZOMBIE COLLISION TESTING |||||||||||||||||||||||||||||||
+    --Removing any zombies that are spawned (or eventually end up) inside of rocks
+
+    for index3 = 1, #KTBM_Gameplay_Zombies_AgentGroupArray do
+        local agent_zombieGroup = KTBM_Gameplay_Zombies_AgentGroupArray[index3];
+
+        local string_zombieGroupAgentName = AgentGetName(agent_zombieGroup); --ZombieGroup
+        local string_timeWhenSpawned =  string_zombieGroupAgentName:sub(12);
+        local string_zombieChildAgentName = "Zombie" .. string_timeWhenSpawned;
+        local agent_zombieChild = AgentFindInScene(string_zombieChildAgentName, KTBM_Gameplay_kScene);
+
+        for index4 = 1, #KTBM_Gameplay_Rocks_AgentArray do
+            local agent_rock = KTBM_Gameplay_Rocks_AgentArray[index4];
+
+            --use native telltale api for doing an intersection test
+            local bool_intersectionTest = AgentCollide(agent_zombieChild, agent_rock);
+
+            if(bool_intersectionTest == true) then
+                table.insert(agentArray_zombiesToDestroy, agent_zombieGroup);
+                break;
+            end
+        end
+    end
+
+    --||||||||||||||||||||||||||||||| OBJECT REMOVAL/DELETION |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| OBJECT REMOVAL/DELETION |||||||||||||||||||||||||||||||
+    --||||||||||||||||||||||||||||||| OBJECT REMOVAL/DELETION |||||||||||||||||||||||||||||||
+    --In here we delete objects "marked" for deletion after a collision test
+
+    for index5 = 1, #agentArray_zombiesToDestroy do
+        local agent_zombieToDelete = agentArray_zombiesToDestroy[index5];
 
         --the index for the main Zombie agent array of the object that we will delete
         local tempIndex = nil;
 
         --iterate through the current Zombie agent array to make sure that it's the same object we have marked.
-        for index4 = 1, #KTBM_Gameplay_Zombies_AgentGroupArray do
-            local agent_originalZombieAgent = KTBM_Gameplay_Zombies_AgentGroupArray[index4];
+        for index6 = 1, #KTBM_Gameplay_Zombies_AgentGroupArray do
+            local agent_originalZombieAgent = KTBM_Gameplay_Zombies_AgentGroupArray[index6];
 
             --when we find it, get the index of it in the original array so we can remove it in a bit.
             if(agent_zombieToDelete == agent_originalZombieAgent) then
-                tempIndex = index4;
+                tempIndex = index6;
             end
         end
 
@@ -93,8 +127,6 @@ KTBM_Gameplay_PhysicsUpdate = function()
         AgentDestroy(agent_zombieLookAtTarget);
         AgentDestroy(agent_zombieChild);
         AgentDestroy(agent_zombieToDelete);
-
-        KTBM_Gameplay_Stats_ZombiesKilled = KTBM_Gameplay_Stats_ZombiesKilled + 1;
     end
 end
 

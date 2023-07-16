@@ -1,10 +1,41 @@
 local agent_barrierTextUI = nil;
 local agent_statsTextUI = nil;
+local agent_gradientLeftSide = nil;
+local agent_gradientRightSide = nil;
 
 KTBM_UI_GamePrepare = function()
     --create our main menu text
     agent_barrierTextUI = KTBM_TextUI_CreateTextAgent("agent_barrierTextUI", "(-------------- O --------------)", Vector(0, 0, 0), 0, 0);
     agent_statsTextUI = KTBM_TextUI_CreateTextAgent("agent_statsTextUI", "[Stats]", Vector(0, 0, 0), 0, 0);
+
+    local number_xPosition = KTBM_Gameplay_BoatHorizontalBoundarySize + 21;
+    local number_zPosition = 10;
+    agent_gradientLeftSide = AgentCreate("agent_gradientLeftSide", "ui_boot_title.prop", Vector(number_xPosition, 0, number_zPosition), Vector(0, 0, 0), KTBM_Gameplay_kScene, false, false);
+    KTBM_PropertySet(agent_gradientLeftSide, "Render Axis Scale", Vector(3, 5.0, 1.0));
+    KTBM_PropertySet(agent_gradientLeftSide, "Render Global Scale", 1.0);
+    KTBM_PropertySet(agent_gradientLeftSide, "Render After Anti-Aliasing", true);
+    KTBM_PropertySet(agent_gradientLeftSide, "Render Depth Test", false);
+    KTBM_PropertySet(agent_gradientLeftSide, "Render Depth Write", false);
+    KTBM_PropertySet(agent_gradientLeftSide, "Render Depth Write Alpha", false);
+    KTBM_PropertySet(agent_gradientLeftSide, "Render Cull", false);
+    KTBM_PropertySet(agent_gradientLeftSide, "Fog Mesh Enabled", false);
+    KTBM_PropertySet(agent_gradientLeftSide, "Render Layer", -5);
+
+    agent_gradientRightSide = AgentCreate("agent_gradientRightSide", "ui_boot_title.prop", Vector(-number_xPosition, 0, number_zPosition), Vector(180, 0, 0), KTBM_Gameplay_kScene, false, false);
+    KTBM_PropertySet(agent_gradientRightSide, "Render Axis Scale", Vector(3, 5.0, 1.0));
+    KTBM_PropertySet(agent_gradientRightSide, "Render Global Scale", 1.0);
+    KTBM_PropertySet(agent_gradientRightSide, "Render After Anti-Aliasing", true);
+    KTBM_PropertySet(agent_gradientRightSide, "Render Depth Test", false);
+    KTBM_PropertySet(agent_gradientRightSide, "Render Depth Write", false);
+    KTBM_PropertySet(agent_gradientRightSide, "Render Depth Write Alpha", false);
+    KTBM_PropertySet(agent_gradientRightSide, "Render Cull", false);
+    KTBM_PropertySet(agent_gradientRightSide, "Fog Mesh Enabled", false);
+    KTBM_PropertySet(agent_gradientRightSide, "Render Layer", -5);
+
+    --local string_fadedGradientTexture = "KTBM_Texture_BlackFadedEdges38.d3dtx";
+    local string_fadedGradientTexture = "KTBM_Texture_BlackFadedEdges50.d3dtx";
+    ShaderSwapTexture(agent_gradientLeftSide, "ui_boot_title.d3dtx", string_fadedGradientTexture);
+    ShaderSwapTexture(agent_gradientRightSide, "ui_boot_title.d3dtx", string_fadedGradientTexture);
 
     --scale note
     --1.0 = default

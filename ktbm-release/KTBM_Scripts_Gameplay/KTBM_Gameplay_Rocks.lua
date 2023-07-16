@@ -8,7 +8,7 @@ KTBM_Gameplay_Rocks_PropArray = {
 };
 
 KTBM_Gameplay_RocksUpdate = function()
-    if(KTBM_Gameplay_State_HasCrashed == true) or (KTBM_Core_Project_DebugDisableRocks == true) or (KTBM_Gameplay_State_Paused == true) then
+    if(KTBM_Gameplay_State_HasCrashed == true) or (KTBM_Project_DebugDisableRocks == true) or (KTBM_Gameplay_State_Paused == true) then
         return;
     end
 

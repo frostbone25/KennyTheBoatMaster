@@ -4,6 +4,12 @@ local controller_music = nil;
 local controller_sound_sceneAmbient = nil;
 local controller_sound_zombieKill = nil;
 local controller_sound_zombieDeathVoice = nil;
+local controller_sound_boatMoveDefault = nil;
+local controller_sound_boatMoveSpeed = nil;
+
+local sound_boatDefaultSoundVolume = 1.0;
+local sound_boatBoostedSoundVolume = 0.0;
+
 local agent_kenny = nil;
 
 local strings_zombieDeathVoiceSounds = {
@@ -91,10 +97,27 @@ KTBM_Cutscene_Game_Start = function(kScene)
     ControllerFadeIn(controller_music, 2.0);
     
     --do scene ambient sound
-    controller_sound_sceneAmbient = SoundPlay("amb_river_shore_calm_water.wav");
+    --controller_sound_sceneAmbient = SoundPlay("amb_river_shore_calm_water.wav");
+    controller_sound_sceneAmbient = SoundPlay("KTBM_Sound_GameMovingAmbience.wav");
     ControllerSetLooping(controller_sound_sceneAmbient, true);
     ControllerSetSoundVolume(controller_sound_sceneAmbient, 0.25);
     ControllerFadeIn(controller_sound_sceneAmbient, 2.0);
+
+
+
+
+
+
+
+    controller_sound_boatMoveDefault = SoundPlay("KTBM_Sound_GameBoatDefaultSpeed.wav");
+    ControllerSetLooping(controller_sound_boatMoveDefault, true);
+    ControllerSetSoundVolume(controller_sound_boatMoveDefault, 0.25);
+    ControllerFadeIn(controller_sound_boatMoveDefault, 1.0);
+
+    controller_sound_boatMoveSpeed = SoundPlay("KTBM_Sound_GameBoatBoostedSpeed.wav");
+    ControllerSetLooping(controller_sound_boatMoveSpeed, true);
+    ControllerSetSoundVolume(controller_sound_boatMoveSpeed, 0.0);
+    ControllerFadeIn(controller_sound_boatMoveSpeed, 1.0);
     
     --------------------------------------------------------
     --prepare kennys base idle animations
@@ -116,6 +139,8 @@ KTBM_Cutscene_Game_End = function(kScene)
     ControllerFadeOut(controller_sound_sceneAmbient, 1.0);
     --ControllerKill(controller_music);
     --ControllerKill(controller_sound_sceneAmbient);
+    ControllerFadeOut(controller_sound_boatMoveDefault, 0.25);
+    ControllerFadeOut(controller_sound_boatMoveSpeed, 0.25);
 end
 
 local strings_voiceLinesAfterZombieKill = {
@@ -156,6 +181,21 @@ KTBM_Cutscene_Game_PlayVoiceLineAfterZombieKill = function()
     local string_voiceLineAfterZombieKill = strings_voiceLinesAfterZombieKill[number_randomClip];
 
     KTBM_Cutscene_PlayVoiceLine(agent_kenny, string_voiceLineAfterZombieKill, 1.0, 1.0);
+end
+
+KTBM_Cutscene_Game_Update = function()
+    local number_deltaTime = GetFrameTime();
+
+    if(KTBM_Gameplay_State_IsSpeeding == true) then
+        sound_boatDefaultSoundVolume = KTBM_NumberLerp(sound_boatDefaultSoundVolume, 0.0, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+        sound_boatBoostedSoundVolume = KTBM_NumberLerp(sound_boatBoostedSoundVolume, 0.5, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+    else
+        sound_boatDefaultSoundVolume = KTBM_NumberLerp(sound_boatDefaultSoundVolume, 0.5, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+        sound_boatBoostedSoundVolume = KTBM_NumberLerp(sound_boatBoostedSoundVolume, 0.0, number_deltaTime * KTBM_Gameplay_SpeedBoostTransitionLerpFactor);
+    end
+
+    ControllerSetSoundVolume(controller_sound_boatMoveDefault, sound_boatDefaultSoundVolume);
+    ControllerSetSoundVolume(controller_sound_boatMoveSpeed, sound_boatBoostedSoundVolume);
 end
 
 KTBM_Cutscene_Game_PlayZombieKill = function(agent_zombie)

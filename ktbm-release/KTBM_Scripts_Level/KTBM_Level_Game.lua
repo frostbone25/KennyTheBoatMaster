@@ -188,6 +188,7 @@ KTBM_Level_Game = function()
         Callback_OnPostUpdate:Add(KTBM_Gameplay_GameLoopUpdate);
 
         Callback_OnPostUpdate:Add(KTBM_Cutscene_GameDeath_Update);
+        Callback_OnPostUpdate:Add(KTBM_Cutscene_Game_Update);
 
         if (KTBM_Core_Project_DebugRockCollisionsUI) then
             KTBM_Gameplay_PrepareDebugRockCollisionsUI();
