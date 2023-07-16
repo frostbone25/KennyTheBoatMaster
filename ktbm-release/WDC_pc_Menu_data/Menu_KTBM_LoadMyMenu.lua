@@ -10,8 +10,8 @@ PlayKBTM_Game = function()
     --SubProject_Switch("WalkingDead201");
 
     --setup KTBM
-    KTBM_Core_Project_SetProjectSettings();
-    KTBM_Core_Project_EnableGameArchives();
+    KTBM_Project_SetProjectSettings();
+    KTBM_Project_EnableGameArchives();
 
     --note to self: we need to do a scene fade both when opening the scene and exiting the scene.
 
